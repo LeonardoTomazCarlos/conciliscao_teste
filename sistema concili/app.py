@@ -44,6 +44,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
+
 db = SQLAlchemy(app)
 CORS(app)
 
@@ -1387,5 +1388,68 @@ def limpar_dados():
         logging.error(f"Erro ao limpar dados: {e}")
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
     app.run(debug=True, host='0.0.0.0', port=5000) 
+
+# Exporta Extratos
+@app.route('/api/exporta-extratos')
+@login_required
+def exporta_extratos():
+    try:
+        extratos = ExtratoBancario.query.all()
+        output = BytesIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Conta', 'Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Conciliado', 'Arquivo Origem', 'Formato', 'Número Documento', 'Hash', 'Recorrente', 'Criado', 'Atualizado'])
+        for e in extratos:
+            writer.writerow([
+                e.id, e.conta_id, e.data, e.descricao, e.valor, e.tipo, e.categoria, e.conciliado,
+                e.arquivo_origem, e.formato_arquivo, e.numero_documento, e.hash_transacao, e.transacao_recorrente,
+                e.created_at, e.updated_at
+            ])
+        output.seek(0)
+        return send_file(output, mimetype='text/csv', as_attachment=True, download_name='extratos.csv')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Exporta Lançamentos
+@app.route('/api/exporta-lancamentos')
+@login_required
+def exporta_lancamentos():
+    try:
+        lancamentos = LancamentoContabil.query.all()
+        output = BytesIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Conciliado', 'Arquivo Origem', 'Número Documento', 'Centro Custo', 'Conta Contábil', 'Fornecedor/Cliente', 'Hash', 'Criado', 'Atualizado'])
+        for l in lancamentos:
+            writer.writerow([
+                l.id, l.data, l.descricao, l.valor, l.tipo, l.categoria, l.conciliado,
+                l.arquivo_origem, l.numero_documento, l.centro_custo, l.conta_contabil, l.fornecedor_cliente,
+                l.hash_transacao, l.created_at, l.updated_at
+            ])
+        output.seek(0)
+        return send_file(output, mimetype='text/csv', as_attachment=True, download_name='lancamentos.csv')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Exporta Conciliações
+@app.route('/api/exporta-conciliacoes')
+@login_required
+def exporta_conciliacoes():
+    try:
+        conciliacoes = Conciliacao.query.all()
+        output = BytesIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Extrato ID', 'Lançamento ID', 'Usuário', 'Data Conciliação', 'Observações', 'Tipo'])
+        for c in conciliacoes:
+            writer.writerow([
+                c.id, c.extrato_id, c.lancamento_id, c.usuario.username if c.usuario else 'Sistema',
+                c.data_conciliacao, c.observacoes, c.tipo_conciliacao
+            ])
+        output.seek(0)
+        return send_file(output, mimetype='text/csv', as_attachment=True, download_name='conciliacoes.csv')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
