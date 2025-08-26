@@ -1,0 +1,289 @@
+2025-08-25 21:23:59,246 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.88:5000
+2025-08-25 21:23:59,246 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-25 21:23:59,251 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:24:00,175 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:24:00,178 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:24:03,249 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.88:5000
+2025-08-25 21:24:03,249 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-25 21:24:03,250 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:24:04,114 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:24:04,117 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:28:02,085 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:02] "[32mGET / HTTP/1.1[0m" 302 -
+2025-08-25 21:28:02,175 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:02] "GET /login HTTP/1.1" 200 -
+2025-08-25 21:28:02,851 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:02] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-25 21:28:24,041 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:24] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:28:25,074 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:25] "GET / HTTP/1.1" 200 -
+2025-08-25 21:28:25,251 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:25] "[35m[1mGET /api/estatisticas HTTP/1.1[0m" 500 -
+2025-08-25 21:28:25,257 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:25] "[35m[1mGET /api/lancamentos HTTP/1.1[0m" 500 -
+2025-08-25 21:28:25,258 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:25] "[35m[1mGET /api/extratos HTTP/1.1[0m" 500 -
+2025-08-25 21:28:25,263 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:25] "[35m[1mGET /api/conciliacoes HTTP/1.1[0m" 500 -
+2025-08-25 21:28:25,266 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:25] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:28:30,391 - PyPDF2._reader - WARNING - incorrect startxref pointer(3)
+2025-08-25 21:28:30,443 - root - ERROR - Erro no upload de extrato: (sqlite3.OperationalError) no such column: extrato_bancario.conta_id
+[SQL: SELECT extrato_bancario.id AS extrato_bancario_id, extrato_bancario.conta_id AS extrato_bancario_conta_id, extrato_bancario.data AS extrato_bancario_data, extrato_bancario.descricao AS extrato_bancario_descricao, extrato_bancario.valor AS extrato_bancario_valor, extrato_bancario.tipo AS extrato_bancario_tipo, extrato_bancario.categoria AS extrato_bancario_categoria, extrato_bancario.conciliado AS extrato_bancario_conciliado, extrato_bancario.arquivo_origem AS extrato_bancario_arquivo_origem, extrato_bancario.formato_arquivo AS extrato_bancario_formato_arquivo, extrato_bancario.numero_documento AS extrato_bancario_numero_documento, extrato_bancario.hash_transacao AS extrato_bancario_hash_transacao, extrato_bancario.transacao_recorrente AS extrato_bancario_transacao_recorrente, extrato_bancario.created_at AS extrato_bancario_created_at, extrato_bancario.updated_at AS extrato_bancario_updated_at 
+FROM extrato_bancario 
+WHERE extrato_bancario.hash_transacao = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('426c736c0cc25e204b65fe9042271aacbd9fb87fe6fb918949b183c42e997677', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-25 21:28:30,444 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:30] "[35m[1mPOST /api/upload-extrato HTTP/1.1[0m" 500 -
+2025-08-25 21:28:47,987 - root - ERROR - Erro no upload de extrato: (sqlite3.OperationalError) no such column: extrato_bancario.conta_id
+[SQL: SELECT extrato_bancario.id AS extrato_bancario_id, extrato_bancario.conta_id AS extrato_bancario_conta_id, extrato_bancario.data AS extrato_bancario_data, extrato_bancario.descricao AS extrato_bancario_descricao, extrato_bancario.valor AS extrato_bancario_valor, extrato_bancario.tipo AS extrato_bancario_tipo, extrato_bancario.categoria AS extrato_bancario_categoria, extrato_bancario.conciliado AS extrato_bancario_conciliado, extrato_bancario.arquivo_origem AS extrato_bancario_arquivo_origem, extrato_bancario.formato_arquivo AS extrato_bancario_formato_arquivo, extrato_bancario.numero_documento AS extrato_bancario_numero_documento, extrato_bancario.hash_transacao AS extrato_bancario_hash_transacao, extrato_bancario.transacao_recorrente AS extrato_bancario_transacao_recorrente, extrato_bancario.created_at AS extrato_bancario_created_at, extrato_bancario.updated_at AS extrato_bancario_updated_at 
+FROM extrato_bancario 
+WHERE extrato_bancario.hash_transacao = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('30e68f36e988a9ef0d51baa2128ce70352a36c727989731b88f6db669a575a75', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-25 21:28:47,988 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:28:47] "[35m[1mPOST /api/upload-extrato HTTP/1.1[0m" 500 -
+2025-08-25 21:31:30,187 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:31:30] "[32mGET / HTTP/1.1[0m" 302 -
+2025-08-25 21:31:30,192 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:31:30] "GET /login HTTP/1.1" 200 -
+2025-08-25 21:33:04,633 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_upload.py', reloading
+2025-08-25 21:33:04,724 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:33:05,890 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:33:05,893 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:33:13,757 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:33:13] "[32mPOST /api/upload-extrato HTTP/1.1[0m" 302 -
+2025-08-25 21:33:15,789 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:33:15] "GET /login?next=/api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:33:28,958 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_upload_completo.py', reloading
+2025-08-25 21:33:29,024 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:33:29,852 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:33:29,855 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:33:37,052 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:33:37] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:33:39,106 - root - ERROR - Erro no upload de extrato: (sqlite3.OperationalError) no such column: extrato_bancario.conta_id
+[SQL: SELECT extrato_bancario.id AS extrato_bancario_id, extrato_bancario.conta_id AS extrato_bancario_conta_id, extrato_bancario.data AS extrato_bancario_data, extrato_bancario.descricao AS extrato_bancario_descricao, extrato_bancario.valor AS extrato_bancario_valor, extrato_bancario.tipo AS extrato_bancario_tipo, extrato_bancario.categoria AS extrato_bancario_categoria, extrato_bancario.conciliado AS extrato_bancario_conciliado, extrato_bancario.arquivo_origem AS extrato_bancario_arquivo_origem, extrato_bancario.formato_arquivo AS extrato_bancario_formato_arquivo, extrato_bancario.numero_documento AS extrato_bancario_numero_documento, extrato_bancario.hash_transacao AS extrato_bancario_hash_transacao, extrato_bancario.transacao_recorrente AS extrato_bancario_transacao_recorrente, extrato_bancario.created_at AS extrato_bancario_created_at, extrato_bancario.updated_at AS extrato_bancario_updated_at 
+FROM extrato_bancario 
+WHERE extrato_bancario.hash_transacao = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('9ff552d11ea16c32a9355b8a5dcb949a7718c1b4dcd77e525b0819c187a331ce', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-25 21:33:39,106 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:33:39] "[35m[1mPOST /api/upload-extrato HTTP/1.1[0m" 500 -
+2025-08-25 21:33:41,138 - root - ERROR - Erro no upload de lançamentos: (sqlite3.OperationalError) no such column: lancamento_contabil.numero_documento
+[SQL: SELECT lancamento_contabil.id AS lancamento_contabil_id, lancamento_contabil.data AS lancamento_contabil_data, lancamento_contabil.descricao AS lancamento_contabil_descricao, lancamento_contabil.valor AS lancamento_contabil_valor, lancamento_contabil.tipo AS lancamento_contabil_tipo, lancamento_contabil.categoria AS lancamento_contabil_categoria, lancamento_contabil.conciliado AS lancamento_contabil_conciliado, lancamento_contabil.arquivo_origem AS lancamento_contabil_arquivo_origem, lancamento_contabil.numero_documento AS lancamento_contabil_numero_documento, lancamento_contabil.centro_custo AS lancamento_contabil_centro_custo, lancamento_contabil.conta_contabil AS lancamento_contabil_conta_contabil, lancamento_contabil.fornecedor_cliente AS lancamento_contabil_fornecedor_cliente, lancamento_contabil.hash_transacao AS lancamento_contabil_hash_transacao, lancamento_contabil.created_at AS lancamento_contabil_created_at, lancamento_contabil.updated_at AS lancamento_contabil_updated_at 
+FROM lancamento_contabil 
+WHERE lancamento_contabil.hash_transacao = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('f5b3d591bdd0604105496fc7e22830f8fde7adcbac40c701fe6aef308006cbd2', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-25 21:33:41,139 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:33:41] "[35m[1mPOST /api/upload-lancamentos HTTP/1.1[0m" 500 -
+2025-08-25 21:34:12,244 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.88:5000
+2025-08-25 21:34:12,244 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-25 21:34:12,245 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:34:13,123 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:34:13,126 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:34:18,241 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:34:18] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:34:20,298 - root - ERROR - Erro no upload de extrato: (sqlite3.OperationalError) no such column: extrato_bancario.conta_id
+[SQL: SELECT extrato_bancario.id AS extrato_bancario_id, extrato_bancario.conta_id AS extrato_bancario_conta_id, extrato_bancario.data AS extrato_bancario_data, extrato_bancario.descricao AS extrato_bancario_descricao, extrato_bancario.valor AS extrato_bancario_valor, extrato_bancario.tipo AS extrato_bancario_tipo, extrato_bancario.categoria AS extrato_bancario_categoria, extrato_bancario.conciliado AS extrato_bancario_conciliado, extrato_bancario.arquivo_origem AS extrato_bancario_arquivo_origem, extrato_bancario.formato_arquivo AS extrato_bancario_formato_arquivo, extrato_bancario.numero_documento AS extrato_bancario_numero_documento, extrato_bancario.hash_transacao AS extrato_bancario_hash_transacao, extrato_bancario.transacao_recorrente AS extrato_bancario_transacao_recorrente, extrato_bancario.created_at AS extrato_bancario_created_at, extrato_bancario.updated_at AS extrato_bancario_updated_at 
+FROM extrato_bancario 
+WHERE extrato_bancario.hash_transacao = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('9ff552d11ea16c32a9355b8a5dcb949a7718c1b4dcd77e525b0819c187a331ce', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-25 21:34:20,298 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:34:20] "[35m[1mPOST /api/upload-extrato HTTP/1.1[0m" 500 -
+2025-08-25 21:34:22,347 - root - ERROR - Erro no upload de lançamentos: (sqlite3.OperationalError) no such column: lancamento_contabil.numero_documento
+[SQL: SELECT lancamento_contabil.id AS lancamento_contabil_id, lancamento_contabil.data AS lancamento_contabil_data, lancamento_contabil.descricao AS lancamento_contabil_descricao, lancamento_contabil.valor AS lancamento_contabil_valor, lancamento_contabil.tipo AS lancamento_contabil_tipo, lancamento_contabil.categoria AS lancamento_contabil_categoria, lancamento_contabil.conciliado AS lancamento_contabil_conciliado, lancamento_contabil.arquivo_origem AS lancamento_contabil_arquivo_origem, lancamento_contabil.numero_documento AS lancamento_contabil_numero_documento, lancamento_contabil.centro_custo AS lancamento_contabil_centro_custo, lancamento_contabil.conta_contabil AS lancamento_contabil_conta_contabil, lancamento_contabil.fornecedor_cliente AS lancamento_contabil_fornecedor_cliente, lancamento_contabil.hash_transacao AS lancamento_contabil_hash_transacao, lancamento_contabil.created_at AS lancamento_contabil_created_at, lancamento_contabil.updated_at AS lancamento_contabil_updated_at 
+FROM lancamento_contabil 
+WHERE lancamento_contabil.hash_transacao = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('f5b3d591bdd0604105496fc7e22830f8fde7adcbac40c701fe6aef308006cbd2', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-25 21:34:22,348 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:34:22] "[35m[1mPOST /api/upload-lancamentos HTTP/1.1[0m" 500 -
+2025-08-25 21:34:35,024 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\recriar_banco.py', reloading
+2025-08-25 21:34:35,099 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:34:35,939 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:34:35,943 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:34:56,164 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.88:5000
+2025-08-25 21:34:56,164 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-25 21:34:56,165 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:34:57,077 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:34:57,080 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:35:00,780 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:00] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:35:02,868 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:02] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:35:04,940 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:04] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-08-25 21:35:10,119 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_upload.py', reloading
+2025-08-25 21:35:10,203 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:35:11,025 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:35:11,028 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:35:15,507 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:15] "[32mGET / HTTP/1.1[0m" 302 -
+2025-08-25 21:35:15,513 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:15] "GET /login HTTP/1.1" 200 -
+2025-08-25 21:35:15,951 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:15] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-25 21:35:44,277 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:44] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:35:45,303 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:45] "GET / HTTP/1.1" 200 -
+2025-08-25 21:35:45,627 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:45] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:35:45,791 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:45] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:35:45,792 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:45] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:35:45,795 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:45] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:35:45,811 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:45] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:35:55,940 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:55] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:35:56,185 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:35:56] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:36:10,188 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:10] "GET / HTTP/1.1" 200 -
+2025-08-25 21:36:10,281 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:10] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:36:10,436 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:10] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:36:10,614 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:10] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:36:10,614 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:10] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:36:10,615 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:10] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:36:16,093 - PyPDF2._reader - WARNING - incorrect startxref pointer(3)
+2025-08-25 21:36:16,149 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:16] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:36:16,354 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:16] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:36:33,215 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:33] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:36:33,525 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:36:33] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:37:14,828 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:37:14] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-08-25 21:37:15,144 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:37:15] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:37:18,052 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:37:18] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:37:18,359 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:37:18] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:37:18,369 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:37:18] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:39:07,000 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:39:07] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:39:07,001 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:39:07] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:39:07,011 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:39:07] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:40:34,861 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\gerar_cnab400.py', reloading
+2025-08-25 21:40:34,948 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:40:35,887 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:40:35,890 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:41:05,978 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_cnab400.py', reloading
+2025-08-25 21:41:06,054 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:41:06,955 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:41:06,958 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:41:15,975 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:41:15] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:41:18,039 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:41:18] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:41:20,107 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:41:20] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:41:22,183 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:41:22] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:41:44,063 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_cnab_parser.py', reloading
+2025-08-25 21:41:44,143 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:41:44,994 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:41:44,996 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:45:33,627 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_final.py', reloading
+2025-08-25 21:45:33,712 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:45:34,573 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:45:34,576 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:45:44,701 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:45:44] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:45:46,757 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:45:46] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:45:48,812 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:45:48] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:45:50,897 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:45:50] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-08-25 21:46:26,718 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_cnab400.py', reloading
+2025-08-25 21:46:26,804 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:46:27,661 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:46:27,664 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:46:49,727 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_upload.py', reloading
+2025-08-25 21:46:49,795 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:46:50,651 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:46:50,654 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:47:07,595 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:47:07] "[31m[1mGET /api/upload-extrato HTTP/1.1[0m" 405 -
+2025-08-25 21:48:06,962 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:06] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:48:09,026 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:09] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:48:11,091 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:11] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:48:13,176 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:13] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-08-25 21:48:45,040 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:45] "GET / HTTP/1.1" 200 -
+2025-08-25 21:48:45,192 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:45] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:48:45,296 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:45] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:48:45,501 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:45] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:48:45,503 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:45] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:48:45,515 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:45] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:48:52,310 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:52] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:48:52,552 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:52] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:48:59,084 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:59] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:48:59,398 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:48:59] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:49:04,508 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:04] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:49:04,823 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:04] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:49:18,792 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:18] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:49:19,115 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:19] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:49:35,734 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:35] "GET / HTTP/1.1" 200 -
+2025-08-25 21:49:36,045 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:36] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:49:36,135 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:36] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:49:36,163 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:36] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:49:36,164 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:36] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:49:36,176 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:36] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:49:43,666 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:43] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:49:43,741 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:43] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:49:55,431 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:55] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-08-25 21:49:55,742 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:55] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:49:58,978 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:58] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:49:59,291 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:59] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:49:59,292 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:49:59] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:50:00,436 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:00] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:50:00,438 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:00] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:50:00,448 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:00] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:50:29,640 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:29] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:50:29,957 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:29] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:50:34,500 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:34] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-08-25 21:50:34,821 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:34] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:50:51,334 - PyPDF2._reader - WARNING - incorrect startxref pointer(3)
+2025-08-25 21:50:51,376 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:51] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:50:51,687 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:50:51] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:51:17,467 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:17] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:51:17,789 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:17] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:51:32,241 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:32] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:51:32,557 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:32] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:51:45,198 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:45] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:51:45,510 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:45] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:51:53,637 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:53] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:51:53,946 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:53] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:51:53,956 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:53] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:51:54,652 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:54] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:51:54,655 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:54] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:51:54,666 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:54] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:51:57,372 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:57] "GET / HTTP/1.1" 200 -
+2025-08-25 21:51:57,681 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:57] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:51:57,778 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:57] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:51:57,781 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:57] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:51:57,784 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:57] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:51:57,793 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:51:57] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:52:00,469 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:00] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:52:00,780 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:00] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:52:00,790 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:00] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:52:01,190 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:01] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:52:01,193 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:01] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:52:01,204 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:01] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:52:01,434 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:01] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-25 21:52:01,497 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:01] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-25 21:52:01,513 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:01] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:52:01,582 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:01] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-08-25 21:52:01,685 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:01] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:52:12,337 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:12] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:52:13,042 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:13] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:52:13,306 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:13] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:52:13,352 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:13] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:52:13,615 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:52:13] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:53:13,763 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_divergencias.py', reloading
+2025-08-25 21:53:13,847 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:53:14,789 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:53:14,792 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:53:23,859 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:53:23] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:53:25,941 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:53:25] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:53:28,015 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:53:28] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-08-25 21:53:30,097 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:53:30] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:53:32,249 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:53:32] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-08-25 21:53:34,309 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:53:34] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:53:36,370 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:53:36] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:54:00,922 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_divergencias_forcadas.py', reloading
+2025-08-25 21:54:00,999 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:54:01,829 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:54:01,832 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:54:03,844 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_divergencias_forcadas.py', reloading
+2025-08-25 21:54:03,915 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:54:04,779 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:54:04,783 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:54:11,456 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:54:11] "POST /login HTTP/1.1" 200 -
+2025-08-25 21:54:13,540 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:54:13] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-08-25 21:54:15,604 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:54:15] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-08-25 21:54:17,744 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:54:17] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-08-25 21:54:19,796 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:54:19] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-25 21:54:21,855 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:54:21] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-25 21:54:23,914 - werkzeug - INFO - 127.0.0.1 - - [25/Aug/2025 21:54:23] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-25 21:54:43,898 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\teste_divergencias.py', reloading
+2025-08-25 21:54:43,982 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:54:44,806 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:54:44,809 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-08-25 21:56:14,092 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Área de Trabalho\\Importante\\sistema concili\\upload_github.py', reloading
+2025-08-25 21:56:14,174 - werkzeug - INFO -  * Restarting with stat
+2025-08-25 21:56:15,042 - werkzeug - WARNING -  * Debugger is active!
+2025-08-25 21:56:15,045 - werkzeug - INFO -  * Debugger PIN: 682-994-724

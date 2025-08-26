@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Conciliação Bancária</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .login-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .login-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 40px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .input-group-text {
+            background: transparent;
+            border: 2px solid #e9ecef;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .spinner-border {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fas fa-university fa-3x mb-3"></i>
+            <h2>Sistema de Conciliação Bancária</h2>
+            <p>Faça login para continuar</p>
+        </div>
+        
+        <div class="login-body">
+            <div id="alert-container"></div>
+            
+            <form id="loginForm">
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Usuário" required>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-login">
+                    <span class="loading">
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        Entrando...
+                    </span>
+                    <span class="normal">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Entrar
+                    </span>
+                </button>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Usuário padrão: admin / Senha: admin123
+                </small>
+            </div>
+        </div>
+        
+        <div class="login-footer">
+            <p>&copy; 2024 Sistema de Conciliação Bancária</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Mostrar loading
+            document.querySelector('.loading').style.display = 'inline';
+            document.querySelector('.normal').style.display = 'none';
+            document.querySelector('.btn-login').disabled = true;
+            
+            // Fazer requisição de login
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', 'Login realizado com sucesso! Redirecionando...');
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    showAlert('danger', data.error || 'Erro no login');
+                    // Resetar botão
+                    document.querySelector('.loading').style.display = 'none';
+                    document.querySelector('.normal').style.display = 'inline';
+                    document.querySelector('.btn-login').disabled = false;
+                }
+            })
+            .catch(error => {
+                showAlert('danger', 'Erro de conexão. Tente novamente.');
+                // Resetar botão
+                document.querySelector('.loading').style.display = 'none';
+                document.querySelector('.normal').style.display = 'inline';
+                document.querySelector('.btn-login').disabled = false;
+            });
+        });
+        
+        function showAlert(type, message) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertId = 'alert-' + Date.now();
+            
+            const alertHtml = `
+                <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            alertContainer.innerHTML = alertHtml;
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                const alert = document.getElementById(alertId);
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+        
+        // Permitir login com Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html> 

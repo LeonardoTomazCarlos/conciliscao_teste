@@ -1,0 +1,11 @@
+Data,Descrição,Valor,Tipo
+2024-01-15,Depósito em conta,5000.00,credito
+2024-01-16,Pagamento de fornecedor,-1500.00,debito
+2024-01-17,Transferência recebida,2000.00,credito
+2024-01-18,Pagamento de funcionários,-3000.00,debito
+2024-01-19,Venda de produtos,3500.00,credito
+2024-01-20,Pagamento de impostos,-800.00,debito
+2024-01-21,Recebimento de cliente,1200.00,credito
+2024-01-22,Pagamento de serviços,-450.00,debito
+2024-01-23,Depósito de cliente,800.00,credito
+2024-01-24,Pagamento de aluguel,-1200.00,debito 

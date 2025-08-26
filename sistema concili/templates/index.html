@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Conciliação Bancária</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            margin: 2px 0;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        .card-dashboard {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .card-dashboard:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .btn-action {
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .alert-custom {
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white"><i class="fas fa-university"></i> Conciliação</h4>
+                        <small class="text-white-50">Sistema Bancário</small>
+                    </div>
+                    
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#importacao" data-bs-toggle="tab">
+                                <i class="fas fa-upload me-2"></i> Importação
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#conciliacao" data-bs-toggle="tab">
+                                <i class="fas fa-link me-2"></i> Conciliação
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#divergencias" data-bs-toggle="tab">
+                                <i class="fas fa-exclamation-triangle me-2"></i> Divergências
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#relatorios" data-bs-toggle="tab">
+                                <i class="fas fa-chart-bar me-2"></i> Relatórios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#configuracoes" data-bs-toggle="tab">
+                                <i class="fas fa-cog me-2"></i> Configurações
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <hr class="text-white-50">
+                    
+                    <div class="text-center">
+                        <small class="text-white-50">Usuário: <span id="current-user">{{ current_user.username }}</span></small><br>
+                        <a href="/logout" class="btn btn-outline-light btn-sm mt-2">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="tab-content">
+                    <!-- Dashboard -->
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Dashboard</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <button class="btn btn-primary" onclick="executarConciliacaoAutomatica()">
+                                    <i class="fas fa-magic"></i> Conciliação Automática
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Estatísticas -->
+                        <div class="row mb-4" id="estatisticas">
+                            <div class="col-md-3">
+                                <div class="card card-dashboard stat-card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-file-invoice fa-2x mb-2"></i>
+                                        <h4 id="total-extratos">0</h4>
+                                        <p class="mb-0">Extratos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card card-dashboard stat-card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-book fa-2x mb-2"></i>
+                                        <h4 id="total-lancamentos">0</h4>
+                                        <p class="mb-0">Lançamentos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card card-dashboard stat-card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-link fa-2x mb-2"></i>
+                                        <h4 id="conciliados">0</h4>
+                                        <p class="mb-0">Conciliados</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card card-dashboard stat-card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                                        <h4 id="divergencias-pendentes">0</h4>
+                                        <p class="mb-0">Divergências</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Rápido -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-upload"></i> Upload Rápido - Extrato</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="upload-area" onclick="document.getElementById('extrato-file').click()">
+                                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                            <p class="mb-0">Clique para selecionar arquivo de extrato</p>
+                                            <small class="text-muted">CSV, Excel, OFX, CNAB, PDF</small>
+                                        </div>
+                                        <input type="file" id="extrato-file" style="display: none;" accept=".csv,.xlsx,.xls,.ofx,.cnab,.ret,.pdf" onchange="uploadExtrato(this)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-upload"></i> Upload Rápido - Lançamentos</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="upload-area" onclick="document.getElementById('lancamento-file').click()">
+                                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                            <p class="mb-0">Clique para selecionar arquivo de lançamentos</p>
+                                            <small class="text-muted">CSV, Excel</small>
+                                        </div>
+                                        <input type="file" id="lancamento-file" style="display: none;" accept=".csv,.xlsx,.xls" onchange="uploadLancamento(this)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Últimas Atividades -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-clock"></i> Últimas Conciliações</h5>
+                                    </div>
+                                    <div class="card-body table-container">
+                                        <div id="ultimas-conciliacoes">Carregando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-exclamation-circle"></i> Divergências Recentes</h5>
+                                    </div>
+                                    <div class="card-body table-container">
+                                        <div id="divergencias-recentes">Carregando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Importação -->
+                    <div class="tab-pane fade" id="importacao">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Importação de Dados</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-file-invoice"></i> Importar Extrato Bancário</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="form-extrato">
+                                            <div class="mb-3">
+                                                <label class="form-label">Selecionar Arquivo</label>
+                                                <input type="file" class="form-control" id="extrato-file-detailed" accept=".csv,.xlsx,.xls,.ofx,.cnab,.ret,.pdf" required>
+                                                <div class="form-text">Formatos suportados: CSV, Excel, OFX, CNAB, PDF</div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary btn-action">
+                                                <i class="fas fa-upload"></i> Importar Extrato
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-book"></i> Importar Lançamentos Contábeis</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="form-lancamento">
+                                            <div class="mb-3">
+                                                <label class="form-label">Selecionar Arquivo</label>
+                                                <input type="file" class="form-control" id="lancamento-file-detailed" accept=".csv,.xlsx,.xls" required>
+                                                <div class="form-text">Formatos suportados: CSV, Excel</div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary btn-action">
+                                                <i class="fas fa-upload"></i> Importar Lançamentos
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-list"></i> Histórico de Importações</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="historico-importacoes">Carregando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conciliação -->
+                    <div class="tab-pane fade" id="conciliacao">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Conciliação</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <button class="btn btn-success me-2" onclick="executarConciliacaoAutomatica()">
+                                    <i class="fas fa-magic"></i> Conciliação Automática
+                                </button>
+                                <button class="btn btn-info" onclick="carregarDadosConciliacao()">
+                                    <i class="fas fa-sync"></i> Atualizar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-file-invoice"></i> Extratos Não Conciliados</h5>
+                                    </div>
+                                    <div class="card-body table-container">
+                                        <div id="extratos-nao-conciliados">Carregando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-book"></i> Lançamentos Não Conciliados</h5>
+                                    </div>
+                                    <div class="card-body table-container">
+                                        <div id="lancamentos-nao-conciliados">Carregando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-link"></i> Conciliações Realizadas</h5>
+                                    </div>
+                                    <div class="card-body table-container">
+                                        <div id="conciliacoes-realizadas">Carregando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divergências -->
+                    <div class="tab-pane fade" id="divergencias">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Divergências</h1>
+                            <button class="btn btn-warning" onclick="carregarDivergencias()">
+                                <i class="fas fa-sync"></i> Atualizar
+                            </button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-exclamation-triangle"></i> Divergências Pendentes</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="lista-divergencias">Carregando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Relatórios -->
+                    <div class="tab-pane fade" id="relatorios">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Relatórios</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie"></i> Relatório Consolidado</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="form-relatorio">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Data Início</label>
+                                                    <input type="date" class="form-control" id="data-inicio">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Data Fim</label>
+                                                    <input type="date" class="form-control" id="data-fim">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary btn-action mt-3">
+                                                <i class="fas fa-chart-bar"></i> Gerar Relatório
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-download"></i> Exportar Dados</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <button class="btn btn-success btn-action mb-2 w-100" onclick="exportarExtratos()">
+                                            <i class="fas fa-file-csv"></i> Exportar Extratos
+                                        </button>
+                                        <button class="btn btn-info btn-action mb-2 w-100" onclick="exportarLancamentos()">
+                                            <i class="fas fa-file-csv"></i> Exportar Lançamentos
+                                        </button>
+                                        <button class="btn btn-warning btn-action w-100" onclick="exportarConciliacoes()">
+                                            <i class="fas fa-file-csv"></i> Exportar Conciliações
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-line"></i> Resultados do Relatório</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="resultado-relatorio">Selecione um período e gere um relatório</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configurações -->
+                    <div class="tab-pane fade" id="configuracoes">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Configurações</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-users"></i> Gestão de Usuários</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarUsuarios()">
+                                            <i class="fas fa-list"></i> Listar Usuários
+                                        </button>
+                                        <div id="lista-usuarios">Clique em "Listar Usuários" para ver os usuários cadastrados</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-university"></i> Contas Bancárias</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarContas()">
+                                            <i class="fas fa-list"></i> Listar Contas
+                                        </button>
+                                        <div id="lista-contas">Clique em "Listar Contas" para ver as contas cadastradas</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card card-dashboard">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-cogs"></i> Regras de Conciliação</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarRegras()">
+                                            <i class="fas fa-list"></i> Listar Regras
+                                        </button>
+                                        <div id="lista-regras">Clique em "Listar Regras" para ver as regras configuradas</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Alertas -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div id="alert-container"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Funções principais
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-custom alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        function carregarEstatisticas() {
+            fetch('/api/estatisticas')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-extratos').textContent = data.total_extratos;
+                    document.getElementById('total-lancamentos').textContent = data.total_lancamentos;
+                    document.getElementById('conciliados').textContent = data.extratos_conciliados + data.lancamentos_conciliados;
+                    document.getElementById('divergencias-pendentes').textContent = data.divergencias_pendentes;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar estatísticas:', error);
+                });
+        }
+
+        function executarConciliacaoAutomatica() {
+            fetch('/api/conciliacao-automatica', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    carregarEstatisticas();
+                } else {
+                    showAlert(data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Erro ao executar conciliação automática', 'danger');
+            });
+        }
+
+        function uploadExtrato(input) {
+            if (!input.files[0]) return;
+            
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+            
+            fetch('/api/upload-extrato', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    carregarEstatisticas();
+                } else {
+                    showAlert(data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Erro no upload do arquivo', 'danger');
+            });
+        }
+
+        function uploadLancamento(input) {
+            if (!input.files[0]) return;
+            
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+            
+            fetch('/api/upload-lancamentos', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    carregarEstatisticas();
+                } else {
+                    showAlert(data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Erro no upload do arquivo', 'danger');
+            });
+        }
+
+        function carregarDadosConciliacao() {
+            // Carregar extratos não conciliados
+            fetch('/api/extratos')
+                .then(response => response.json())
+                .then(data => {
+                    const naoConciliados = data.filter(e => !e.conciliado);
+                    const html = naoConciliados.length > 0 ? 
+                        naoConciliados.slice(0, 10).map(e => `
+                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                                <div>
+                                    <strong>${e.descricao}</strong><br>
+                                    <small class="text-muted">${e.data} - R$ ${e.valor.toFixed(2)}</small>
+                                </div>
+                                <span class="badge bg-secondary">${e.tipo}</span>
+                            </div>
+                        `).join('') : '<p class="text-muted">Nenhum extrato não conciliado</p>';
+                    document.getElementById('extratos-nao-conciliados').innerHTML = html;
+                });
+
+            // Carregar lançamentos não conciliados
+            fetch('/api/lancamentos')
+                .then(response => response.json())
+                .then(data => {
+                    const naoConciliados = data.filter(l => !l.conciliado);
+                    const html = naoConciliados.length > 0 ? 
+                        naoConciliados.slice(0, 10).map(l => `
+                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                                <div>
+                                    <strong>${l.descricao}</strong><br>
+                                    <small class="text-muted">${l.data} - R$ ${l.valor.toFixed(2)}</small>
+                                </div>
+                                <span class="badge bg-secondary">${l.tipo}</span>
+                            </div>
+                        `).join('') : '<p class="text-muted">Nenhum lançamento não conciliado</p>';
+                    document.getElementById('lancamentos-nao-conciliados').innerHTML = html;
+                });
+
+            // Carregar conciliações realizadas
+            fetch('/api/conciliacoes')
+                .then(response => response.json())
+                .then(data => {
+                    const html = data.length > 0 ? 
+                        data.slice(0, 10).map(c => `
+                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                                <div>
+                                    <strong>${c.extrato.descricao}</strong><br>
+                                    <small class="text-muted">${c.data_conciliacao} - ${c.usuario}</small>
+                                </div>
+                                <span class="badge bg-success">Conciliado</span>
+                            </div>
+                        `).join('') : '<p class="text-muted">Nenhuma conciliação realizada</p>';
+                    document.getElementById('conciliacoes-realizadas').innerHTML = html;
+                });
+        }
+
+        function carregarDivergencias() {
+            fetch('/api/divergencias')
+                .then(response => response.json())
+                .then(data => {
+                    const html = data.length > 0 ? 
+                        data.map(d => `
+                            <div class="alert alert-warning alert-custom">
+                                <h6>${d.tipo.toUpperCase()}</h6>
+                                <p class="mb-1">${d.descricao}</p>
+                                <small class="text-muted">${d.created_at}</small>
+                                <button class="btn btn-sm btn-outline-warning float-end" onclick="resolverDivergencia(${d.id})">
+                                    Resolver
+                                </button>
+                            </div>
+                        `).join('') : '<p class="text-muted">Nenhuma divergência pendente</p>';
+                    document.getElementById('lista-divergencias').innerHTML = html;
+                });
+        }
+
+        function resolverDivergencia(id) {
+            const justificativa = prompt('Digite a justificativa para resolver esta divergência:');
+            if (!justificativa) return;
+
+            fetch(`/api/divergencias/${id}/resolver`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ justificativa })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Divergência resolvida com sucesso', 'success');
+                    carregarDivergencias();
+                    carregarEstatisticas();
+                } else {
+                    showAlert(data.error, 'danger');
+                }
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarEstatisticas();
+            carregarDadosConciliacao();
+            carregarDivergencias();
+
+            // Form handlers
+            document.getElementById('form-extrato').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const file = document.getElementById('extrato-file-detailed').files[0];
+                if (file) {
+                    const input = { files: [file] };
+                    uploadExtrato(input);
+                }
+            });
+
+            document.getElementById('form-lancamento').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const file = document.getElementById('lancamento-file-detailed').files[0];
+                if (file) {
+                    const input = { files: [file] };
+                    uploadLancamento(input);
+                }
+            });
+
+            document.getElementById('form-relatorio').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const dataInicio = document.getElementById('data-inicio').value;
+                const dataFim = document.getElementById('data-fim').value;
+                
+                fetch(`/api/relatorios/consolidado?data_inicio=${dataInicio}&data_fim=${dataFim}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const html = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Estatísticas do Período</h6>
+                                    <ul class="list-unstyled">
+                                        <li>Extratos: ${data.estatisticas.total_extratos}</li>
+                                        <li>Lançamentos: ${data.estatisticas.total_lancamentos}</li>
+                                        <li>Extratos Conciliados: ${data.estatisticas.extratos_conciliados} (${data.estatisticas.percentual_extratos.toFixed(1)}%)</li>
+                                        <li>Lançamentos Conciliados: ${data.estatisticas.lancamentos_conciliados} (${data.estatisticas.percentual_lancamentos.toFixed(1)}%)</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Período</h6>
+                                    <p>De: ${data.periodo.inicio || 'N/A'}<br>
+                                    Até: ${data.periodo.fim || 'N/A'}</p>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('resultado-relatorio').innerHTML = html;
+                    });
+            });
+        });
+
+        // Navegação por tabs
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                const target = this.getAttribute('href').substring(1);
+                document.querySelectorAll('.tab-pane').forEach(tab => {
+                    tab.classList.remove('show', 'active');
+                });
+                document.getElementById(target).classList.add('show', 'active');
+            });
+        });
+    </script>
+</body>
+</html>

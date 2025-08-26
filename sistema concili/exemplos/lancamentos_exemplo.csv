@@ -1,0 +1,11 @@
+Data,Descrição,Valor,Tipo
+2024-01-15,Depósito inicial,5000.00,credito
+2024-01-16,Pagamento fornecedor ABC,-1500.00,debito
+2024-01-17,Transferência cliente XYZ,2000.00,credito
+2024-01-18,Folha de pagamento,-3000.00,debito
+2024-01-19,Venda produto A,3500.00,credito
+2024-01-20,Impostos federais,-800.00,debito
+2024-01-21,Recebimento cliente 123,1200.00,credito
+2024-01-22,Serviços de consultoria,-450.00,debito
+2024-01-23,Depósito cliente DEF,800.00,credito
+2024-01-24,Aluguel escritório,-1200.00,debito 
