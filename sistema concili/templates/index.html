@@ -400,17 +400,302 @@
                                     <div class="card-header">
                                         <h5><i class="fas fa-download"></i> Exportar Dados</h5>
                                     </div>
-                                    <div class="card-body">
-                                        <button class="btn btn-success btn-action mb-2 w-100" onclick="exportarExtratos()">
-                                            <i class="fas fa-file-csv"></i> Exportar Extratos
-                                        </button>
-                                        <button class="btn btn-info btn-action mb-2 w-100" onclick="exportarLancamentos()">
-                                            <i class="fas fa-file-csv"></i> Exportar Lançamentos
-                                        </button>
-                                        <button class="btn btn-warning btn-action w-100" onclick="exportarConciliacoes()">
-                                            <i class="fas fa-file-csv"></i> Exportar Conciliações
-                                        </button>
+                                    <div class="card-body export-section">
+                                        <!-- Extratos -->
+                                        <div class="mb-4">
+                                            <div class="section-header" data-bs-toggle="collapse" data-bs-target="#collapseExtratos" role="button" aria-expanded="false">
+                                                <div class="d-flex justify-content-between align-items-center p-3 rounded">
+                                                    <h5 class="mb-0">
+                                                        <i class="fas fa-chevron-right me-2 section-icon"></i>
+                                                        <i class="fas fa-file-invoice me-2"></i>
+                                                        Extratos Bancários
+                                                    </h5>
+                                                    <span class="badge" id="extratos-count">0</span>
+                                                </div>
+                                            </div>
+                                            <div class="collapse" id="collapseExtratos">
+                                                <div class="card card-body border-0 pt-3 section-content">
+                                                    <div id="lista-extratos" class="list-group mb-2">
+                                                        <div class="text-center">
+                                                            <div class="spinner-border text-primary" role="status">
+                                                                <span class="visually-hidden">Carregando...</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Lançamentos -->
+                                        <div class="mb-4">
+                                            <div class="section-header" data-bs-toggle="collapse" data-bs-target="#collapseLancamentos" role="button" aria-expanded="false">
+                                                <div class="d-flex justify-content-between align-items-center p-3 rounded">
+                                                    <h5 class="mb-0">
+                                                        <i class="fas fa-chevron-right me-2 section-icon"></i>
+                                                        <i class="fas fa-book me-2"></i>
+                                                        Lançamentos Contábeis
+                                                    </h5>
+                                                    <span class="badge" id="lancamentos-count">0</span>
+                                                </div>
+                                            </div>
+                                            <div class="collapse" id="collapseLancamentos">
+                                                <div class="card card-body border-0 pt-3 section-content">
+                                                    <div id="lista-lancamentos" class="list-group mb-2">
+                                                        <div class="text-center">
+                                                            <div class="spinner-border text-primary" role="status">
+                                                                <span class="visually-hidden">Carregando...</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Conciliações -->
+                                        <div class="mb-4">
+                                            <div class="section-header" data-bs-toggle="collapse" data-bs-target="#collapseConciliacoes" role="button" aria-expanded="false">
+                                                <div class="d-flex justify-content-between align-items-center p-3 rounded">
+                                                    <h5 class="mb-0">
+                                                        <i class="fas fa-chevron-right me-2 section-icon"></i>
+                                                        <i class="fas fa-link me-2"></i>
+                                                        Conciliações
+                                                    </h5>
+                                                    <span class="badge" id="conciliacoes-count">0</span>
+                                                </div>
+                                            </div>
+                                            <div class="collapse" id="collapseConciliacoes">
+                                                <div class="card card-body border-0 pt-3 section-content">
+                                                    <div id="lista-conciliacoes" class="list-group mb-2">
+                                                        <div class="text-center">
+                                                            <div class="spinner-border text-primary" role="status">
+                                                                <span class="visually-hidden">Carregando...</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div id="exportMessage" class="mt-3"></div>
                                     </div>
+                                    
+                                    <style>
+                                        .export-section .section-header {
+                                            cursor: pointer;
+                                            transition: all 0.3s ease;
+                                        }
+                                        .export-section .section-header:hover {
+                                            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+                                        }
+                                        .export-section .section-header .badge {
+                                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                            font-size: 0.9em;
+                                            padding: 0.5em 1em;
+                                            border-radius: 20px;
+                                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                        }
+                                        .export-section .section-content {
+                                            background-color: #f8f9fa;
+                                            border-radius: 10px;
+                                            margin-top: 0.5rem;
+                                        }
+                                        .export-section .list-group-item-action {
+                                            border: none;
+                                            margin-bottom: 0.5rem;
+                                            border-radius: 8px !important;
+                                            transition: all 0.3s ease;
+                                        }
+                                        .export-section .list-group-item-action:hover {
+                                            background-color: rgba(102, 126, 234, 0.1);
+                                            transform: translateX(5px);
+                                        }
+                                        .export-section .list-group-item-action:last-child {
+                                            margin-bottom: 0;
+                                        }
+                                        .export-section .list-group-item-primary {
+                                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                            color: white;
+                                            font-weight: 500;
+                                        }
+                                        .export-section .list-group-item-primary:hover {
+                                            background: linear-gradient(135deg, #5a71d9 0%, #6a4393 100%);
+                                            transform: translateX(5px);
+                                        }
+                                        .export-section .section-icon {
+                                            transition: transform 0.3s ease;
+                                        }
+                                        .export-section .collapse.show + .card-body {
+                                            animation: fadeIn 0.3s ease;
+                                        }
+                                        @keyframes fadeIn {
+                                            from { opacity: 0; transform: translateY(-10px); }
+                                            to { opacity: 1; transform: translateY(0); }
+                                        }
+                                        .text-muted {
+                                            color: #6c757d !important;
+                                            font-style: italic;
+                                        }
+                                    </style>
+                                    <script>
+                                    function carregarArquivosDisponiveis() {
+                                        fetch('/api/listar_arquivos_exportacao')
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                // Preencher lista de extratos
+                                                const extratosLista = document.getElementById('lista-extratos');
+                                                const extratosCount = document.getElementById('extratos-count');
+                                                extratosLista.innerHTML = '';
+                                                
+                                                if (data.extratos && data.extratos.length > 0) {
+                                                    let totalExtratos = 0;
+                                                    data.extratos.forEach(extrato => {
+                                                        totalExtratos += extrato.total;
+                                                        extratosLista.innerHTML += `
+                                                            <a href="/api/exporta_extratos?arquivo=${encodeURIComponent(extrato.arquivo)}" 
+                                                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" 
+                                                               onclick="handleExport(event, this.href)">
+                                                                <div>
+                                                                    <i class="fas fa-file-csv me-2"></i>
+                                                                    ${extrato.arquivo}
+                                                                </div>
+                                                                <span class="badge bg-primary rounded-pill">${extrato.total} registros</span>
+                                                            </a>`;
+                                                    });
+                                                    extratosLista.innerHTML += `
+                                                        <a href="/api/exporta_extratos" 
+                                                           class="list-group-item list-group-item-action list-group-item-primary" 
+                                                           onclick="handleExport(event, this.href)">
+                                                            <i class="fas fa-download me-2"></i>
+                                                            Exportar Todos os Extratos
+                                                        </a>`;
+                                                    extratosCount.textContent = totalExtratos;
+                                                } else {
+                                                    extratosLista.innerHTML = '<div class="list-group-item text-muted">Nenhum extrato disponível para exportação</div>';
+                                                    extratosCount.textContent = '0';
+                                                }
+                                                
+                                                // Preencher lista de lançamentos
+                                                const lancamentosLista = document.getElementById('lista-lancamentos');
+                                                const lancamentosCount = document.getElementById('lancamentos-count');
+                                                lancamentosLista.innerHTML = '';
+                                                
+                                                if (data.lancamentos && data.lancamentos.length > 0) {
+                                                    let totalLancamentos = 0;
+                                                    data.lancamentos.forEach(lancamento => {
+                                                        totalLancamentos += lancamento.total;
+                                                        lancamentosLista.innerHTML += `
+                                                            <a href="/api/exporta_lancamentos?arquivo=${encodeURIComponent(lancamento.arquivo)}" 
+                                                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" 
+                                                               onclick="handleExport(event, this.href)">
+                                                                <div>
+                                                                    <i class="fas fa-file-csv me-2"></i>
+                                                                    ${lancamento.arquivo}
+                                                                </div>
+                                                                <span class="badge bg-primary rounded-pill">${lancamento.total} registros</span>
+                                                            </a>`;
+                                                    });
+                                                    lancamentosLista.innerHTML += `
+                                                        <a href="/api/exporta_lancamentos" 
+                                                           class="list-group-item list-group-item-action list-group-item-primary" 
+                                                           onclick="handleExport(event, this.href)">
+                                                            <i class="fas fa-download me-2"></i>
+                                                            Exportar Todos os Lançamentos
+                                                        </a>`;
+                                                    lancamentosCount.textContent = totalLancamentos;
+                                                } else {
+                                                    lancamentosLista.innerHTML = '<div class="list-group-item text-muted">Nenhum lançamento disponível para exportação</div>';
+                                                    lancamentosCount.textContent = '0';
+                                                }
+                                                
+                                                // Preencher informações de conciliações
+                                                const conciliacoesLista = document.getElementById('lista-conciliacoes');
+                                                const conciliacoesCount = document.getElementById('conciliacoes-count');
+                                                conciliacoesLista.innerHTML = '';
+                                                
+                                                if (data.conciliacoes && data.conciliacoes.total > 0) {
+                                                    conciliacoesLista.innerHTML = `
+                                                        <a href="/api/exporta_conciliacoes" 
+                                                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" 
+                                                           onclick="handleExport(event, this.href)">
+                                                            <div>
+                                                                <i class="fas fa-file-csv me-2"></i>
+                                                                Exportar Conciliações
+                                                            </div>
+                                                            <span class="badge bg-primary rounded-pill">${data.conciliacoes.total} registros</span>
+                                                        </a>`;
+                                                    conciliacoesCount.textContent = data.conciliacoes.total;
+                                                } else {
+                                                    conciliacoesLista.innerHTML = '<div class="list-group-item text-muted">Nenhuma conciliação disponível para exportação</div>';
+                                                    conciliacoesCount.textContent = '0';
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Erro ao carregar arquivos:', error);
+                                                showAlert('Erro ao carregar a lista de arquivos disponíveis', 'danger');
+                                            });
+                                    }
+
+                                    // Atualizar ícones de seta quando os painéis são expandidos/recolhidos
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const collapses = document.querySelectorAll('.collapse');
+                                        collapses.forEach(collapse => {
+                                            collapse.addEventListener('show.bs.collapse', function() {
+                                                const header = document.querySelector(`[data-bs-target="#${this.id}"]`);
+                                                const icon = header.querySelector('.section-icon');
+                                                icon.style.transform = 'rotate(90deg)';
+                                            });
+                                            
+                                            collapse.addEventListener('hide.bs.collapse', function() {
+                                                const header = document.querySelector(`[data-bs-target="#${this.id}"]`);
+                                                const icon = header.querySelector('.section-icon');
+                                                icon.style.transform = 'rotate(0deg)';
+                                            });
+                                        });
+                                    });                                        function handleExport(event, url) {
+                                            event.preventDefault();
+                                            
+                                            // Mostrar loading
+                                            showAlert('Preparando arquivo para download...', 'info');
+                                            
+                                            fetch(url)
+                                                .then(response => {
+                                                    if (!response.ok) {
+                                                        return response.json().then(data => {
+                                                            throw new Error(data.message || data.error || 'Erro ao exportar arquivo');
+                                                        });
+                                                    }
+                                                    return response.blob();
+                                                })
+                                                .then(blob => {
+                                                    const fileName = url.includes('extratos') ? 'extratos.csv' :
+                                                                   url.includes('lancamentos') ? 'lancamentos.csv' :
+                                                                   'conciliacoes.csv';
+                                                    
+                                                    const link = document.createElement('a');
+                                                    link.href = window.URL.createObjectURL(blob);
+                                                    link.download = fileName;
+                                                    document.body.appendChild(link);
+                                                    link.click();
+                                                    document.body.removeChild(link);
+                                                    
+                                                    showAlert('Arquivo exportado com sucesso!', 'success');
+                                                })
+                                                .catch(error => {
+                                                    console.error('Erro na exportação:', error);
+                                                    showAlert(error.message, 'danger');
+                                                });
+                                        }
+
+                                        // Carregar dados ao abrir a aba de relatórios
+                                        document.querySelector('a[href="#relatorios"]').addEventListener('click', function() {
+                                            carregarArquivosDisponiveis();
+                                        });
+
+                                        // Carregar dados iniciais se já estiver na aba de relatórios
+                                        if (window.location.hash === '#relatorios') {
+                                            carregarArquivosDisponiveis();
+                                        }
+                                    </script>
                                 </div>
                             </div>
                         </div>
@@ -491,6 +776,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/exportacao.js"></script>
     <script>
         // Funções principais
         function showAlert(message, type = 'success') {

@@ -18,7 +18,7 @@ import PyPDF2
 import logging
 from functools import wraps
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='templates')
 app.config['SECRET_KEY'] = 'sua_chave_secreta_aqui'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///conciliacao.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -1388,68 +1388,203 @@ def limpar_dados():
         logging.error(f"Erro ao limpar dados: {e}")
         return jsonify({'error': str(e)}), 500
 
-    app.run(debug=True, host='0.0.0.0', port=5000)
-
-    app.run(debug=True, host='0.0.0.0', port=5000) 
+# Lista arquivos disponíveis para exportação
+@app.route('/api/listar_arquivos_exportacao')
+@login_required
+def listar_arquivos_exportacao():
+    try:
+        # Listar extratos disponíveis
+        extratos = ExtratoBancario.query.with_entities(
+            ExtratoBancario.arquivo_origem,
+            db.func.count(ExtratoBancario.id).label('total')
+        ).group_by(ExtratoBancario.arquivo_origem).all()
+        
+        # Listar lançamentos disponíveis
+        lancamentos = LancamentoContabil.query.with_entities(
+            LancamentoContabil.arquivo_origem,
+            db.func.count(LancamentoContabil.id).label('total')
+        ).group_by(LancamentoContabil.arquivo_origem).all()
+        
+        # Listar conciliações
+        conciliacoes_count = Conciliacao.query.count()
+        
+        return jsonify({
+            'extratos': [{'arquivo': e.arquivo_origem, 'total': e.total} for e in extratos if e.arquivo_origem],
+            'lancamentos': [{'arquivo': l.arquivo_origem, 'total': l.total} for l in lancamentos if l.arquivo_origem],
+            'conciliacoes': {'total': conciliacoes_count}
+        })
+    except Exception as e:
+        logging.error(f"Erro ao listar arquivos para exportação: {e}")
+        return jsonify({'error': 'Erro ao listar arquivos'}), 500
 
 # Exporta Extratos
-@app.route('/api/exporta-extratos')
+@app.route('/api/exporta_extratos')
 @login_required
 def exporta_extratos():
     try:
-        extratos = ExtratoBancario.query.all()
-        output = BytesIO()
-        writer = csv.writer(output)
-        writer.writerow(['ID', 'Conta', 'Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Conciliado', 'Arquivo Origem', 'Formato', 'Número Documento', 'Hash', 'Recorrente', 'Criado', 'Atualizado'])
+        arquivo_origem = request.args.get('arquivo')
+        query = ExtratoBancario.query
+        
+        if arquivo_origem:
+            query = query.filter_by(arquivo_origem=arquivo_origem)
+        
+        extratos = query.all()
+        
+        if not extratos:
+            return jsonify({
+                'error': 'Não há extratos para exportar',
+                'message': 'Não existem extratos cadastrados no sistema para os critérios selecionados.'
+            }), 404
+            
+        # Criar arquivo CSV como string
+        output_rows = []
+        
+        # Cabeçalho
+        output_rows.append("ID;Data;Descrição;Valor;Tipo;Categoria;Conciliado;Arquivo Origem")
+        
+        # Dados
         for e in extratos:
-            writer.writerow([
-                e.id, e.conta_id, e.data, e.descricao, e.valor, e.tipo, e.categoria, e.conciliado,
-                e.arquivo_origem, e.formato_arquivo, e.numero_documento, e.hash_transacao, e.transacao_recorrente,
-                e.created_at, e.updated_at
-            ])
-        output.seek(0)
-        return send_file(output, mimetype='text/csv', as_attachment=True, download_name='extratos.csv')
+            row = [
+                str(e.id),
+                e.data.strftime('%d/%m/%Y'),
+                e.descricao.replace('"', '""').replace(';', ','),
+                f'{e.valor:.2f}'.replace('.', ','),
+                e.tipo,
+                e.categoria,
+                'Sim' if e.conciliado else 'Não',
+                e.arquivo_origem or 'N/A'
+            ]
+            output_rows.append(';'.join(f'"{str(item)}"' for item in row))
+        
+        # Juntar todas as linhas
+        output_text = '\n'.join(output_rows)
+        
+        # Converter para bytes com encoding específico
+        output_bytes = output_text.encode('iso-8859-1', 'replace')
+        
+        return send_file(
+            BytesIO(output_bytes),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=f'extratos_{datetime.now().strftime("%Y%m%d_%H%M")}.csv'
+        )
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Erro ao exportar extratos: {e}")
+        return jsonify({'error': 'Erro ao exportar extratos. Por favor, tente novamente.'}), 500
 
 # Exporta Lançamentos
-@app.route('/api/exporta-lancamentos')
+@app.route('/api/exporta_lancamentos')
 @login_required
 def exporta_lancamentos():
     try:
-        lancamentos = LancamentoContabil.query.all()
-        output = BytesIO()
-        writer = csv.writer(output)
-        writer.writerow(['ID', 'Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Conciliado', 'Arquivo Origem', 'Número Documento', 'Centro Custo', 'Conta Contábil', 'Fornecedor/Cliente', 'Hash', 'Criado', 'Atualizado'])
+        arquivo_origem = request.args.get('arquivo')
+        query = LancamentoContabil.query
+        
+        if arquivo_origem:
+            query = query.filter_by(arquivo_origem=arquivo_origem)
+            
+        lancamentos = query.all()
+        if not lancamentos:
+            return jsonify({
+                'error': 'Não há lançamentos para exportar',
+                'message': 'Não existem lançamentos cadastrados no sistema para os critérios selecionados.'
+            }), 404
+            
+        # Criar arquivo CSV como string
+        output_rows = []
+        
+        # Cabeçalho
+        output_rows.append("ID;Data;Descrição;Valor;Tipo;Categoria;Conciliado;Arquivo Origem;Número Documento;Centro Custo;Conta Contábil;Fornecedor/Cliente")
+        
+        # Dados
         for l in lancamentos:
-            writer.writerow([
-                l.id, l.data, l.descricao, l.valor, l.tipo, l.categoria, l.conciliado,
-                l.arquivo_origem, l.numero_documento, l.centro_custo, l.conta_contabil, l.fornecedor_cliente,
-                l.hash_transacao, l.created_at, l.updated_at
-            ])
-        output.seek(0)
-        return send_file(output, mimetype='text/csv', as_attachment=True, download_name='lancamentos.csv')
+            row = [
+                str(l.id),
+                l.data.strftime('%d/%m/%Y'),
+                l.descricao.replace('"', '""').replace(';', ','),
+                f'{l.valor:.2f}'.replace('.', ','),
+                l.tipo,
+                l.categoria,
+                'Sim' if l.conciliado else 'Não',
+                l.arquivo_origem or 'N/A',
+                l.numero_documento or 'N/A',
+                l.centro_custo or 'N/A',
+                l.conta_contabil or 'N/A',
+                (l.fornecedor_cliente or 'N/A').replace('"', '""').replace(';', ',')
+            ]
+            output_rows.append(';'.join(f'"{str(item)}"' for item in row))
+        
+        # Juntar todas as linhas
+        output_text = '\n'.join(output_rows)
+        
+        # Converter para bytes com encoding específico
+        output_bytes = output_text.encode('iso-8859-1', 'replace')
+        
+        return send_file(
+            BytesIO(output_bytes),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=f'lancamentos_{datetime.now().strftime("%Y%m%d_%H%M")}.csv'
+        )
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Erro ao exportar lançamentos: {e}")
+        return jsonify({'error': 'Erro ao exportar lançamentos. Por favor, tente novamente.'}), 500
 
 # Exporta Conciliações
-@app.route('/api/exporta-conciliacoes')
+@app.route('/api/exporta_conciliacoes')
 @login_required
 def exporta_conciliacoes():
     try:
         conciliacoes = Conciliacao.query.all()
-        output = BytesIO()
-        writer = csv.writer(output)
-        writer.writerow(['ID', 'Extrato ID', 'Lançamento ID', 'Usuário', 'Data Conciliação', 'Observações', 'Tipo'])
+        if not conciliacoes:
+            return jsonify({
+                'error': 'Não há conciliações para exportar',
+                'message': 'Não existem conciliações cadastradas no sistema. Realize algumas conciliações antes de tentar exportar.'
+            }), 404
+            
+        # Criar arquivo CSV como string
+        output_rows = []
+        
+        # Cabeçalho
+        output_rows.append("ID Conciliação;Data Conciliação;Usuário;Tipo Conciliação;" +
+                         "ID Extrato;Data Extrato;Descrição Extrato;Valor Extrato;" +
+                         "ID Lançamento;Data Lançamento;Descrição Lançamento;Valor Lançamento;" +
+                         "Observações")
+        
+        # Dados
         for c in conciliacoes:
-            writer.writerow([
-                c.id, c.extrato_id, c.lancamento_id, c.usuario.username if c.usuario else 'Sistema',
-                c.data_conciliacao, c.observacoes, c.tipo_conciliacao
-            ])
-        output.seek(0)
-        return send_file(output, mimetype='text/csv', as_attachment=True, download_name='conciliacoes.csv')
+            row = [
+                str(c.id),
+                c.data_conciliacao.strftime('%d/%m/%Y %H:%M:%S'),
+                c.usuario.username if c.usuario else 'Sistema',
+                c.tipo_conciliacao,
+                str(c.extrato.id) if c.extrato else 'N/A',
+                c.extrato.data.strftime('%d/%m/%Y') if c.extrato else 'N/A',
+                c.extrato.descricao.replace('"', '""').replace(';', ',') if c.extrato else 'N/A',
+                f'{c.extrato.valor:.2f}'.replace('.', ',') if c.extrato else 'N/A',
+                str(c.lancamento.id) if c.lancamento else 'N/A',
+                c.lancamento.data.strftime('%d/%m/%Y') if c.lancamento else 'N/A',
+                c.lancamento.descricao.replace('"', '""').replace(';', ',') if c.lancamento else 'N/A',
+                f'{c.lancamento.valor:.2f}'.replace('.', ',') if c.lancamento else 'N/A',
+                (c.observacoes or 'N/A').replace('"', '""').replace(';', ',')
+            ]
+            output_rows.append(';'.join(f'"{str(item)}"' for item in row))
+        
+        # Juntar todas as linhas
+        output_text = '\n'.join(output_rows)
+        
+        # Converter para bytes com encoding específico
+        output_bytes = output_text.encode('iso-8859-1', 'replace')
+        
+        return send_file(
+            BytesIO(output_bytes),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=f'conciliacoes_{datetime.now().strftime("%Y%m%d_%H%M")}.csv'
+        )
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Erro ao exportar conciliações: {e}")
+        return jsonify({'error': 'Erro ao exportar conciliações. Por favor, tente novamente.'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
