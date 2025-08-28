@@ -395,3 +395,21 @@
 2025-08-28 16:09:18,484 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:09:18] "GET /api/extratos HTTP/1.1" 200 -
 2025-08-28 16:09:18,497 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:09:18] "GET /api/conciliacoes HTTP/1.1" 200 -
 2025-08-28 16:09:19,439 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:09:19] "GET /api/listar_arquivos_exportacao HTTP/1.1" 200 -
+2025-08-28 16:16:30,318 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.88:5000
+2025-08-28 16:16:30,318 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-28 16:16:30,319 - werkzeug - INFO -  * Restarting with stat
+2025-08-28 16:16:31,150 - werkzeug - WARNING -  * Debugger is active!
+2025-08-28 16:16:31,153 - werkzeug - INFO -  * Debugger PIN: 518-123-314
+2025-08-28 16:16:42,015 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:42] "GET / HTTP/1.1" 200 -
+2025-08-28 16:16:42,105 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:42] "GET /js/exportacao.js HTTP/1.1" 200 -
+2025-08-28 16:16:42,280 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:42] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-28 16:16:42,499 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:42] "GET /api/divergencias HTTP/1.1" 200 -
+2025-08-28 16:16:42,503 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:42] "GET /api/lancamentos HTTP/1.1" 200 -
+2025-08-28 16:16:42,506 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:42] "GET /api/extratos HTTP/1.1" 200 -
+2025-08-28 16:16:42,520 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:42] "GET /api/conciliacoes HTTP/1.1" 200 -
+2025-08-28 16:16:43,562 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:43] "GET /api/listar_arquivos_exportacao HTTP/1.1" 200 -
+2025-08-28 16:16:43,821 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:43] "GET /api/listar_arquivos_exportacao HTTP/1.1" 200 -
+2025-08-28 16:16:45,186 - werkzeug - INFO - 127.0.0.1 - - [28/Aug/2025 16:16:45] "GET /api/exporta_conciliacoes HTTP/1.1" 200 -
