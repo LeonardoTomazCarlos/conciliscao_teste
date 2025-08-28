@@ -1535,7 +1535,7 @@ def exporta_lancamentos():
 @login_required
 def exporta_conciliacoes():
     try:
-        conciliacoes = Conciliacao.query.all()
+        conciliacoes = Conciliacao.query.filter_by(status='ativa').all()
         if not conciliacoes:
             return jsonify({
                 'error': 'Não há conciliações para exportar',
@@ -1546,29 +1546,41 @@ def exporta_conciliacoes():
         output_rows = []
         
         # Cabeçalho
-        output_rows.append("ID Conciliação;Data Conciliação;Usuário;Tipo Conciliação;" +
-                         "ID Extrato;Data Extrato;Descrição Extrato;Valor Extrato;" +
-                         "ID Lançamento;Data Lançamento;Descrição Lançamento;Valor Lançamento;" +
-                         "Observações")
+        headers = [
+            "Data da Conciliação",
+            "Tipo",
+            "Data do Extrato",
+            "Descrição do Extrato",
+            "Valor do Extrato",
+            "Data do Lançamento",
+            "Descrição do Lançamento",
+            "Valor do Lançamento",
+            "Status",
+            "Usuário",
+            "Observações"
+        ]
+        output_rows.append(';'.join(f'"{header}"' for header in headers))
         
         # Dados
         for c in conciliacoes:
-            row = [
-                str(c.id),
-                c.data_conciliacao.strftime('%d/%m/%Y %H:%M:%S'),
-                c.usuario.username if c.usuario else 'Sistema',
-                c.tipo_conciliacao,
-                str(c.extrato.id) if c.extrato else 'N/A',
-                c.extrato.data.strftime('%d/%m/%Y') if c.extrato else 'N/A',
-                c.extrato.descricao.replace('"', '""').replace(';', ',') if c.extrato else 'N/A',
-                f'{c.extrato.valor:.2f}'.replace('.', ',') if c.extrato else 'N/A',
-                str(c.lancamento.id) if c.lancamento else 'N/A',
-                c.lancamento.data.strftime('%d/%m/%Y') if c.lancamento else 'N/A',
-                c.lancamento.descricao.replace('"', '""').replace(';', ',') if c.lancamento else 'N/A',
-                f'{c.lancamento.valor:.2f}'.replace('.', ',') if c.lancamento else 'N/A',
-                (c.observacoes or 'N/A').replace('"', '""').replace(';', ',')
-            ]
-            output_rows.append(';'.join(f'"{str(item)}"' for item in row))
+            try:
+                row = [
+                    c.data_conciliacao.strftime('%d/%m/%Y %H:%M:%S'),
+                    c.tipo_conciliacao.title(),
+                    c.extrato.data.strftime('%d/%m/%Y') if c.extrato else 'N/A',
+                    c.extrato.descricao.replace('"', '""') if c.extrato else 'N/A',
+                    f'{c.extrato.valor:.2f}'.replace('.', ',') if c.extrato else 'N/A',
+                    c.lancamento.data.strftime('%d/%m/%Y') if c.lancamento else 'N/A',
+                    c.lancamento.descricao.replace('"', '""') if c.lancamento else 'N/A',
+                    f'{c.lancamento.valor:.2f}'.replace('.', ',') if c.lancamento else 'N/A',
+                    'Ativo' if c.status == 'ativa' else 'Cancelado',
+                    c.usuario.username if c.usuario else 'Sistema',
+                    (c.observacoes or 'N/A').replace('"', '""')
+                ]
+                output_rows.append(';'.join(f'"{str(item)}"' for item in row))
+            except Exception as row_error:
+                logging.error(f"Erro ao processar linha de conciliação {c.id}: {row_error}")
+                continue
         
         # Juntar todas as linhas
         output_text = '\n'.join(output_rows)
