@@ -3,202 +3,700 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Conciliação Bancária</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>FinanceSync Pro - Sistema de Conciliação Bancária</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .sidebar {
+        :root {
+            --primary-color: #1e293b;
+            --secondary-color: #3b82f6;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --light-bg: #f8fafc;
+            --dark-text: #1e293b;
+            --light-text: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        .main-container {
+            display: flex;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            border-radius: 8px;
-            margin: 2px 0;
-            transition: all 0.3s;
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            color: white;
-            background: rgba(255,255,255,0.1);
-            transform: translateX(5px);
-        }
-        .card-dashboard {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        .card-dashboard:hover {
-            transform: translateY(-5px);
-        }
-        .stat-card {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-        .upload-area {
-            border: 2px dashed #dee2e6;
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        .upload-area:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-        }
-        .table-container {
-            max-height: 400px;
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary-color) 0%, #0f172a 100%);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
             overflow-y: auto;
+            transition: all 0.3s ease;
         }
-        .btn-action {
-            border-radius: 20px;
-            padding: 8px 20px;
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-logo i {
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            padding: 0.5rem;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+            height: calc(100vh - 160px); /* Altura da sidebar menos header e user section */
+            overflow-y: auto;
+            padding-bottom: 140px; /* Espaço para a seção do usuário */
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-item {
+            margin: 0.25rem 1rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.875rem 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, var(--secondary-color), #2563eb);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--accent-color);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .user-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 280px;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-details h6 {
+            margin: 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .user-details p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin: 0;
+        }
+
+        .header-subtitle {
+            color: var(--light-text);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .content-area {
+            padding: 2rem;
+            margin-left: 280px;
+            min-height: calc(100vh - 80px);
+            width: calc(100% - 280px);
+        }
+
+        /* Cards */
+        .card-modern {
+            background: white;
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card-modern:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-header-modern {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            background: white;
+            border: none;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+        }
+
+        .stats-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .stats-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-icon.primary {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: var(--secondary-color);
+        }
+
+        .stats-icon.success {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: var(--accent-color);
+        }
+
+        .stats-icon.warning {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: var(--warning-color);
+        }
+
+        .stats-icon.danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: var(--danger-color);
+        }
+
+        .stats-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-label {
+            color: var(--light-text);
+            font-size: 0.875rem;
             font-weight: 500;
         }
-        .alert-custom {
-            border-radius: 10px;
+
+        /* Buttons */
+        .btn-modern {
             border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--secondary-color), #2563eb);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success-modern {
+            background: linear-gradient(135deg, var(--accent-color), #059669);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-success-modern:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Upload Areas */
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #fafbfc;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--secondary-color);
+            background: #f0f7ff;
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin: 0 auto 1rem;
+        }
+
+        /* Tables */
+        .table-modern {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table-modern thead {
+            background: var(--light-bg);
+        }
+
+        .table-modern th {
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 0.875rem;
+        }
+
+        .table-modern td {
+            border: none;
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--dark-text);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-area {
+                padding: 1rem;
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        /* Tab Content */
+        .tab-content {
+            background: transparent;
+        }
+
+        .tab-pane {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <div class="text-center mb-4">
-                        <h4 class="text-white"><i class="fas fa-university"></i> Conciliação</h4>
-                        <small class="text-white-50">Sistema Bancário</small>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">
+                    <i class="fas fa-chart-line"></i>
+                    <div>
+                        <div>FinanceSync Pro</div>
+                        <div class="sidebar-subtitle">Conciliação Bancária</div>
                     </div>
-                    
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
-                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#importacao" data-bs-toggle="tab">
-                                <i class="fas fa-upload me-2"></i> Importação
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#conciliacao" data-bs-toggle="tab">
-                                <i class="fas fa-link me-2"></i> Conciliação
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#divergencias" data-bs-toggle="tab">
-                                <i class="fas fa-exclamation-triangle me-2"></i> Divergências
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#relatorios" data-bs-toggle="tab">
-                                <i class="fas fa-chart-bar me-2"></i> Relatórios
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#configuracoes" data-bs-toggle="tab">
-                                <i class="fas fa-cog me-2"></i> Configurações
-                            </a>
-                        </li>
-                    </ul>
-                    
-                    <hr class="text-white-50">
-                    
-                    <div class="text-center">
-                        <small class="text-white-50">Usuário: <span id="current-user">{{ current_user.username }}</span></small><br>
-                        <a href="/logout" class="btn btn-outline-light btn-sm mt-2">
-                            <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </div>
+            
+            <div class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <div class="nav-item">
+                        <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                            <i class="fas fa-home"></i>
+                            Dashboard
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="#importacao" data-bs-toggle="tab">
+                            <i class="fas fa-upload"></i>
+                            Importação
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="#conciliacao" data-bs-toggle="tab">
+                            <i class="fas fa-link"></i>
+                            Conciliação
                         </a>
                     </div>
                 </div>
-            </nav>
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="nav-section">
+                    <div class="nav-section-title">Análise</div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="#divergencias" data-bs-toggle="tab">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Divergências
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="#relatorios" data-bs-toggle="tab">
+                            <i class="fas fa-chart-bar"></i>
+                            Relatórios
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Sistema</div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="#configuracoes" data-bs-toggle="tab">
+                            <i class="fas fa-cog"></i>
+                            Configurações
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ current_user.username[0].upper() if current_user and current_user.username else 'U' }}
+                    </div>
+                    <div class="user-details">
+                        <h6>{{ current_user.username if current_user and current_user.username else 'Usuário' }}</h6>
+                        <p>Administrador</p>
+                    </div>
+                </div>
+                <a href="/logout" class="btn btn-outline-light btn-sm w-100">
+                    <i class="fas fa-sign-out-alt me-2"></i>Sair
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-header">
+                <h1 class="header-title">Dashboard de Conciliação</h1>
+                <p class="header-subtitle">Gerencie suas conciliações bancárias de forma eficiente</p>
+            </div>
+
+            <div class="content-area">
                 <div class="tab-content">
                     <!-- Dashboard -->
                     <div class="tab-pane fade show active" id="dashboard">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Dashboard</h1>
-                            <div class="btn-toolbar mb-2 mb-md-0">
-                                <button class="btn btn-primary" onclick="executarConciliacaoAutomatica()">
-                                    <i class="fas fa-magic"></i> Conciliação Automática
-                                </button>
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h2 class="h4 mb-1">Visão Geral</h2>
+                                <p class="text-muted mb-0">Acompanhe o status das suas conciliações</p>
+                            </div>
+                            <button class="btn btn-primary-modern btn-modern" onclick="executarConciliacaoAutomatica()">
+                                <i class="fas fa-magic"></i>
+                                Conciliação Automática
+                            </button>
+                        </div>
+
+                        <!-- Statistics Cards -->
+                        <div class="row g-4 mb-5" id="estatisticas">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon primary">
+                                        <i class="fas fa-file-invoice"></i>
+                                    </div>
+                                    <div class="stats-value" id="total-extratos">0</div>
+                                    <div class="stats-label">Extratos Bancários</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon success">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div class="stats-value" id="total-lancamentos">0</div>
+                                    <div class="stats-label">Lançamentos Contábeis</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon success">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="stats-value" id="conciliados">0</div>
+                                    <div class="stats-label">Itens Conciliados</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon danger">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="stats-value" id="divergencias-pendentes">0</div>
+                                    <div class="stats-label">Divergências Pendentes</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Estatísticas -->
-                        <div class="row mb-4" id="estatisticas">
-                            <div class="col-md-3">
-                                <div class="card card-dashboard stat-card">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-file-invoice fa-2x mb-2"></i>
-                                        <h4 id="total-extratos">0</h4>
-                                        <p class="mb-0">Extratos</p>
+                        <!-- Quick Upload Section -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-lg-6">
+                                <div class="card-modern">
+                                    <div class="card-header-modern">
+                                        <i class="fas fa-university me-2"></i>
+                                        Importar Extrato Bancário
+                                    </div>
+                                    <div class="p-4">
+                                        <div class="upload-zone" onclick="document.getElementById('extrato-file').click()">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-cloud-upload-alt"></i>
+                                            </div>
+                                            <h6 class="mb-2">Clique para selecionar arquivo</h6>
+                                            <p class="text-muted mb-0">Suporte para CSV, Excel, OFX, CNAB, PDF</p>
+                                        </div>
+                                        <input type="file" id="extrato-file" style="display: none;" 
+                                               accept=".csv,.xlsx,.xls,.ofx,.cnab,.ret,.pdf" 
+                                               onchange="uploadExtrato(this)">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="card card-dashboard stat-card">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-book fa-2x mb-2"></i>
-                                        <h4 id="total-lancamentos">0</h4>
-                                        <p class="mb-0">Lançamentos</p>
+                            <div class="col-lg-6">
+                                <div class="card-modern">
+                                    <div class="card-header-modern">
+                                        <i class="fas fa-receipt me-2"></i>
+                                        Importar Lançamentos Contábeis
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card card-dashboard stat-card">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-link fa-2x mb-2"></i>
-                                        <h4 id="conciliados">0</h4>
-                                        <p class="mb-0">Conciliados</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card card-dashboard stat-card">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
-                                        <h4 id="divergencias-pendentes">0</h4>
-                                        <p class="mb-0">Divergências</p>
+                                    <div class="p-4">
+                                        <div class="upload-zone" onclick="document.getElementById('lancamento-file').click()">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-cloud-upload-alt"></i>
+                                            </div>
+                                            <h6 class="mb-2">Clique para selecionar arquivo</h6>
+                                            <p class="text-muted mb-0">Suporte para CSV, Excel</p>
+                                        </div>
+                                                                                <input type="file" id="lancamento-file" style="display: none;" 
+                                               accept=".csv,.xlsx,.xls" 
+                                               onchange="uploadLancamento(this)">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Upload Rápido -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-upload"></i> Upload Rápido - Extrato</h5>
+                        <!-- Recent Activity -->
+                        <div class="row g-4">
+                            <div class="col-lg-8">
+                                <div class="card-modern">
+                                    <div class="card-header-modern">
+                                        <i class="fas fa-history me-2"></i>
+                                        Atividade Recente
                                     </div>
-                                    <div class="card-body">
-                                        <div class="upload-area" onclick="document.getElementById('extrato-file').click()">
-                                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                            <p class="mb-0">Clique para selecionar arquivo de extrato</p>
-                                            <small class="text-muted">CSV, Excel, OFX, CNAB, PDF</small>
-                                        </div>
-                                        <input type="file" id="extrato-file" style="display: none;" accept=".csv,.xlsx,.xls,.ofx,.cnab,.ret,.pdf" onchange="uploadExtrato(this)">
+                                    <div class="table-modern">
+                                        <table class="table mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Data</th>
+                                                    <th>Ação</th>
+                                                    <th>Arquivo</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="atividade-recente">
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted py-4">
+                                                        Nenhuma atividade registrada
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-upload"></i> Upload Rápido - Lançamentos</h5>
+                            <div class="col-lg-4">
+                                <div class="card-modern">
+                                    <div class="card-header-modern">
+                                        <i class="fas fa-tasks me-2"></i>
+                                        Ações Rápidas
                                     </div>
-                                    <div class="card-body">
-                                        <div class="upload-area" onclick="document.getElementById('lancamento-file').click()">
-                                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                            <p class="mb-0">Clique para selecionar arquivo de lançamentos</p>
-                                            <small class="text-muted">CSV, Excel</small>
+                                    <div class="p-4">
+                                        <div class="d-grid gap-3">
+                                            <button class="btn btn-success-modern btn-modern" onclick="exportarExtratos()">
+                                                <i class="fas fa-download"></i>
+                                                Exportar Extratos
+                                            </button>
+                                            <button class="btn btn-success-modern btn-modern" onclick="exportarLancamentos()">
+                                                <i class="fas fa-download"></i>
+                                                Exportar Lançamentos
+                                            </button>
+                                            <button class="btn btn-success-modern btn-modern" onclick="exportarConciliacoes()">
+                                                <i class="fas fa-download"></i>
+                                                Exportar Conciliações
+                                            </button>
+                                            <button class="btn btn-primary-modern btn-modern" onclick="limparDados()">
+                                                <i class="fas fa-trash"></i>
+                                                Limpar Dados
+                                            </button>
                                         </div>
-                                        <input type="file" id="lancamento-file" style="display: none;" accept=".csv,.xlsx,.xls" onchange="uploadLancamento(this)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -231,60 +729,72 @@
 
                     <!-- Importação -->
                     <div class="tab-pane fade" id="importacao">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Importação de Dados</h1>
+                        <div class="top-header">
+                            <h1 class="header-title">Importação de Dados</h1>
+                            <p class="header-subtitle">Importe seus extratos bancários e lançamentos contábeis</p>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-file-invoice"></i> Importar Extrato Bancário</h5>
+                        <div class="content-area">
+                            <div class="row g-4 mb-5">
+                                <div class="col-lg-6">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-university me-2"></i>
+                                            Importar Extrato Bancário
+                                        </div>
+                                        <div class="p-4">
+                                            <form id="form-extrato">
+                                                <div class="mb-4">
+                                                    <label class="form-label fw-semibold">Selecionar Arquivo</label>
+                                                    <input type="file" class="form-control" id="extrato-file-detailed" 
+                                                           accept=".csv,.xlsx,.xls,.ofx,.cnab,.ret,.pdf" required>
+                                                    <div class="form-text mt-2">
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        Formatos suportados: CSV, Excel, OFX, CNAB, PDF
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary-modern btn-modern w-100">
+                                                    <i class="fas fa-upload"></i>
+                                                    Importar Extrato
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <form id="form-extrato">
-                                            <div class="mb-3">
-                                                <label class="form-label">Selecionar Arquivo</label>
-                                                <input type="file" class="form-control" id="extrato-file-detailed" accept=".csv,.xlsx,.xls,.ofx,.cnab,.ret,.pdf" required>
-                                                <div class="form-text">Formatos suportados: CSV, Excel, OFX, CNAB, PDF</div>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary btn-action">
-                                                <i class="fas fa-upload"></i> Importar Extrato
-                                            </button>
-                                        </form>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-receipt me-2"></i>
+                                            Importar Lançamentos Contábeis
+                                        </div>
+                                        <div class="p-4">
+                                            <form id="form-lancamento">
+                                                <div class="mb-4">
+                                                    <label class="form-label fw-semibold">Selecionar Arquivo</label>
+                                                    <input type="file" class="form-control" id="lancamento-file-detailed" 
+                                                           accept=".csv,.xlsx,.xls" required>
+                                                    <div class="form-text mt-2">
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        Formatos suportados: CSV, Excel
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-success-modern btn-modern w-100">
+                                                    <i class="fas fa-upload"></i>
+                                                    Importar Lançamentos
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-book"></i> Importar Lançamentos Contábeis</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="form-lancamento">
-                                            <div class="mb-3">
-                                                <label class="form-label">Selecionar Arquivo</label>
-                                                <input type="file" class="form-control" id="lancamento-file-detailed" accept=".csv,.xlsx,.xls" required>
-                                                <div class="form-text">Formatos suportados: CSV, Excel</div>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary btn-action">
-                                                <i class="fas fa-upload"></i> Importar Lançamentos
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-list"></i> Histórico de Importações</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div id="historico-importacoes">Carregando...</div>
-                                    </div>
+                            <div class="card-modern">
+                                <div class="card-header-modern">
+                                    <i class="fas fa-history me-2"></i>
+                                    Histórico de Importações
+                                </div>
+                                <div class="table-modern">
+                                    <div id="historico-importacoes" class="p-4">Carregando...</div>
                                 </div>
                             </div>
                         </div>
@@ -292,50 +802,58 @@
 
                     <!-- Conciliação -->
                     <div class="tab-pane fade" id="conciliacao">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Conciliação</h1>
-                            <div class="btn-toolbar mb-2 mb-md-0">
-                                <button class="btn btn-success me-2" onclick="executarConciliacaoAutomatica()">
-                                    <i class="fas fa-magic"></i> Conciliação Automática
-                                </button>
-                                <button class="btn btn-info" onclick="carregarDadosConciliacao()">
-                                    <i class="fas fa-sync"></i> Atualizar
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-file-invoice"></i> Extratos Não Conciliados</h5>
-                                    </div>
-                                    <div class="card-body table-container">
-                                        <div id="extratos-nao-conciliados">Carregando...</div>
-                                    </div>
+                        <div class="top-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h1 class="header-title">Conciliação Bancária</h1>
+                                    <p class="header-subtitle">Execute e gerencie suas conciliações automáticas</p>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-book"></i> Lançamentos Não Conciliados</h5>
-                                    </div>
-                                    <div class="card-body table-container">
-                                        <div id="lancamentos-nao-conciliados">Carregando...</div>
-                                    </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success-modern btn-modern" onclick="executarConciliacaoAutomatica()">
+                                        <i class="fas fa-magic"></i>
+                                        Conciliação Automática
+                                    </button>
+                                    <button class="btn btn-primary-modern btn-modern" onclick="carregarDadosConciliacao()">
+                                        <i class="fas fa-sync"></i>
+                                        Atualizar
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-link"></i> Conciliações Realizadas</h5>
+                        <div class="content-area">
+                            <div class="row g-4 mb-5">
+                                <div class="col-lg-6">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-university me-2"></i>
+                                            Extratos Não Conciliados
+                                        </div>
+                                        <div class="table-modern">
+                                            <div id="extratos-nao-conciliados" class="p-4">Carregando...</div>
+                                        </div>
                                     </div>
-                                    <div class="card-body table-container">
-                                        <div id="conciliacoes-realizadas">Carregando...</div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-receipt me-2"></i>
+                                            Lançamentos Não Conciliados
+                                        </div>
+                                        <div class="table-modern">
+                                            <div id="lancamentos-nao-conciliados" class="p-4">Carregando...</div>
+                                        </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="card-modern">
+                                <div class="card-header-modern">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    Conciliações Realizadas
+                                </div>
+                                <div class="table-modern">
+                                    <div id="conciliacoes-realizadas" class="p-4">Carregando...</div>
                                 </div>
                             </div>
                         </div>
@@ -343,22 +861,27 @@
 
                     <!-- Divergências -->
                     <div class="tab-pane fade" id="divergencias">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Divergências</h1>
-                            <button class="btn btn-warning" onclick="carregarDivergencias()">
-                                <i class="fas fa-sync"></i> Atualizar
-                            </button>
+                        <div class="top-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h1 class="header-title">Divergências</h1>
+                                    <p class="header-subtitle">Analise e resolva as divergências encontradas</p>
+                                </div>
+                                <button class="btn btn-primary-modern btn-modern" onclick="carregarDivergencias()">
+                                    <i class="fas fa-sync"></i>
+                                    Atualizar
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-exclamation-triangle"></i> Divergências Pendentes</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div id="lista-divergencias">Carregando...</div>
-                                    </div>
+                        <div class="content-area">
+                            <div class="card-modern">
+                                <div class="card-header-modern">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Divergências Pendentes
+                                </div>
+                                <div class="table-modern">
+                                    <div id="lista-divergencias" class="p-4">Carregando...</div>
                                 </div>
                             </div>
                         </div>
@@ -366,40 +889,45 @@
 
                     <!-- Relatórios -->
                     <div class="tab-pane fade" id="relatorios">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Relatórios</h1>
+                        <div class="top-header">
+                            <h1 class="header-title">Relatórios</h1>
+                            <p class="header-subtitle">Gere relatórios e análises detalhadas</p>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-chart-pie"></i> Relatório Consolidado</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="form-relatorio">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Data Início</label>
-                                                    <input type="date" class="form-control" id="data-inicio">
+                        <div class="content-area">
+                            <div class="row g-4 mb-5">
+                                <div class="col-lg-6">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-chart-pie me-2"></i>
+                                            Relatório Consolidado
+                                        </div>
+                                        <div class="p-4">
+                                            <form id="form-relatorio">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Data Início</label>
+                                                        <input type="date" class="form-control" id="data-inicio">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Data Fim</label>
+                                                        <input type="date" class="form-control" id="data-fim">
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Data Fim</label>
-                                                    <input type="date" class="form-control" id="data-fim">
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary btn-action mt-3">
-                                                <i class="fas fa-chart-bar"></i> Gerar Relatório
-                                            </button>
-                                        </form>
+                                                <button type="submit" class="btn btn-primary-modern btn-modern w-100 mt-4">
+                                                    <i class="fas fa-chart-bar"></i>
+                                                    Gerar Relatório
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-download"></i> Exportar Dados</h5>
-                                    </div>
+                                <div class="col-lg-6">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-download me-2"></i>
+                                            Exportar Dados
+                                        </div>
                                     <div class="card-body">
                                         <button class="btn btn-success btn-action mb-2 w-100" onclick="exportarExtratos()">
                                             <i class="fas fa-file-csv"></i> Exportar Extratos
@@ -744,19 +1272,324 @@
             });
         });
 
-        // Navegação por tabs
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Utility Functions
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show shadow-sm border-0`;
+            alert.style.borderRadius = '12px';
+            alert.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('pt-BR');
+        }
+
+        // Data Loading Functions
+        function carregarEstatisticas() {
+            fetch('/api/estatisticas')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-extratos').textContent = data.total_extratos || 0;
+                    document.getElementById('total-lancamentos').textContent = data.total_lancamentos || 0;
+                    document.getElementById('conciliados').textContent = (data.extratos_conciliados || 0) + (data.lancamentos_conciliados || 0);
+                    document.getElementById('divergencias-pendentes').textContent = data.divergencias_pendentes || 0;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar estatísticas:', error);
+                    showAlert('Erro ao carregar estatísticas', 'danger');
+                });
+        }
+
+        // Upload Functions
+        function uploadExtrato(input) {
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('file', input.files[0]);
+                
+                showAlert('Uploading extrato...', 'info');
+                
+                fetch('/api/upload-extrato', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert(data.message || 'Extrato importado com sucesso!', 'success');
+                        carregarEstatisticas();
+                        adicionarAtividadeRecente('Upload Extrato', input.files[0].name, 'Sucesso');
+                    } else {
+                        showAlert(data.message || 'Erro ao importar extrato', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    showAlert('Erro ao fazer upload do extrato', 'danger');
+                });
+            }
+        }
+
+        function uploadLancamento(input) {
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('file', input.files[0]);
+                
+                showAlert('Uploading lançamentos...', 'info');
+                
+                fetch('/api/upload-lancamento', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert(data.message || 'Lançamentos importados com sucesso!', 'success');
+                        carregarEstatisticas();
+                        adicionarAtividadeRecente('Upload Lançamentos', input.files[0].name, 'Sucesso');
+                    } else {
+                        showAlert(data.message || 'Erro ao importar lançamentos', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    showAlert('Erro ao fazer upload dos lançamentos', 'danger');
+                });
+            }
+        }
+
+        // Conciliation Functions
+        function executarConciliacaoAutomatica() {
+            showAlert('Executando conciliação automática...', 'info');
+            
+            fetch('/api/conciliacao-automatica', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(`Conciliação realizada! ${data.conciliados} itens conciliados.`, 'success');
+                    carregarEstatisticas();
+                    adicionarAtividadeRecente('Conciliação Automática', '-', 'Sucesso');
+                } else {
+                    showAlert(data.message || 'Erro na conciliação automática', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                showAlert('Erro ao executar conciliação automática', 'danger');
+            });
+        }
+
+        // Export Functions
+        function exportarExtratos() {
+            showAlert('Exportando extratos...', 'info');
+            
+            fetch('/api/exporta-extratos')
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('Erro na exportação');
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `extratos_${new Date().toISOString().split('T')[0]}.csv`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    showAlert('Extratos exportados com sucesso!', 'success');
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    showAlert('Erro ao exportar extratos', 'danger');
+                });
+        }
+
+        function exportarLancamentos() {
+            showAlert('Exportando lançamentos...', 'info');
+            
+            fetch('/api/exporta-lancamentos')
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('Erro na exportação');
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `lancamentos_${new Date().toISOString().split('T')[0]}.csv`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    showAlert('Lançamentos exportados com sucesso!', 'success');
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    showAlert('Erro ao exportar lançamentos', 'danger');
+                });
+        }
+
+        function exportarConciliacoes() {
+            showAlert('Exportando conciliações...', 'info');
+            
+            fetch('/api/exporta-conciliacoes')
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('Erro na exportação');
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `conciliacoes_${new Date().toISOString().split('T')[0]}.csv`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    showAlert('Conciliações exportadas com sucesso!', 'success');
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    showAlert('Erro ao exportar conciliações', 'danger');
+                });
+        }
+
+        // Utility Functions
+        function limparDados() {
+            if (confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
+                fetch('/api/limpar-dados', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Dados limpos com sucesso!', 'success');
+                        carregarEstatisticas();
+                        limparAtividadeRecente();
+                    } else {
+                        showAlert('Erro ao limpar dados', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    showAlert('Erro ao limpar dados', 'danger');
+                });
+            }
+        }
+
+        function adicionarAtividadeRecente(acao, arquivo, status) {
+            const tbody = document.querySelector('#atividade-recente');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${new Date().toLocaleString('pt-BR')}</td>
+                <td>${acao}</td>
+                <td>${arquivo}</td>
+                <td><span class="badge bg-${status === 'Sucesso' ? 'success' : 'danger'}">${status}</span></td>
+            `;
+            
+            if (tbody.children.length === 1 && tbody.children[0].children.length === 1) {
+                tbody.innerHTML = '';
+            }
+            
+            tbody.insertBefore(row, tbody.firstChild);
+            
+            if (tbody.children.length > 10) {
+                tbody.removeChild(tbody.lastChild);
+            }
+        }
+
+        function limparAtividadeRecente() {
+            document.querySelector('#atividade-recente').innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        Nenhuma atividade registrada
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Tab Navigation
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
+                
+                // Remove active class from all nav links
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
                 
-                const target = this.getAttribute('href').substring(1);
+                // Hide all tab panes
                 document.querySelectorAll('.tab-pane').forEach(tab => {
                     tab.classList.remove('show', 'active');
                 });
-                document.getElementById(target).classList.add('show', 'active');
+                
+                // Show target tab pane
+                const target = this.getAttribute('href').substring(1);
+                const targetTab = document.getElementById(target);
+                if (targetTab) {
+                    targetTab.classList.add('show', 'active');
+                }
             });
+        });
+
+        // Form Handlers
+        document.getElementById('form-extrato')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('extrato-file-detailed');
+            uploadExtrato(fileInput);
+        });
+
+        document.getElementById('form-lancamento')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('lancamento-file-detailed');
+            uploadLancamento(fileInput);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarEstatisticas();
+            
+            // Set default dates for report form
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            
+            const dataInicioInput = document.getElementById('data-inicio');
+            const dataFimInput = document.getElementById('data-fim');
+            
+            if (dataInicioInput) {
+                dataInicioInput.value = firstDay.toISOString().split('T')[0];
+            }
+            if (dataFimInput) {
+                dataFimInput.value = today.toISOString().split('T')[0];
+            }
         });
     </script>
 </body>
