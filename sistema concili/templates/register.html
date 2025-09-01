@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - FinanceSync</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.4) 0%, transparent 25%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.4) 0%, transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 0%, 100% 100%, 50% 50%;
+            }
+            50% {
+                background-position: 100% 100%, 0% 0%, 60% 40%;
+            }
+            100% {
+                background-position: 0% 0%, 100% 100%, 50% 50%;
+            }
+        }
+
+        .card {
+            position: relative;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            max-width: 450px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            animation: cardAppear 0.6s ease-out;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .card-header {
+            background: none;
+            border: none;
+            padding: 30px 20px 10px;
+        }
+        .card-header h4 {
+            font-size: 1.8rem;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .form-control {
+            border-radius: 12px;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102,126,234,0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            width: 100%;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+            background: linear-gradient(135deg, #5a71d9 0%, #6a4393 100%);
+        }
+        .text-muted {
+            color: #718096 !important;
+        }
+        .alert {
+            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+        }
+        .form-label {
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Shapes -->
+    <div class="floating-shapes">
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape wave"></div>
+    </div>
+
+    <div class="register-wrapper">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-11 col-sm-10 col-md-8 col-lg-5">
+                    <div class="card">
+                        <div class="card-header text-center pt-4">
+                            
+                    <style>
+                        .register-wrapper {
+                            min-height: 100vh;
+                            display: flex;
+                            align-items: center;
+                            padding: 2rem 0;
+                            max-height: 100vh;
+                            overflow-y: auto;
+                        }
+                        
+                        .container {
+                            margin: auto;
+                        }
+                        
+                        .card {
+                            margin: 0 auto;
+                            max-height: calc(100vh - 4rem);
+                            overflow-y: auto;
+                        }
+                        
+                        .card::-webkit-scrollbar {
+                            width: 8px;
+                        }
+                        
+                        .card::-webkit-scrollbar-track {
+                            background: rgba(255,255,255,0.1);
+                            border-radius: 4px;
+                        }
+                        
+                        .card::-webkit-scrollbar-thumb {
+                            background: rgba(102,126,234,0.2);
+                            border-radius: 4px;
+                        }
+                        
+                        .card::-webkit-scrollbar-thumb:hover {
+                            background: rgba(102,126,234,0.4);
+                        }
+                        
+                        @media (max-height: 800px) {
+                            .register-wrapper {
+                                align-items: flex-start;
+                            }
+                            
+                            .card {
+                                margin: 1rem auto;
+                            }
+                        }
+                    </style>
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-user-circle fa-3x"></i>
+                        </div>
+                        <h4 class="animate-text">Comece Agora!</h4>
+                        <p class="text-muted animate-text-delay">Registre-se gratuitamente para acessar o sistema</p>
+                    </div>
+
+                    <style>
+                        .floating-shapes {
+                            position: fixed;
+                            width: 100%;
+                            height: 100%;
+                            top: 0;
+                            left: 0;
+                            pointer-events: none;
+                            z-index: 0;
+                        }
+
+                        .shape {
+                            position: absolute;
+                            background: rgba(255, 255, 255, 0.1);
+                            backdrop-filter: blur(5px);
+                            animation: float 15s infinite;
+                            pointer-events: none;
+                        }
+
+                        .circle {
+                            width: 100px;
+                            height: 100px;
+                            border-radius: 50%;
+                            top: 20%;
+                            left: 10%;
+                            animation-delay: 0s;
+                        }
+
+                        .square {
+                            width: 80px;
+                            height: 80px;
+                            border-radius: 15px;
+                            top: 60%;
+                            right: 10%;
+                            animation-delay: 2s;
+                        }
+
+                        .triangle {
+                            width: 0;
+                            height: 0;
+                            border-left: 50px solid transparent;
+                            border-right: 50px solid transparent;
+                            border-bottom: 86px solid rgba(255, 255, 255, 0.1);
+                            top: 30%;
+                            right: 20%;
+                            animation-delay: 4s;
+                        }
+
+                        .wave {
+                            width: 200px;
+                            height: 200px;
+                            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+                            bottom: 20%;
+                            left: 15%;
+                            animation: wave 8s infinite alternate;
+                        }
+
+                        @keyframes float {
+                            0%, 100% {
+                                transform: translateY(0) rotate(0deg);
+                            }
+                            50% {
+                                transform: translateY(-20px) rotate(180deg);
+                            }
+                        }
+
+                        @keyframes wave {
+                            0% {
+                                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+                            }
+                            50% {
+                                border-radius: 60% 40% 30% 70% / 50% 60% 30% 60%;
+                            }
+                            100% {
+                                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+                            }
+                        }
+
+                        .animate-text {
+                            animation: fadeInUp 0.6s ease forwards;
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+
+                        .animate-text-delay {
+                            animation: fadeInUp 0.6s ease forwards;
+                            animation-delay: 0.2s;
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+
+                        @keyframes fadeInUp {
+                            to {
+                                opacity: 1;
+                                transform: translateY(0);
+                            }
+                        }
+
+                        .min-vh-100 {
+                            min-height: 100vh;
+                            padding: 2rem 0;
+                        }
+                    </style>
+                    <style>
+                        .feature-icon {
+                            width: 80px;
+                            height: 80px;
+                            border-radius: 50%;
+                            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto;
+                            color: white;
+                            animation: pulse 2s infinite;
+                        }
+                        
+                        @keyframes pulse {
+                            0% {
+                                transform: scale(1);
+                                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+                            }
+                            70% {
+                                transform: scale(1.05);
+                                box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+                            }
+                            100% {
+                                transform: scale(1);
+                                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+                            }
+                        }
+                    </style>
+                    <div class="card-body">
+                        <form id="register-form" method="POST">
+                            <div class="mb-4 form-group-animated">
+                                <label class="form-label">
+                                    <i class="fas fa-user me-2"></i>Nome Completo
+                                </label>
+                                <input type="text" class="form-control" name="nome_completo" placeholder="Digite seu nome completo" required>
+                                <div class="form-icon">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                            </div>
+                            <div class="mb-4 form-group-animated">
+                                <label class="form-label">
+                                    <i class="fas fa-at me-2"></i>Nome de Usuário
+                                </label>
+                                <input type="text" class="form-control" name="username" placeholder="Escolha seu nome de usuário" required>
+                                <div class="form-icon">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                            </div>
+                            <div class="mb-4 form-group-animated">
+                                <label class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>E-mail
+                                </label>
+                                <input type="email" class="form-control" name="email" placeholder="seu.email@exemplo.com" required>
+                                <div class="form-icon">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                            </div>
+                            <style>
+                                .form-group-animated {
+                                    position: relative;
+                                    transform: translateY(20px);
+                                    opacity: 0;
+                                    animation: slideUp 0.5s ease forwards;
+                                }
+                                
+                                .form-group-animated:nth-child(1) { animation-delay: 0.2s; }
+                                .form-group-animated:nth-child(2) { animation-delay: 0.3s; }
+                                .form-group-animated:nth-child(3) { animation-delay: 0.4s; }
+                                .form-group-animated:nth-child(4) { animation-delay: 0.5s; }
+                                
+                                @keyframes slideUp {
+                                    to {
+                                        transform: translateY(0);
+                                        opacity: 1;
+                                    }
+                                }
+                                
+                                .form-control {
+                                    padding-right: 40px;
+                                    transition: all 0.3s ease;
+                                }
+                                
+                                .form-control:focus {
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.15);
+                                }
+                                
+                                .form-icon {
+                                    position: absolute;
+                                    right: 10px;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    opacity: 0;
+                                    transition: opacity 0.3s ease;
+                                }
+                                
+                                .form-control:valid ~ .form-icon {
+                                    opacity: 1;
+                                }
+                            </style>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Senha
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" name="password" placeholder="Digite sua senha" required>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength-meter mt-2" style="display: none;">
+                                    <div class="strength-bars">
+                                        <div class="strength-bar"></div>
+                                        <div class="strength-bar"></div>
+                                        <div class="strength-bar"></div>
+                                        <div class="strength-bar"></div>
+                                    </div>
+                                    <div class="strength-text text-muted small"></div>
+                                </div>
+                            </div>
+                            <style>
+                                .password-strength-meter {
+                                    margin-top: 8px;
+                                }
+                                .strength-bars {
+                                    display: flex;
+                                    gap: 5px;
+                                    margin-bottom: 5px;
+                                }
+                                .strength-bar {
+                                    height: 4px;
+                                    flex: 1;
+                                    background: #e2e8f0;
+                                    border-radius: 2px;
+                                    transition: background-color 0.3s ease;
+                                }
+                                .strength-bar.weak {
+                                    background-color: #ef4444;
+                                }
+                                .strength-bar.medium {
+                                    background-color: #f59e0b;
+                                }
+                                .strength-bar.strong {
+                                    background-color: #10b981;
+                                }
+                                .strength-bar.very-strong {
+                                    background-color: #059669;
+                                }
+                                .strength-text {
+                                    font-size: 0.8rem;
+                                    margin-top: 4px;
+                                }
+                                .strength-text.weak {
+                                    color: #ef4444;
+                                }
+                                .strength-text.medium {
+                                    color: #f59e0b;
+                                }
+                                .strength-text.strong {
+                                    color: #10b981;
+                                }
+                                .strength-text.very-strong {
+                                    color: #059669;
+                                }
+                            </style>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-check-circle me-2"></i>Confirmar Senha
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" name="confirm_password" placeholder="Confirme sua senha" required>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-register">
+                                <span class="button-content">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Criar Minha Conta
+                                </span>
+                                <div class="button-loader">
+                                    <i class="fas fa-circle-notch fa-spin"></i>
+                                </div>
+                            </button>
+                            <style>
+                                .btn-register {
+                                    position: relative;
+                                    overflow: hidden;
+                                    font-size: 1.1rem;
+                                    font-weight: 600;
+                                    letter-spacing: 0.5px;
+                                    padding: 15px 30px;
+                                    text-transform: uppercase;
+                                    transition: all 0.4s ease;
+                                }
+                                .btn-register::after {
+                                    content: '';
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    width: 0;
+                                    height: 0;
+                                    background: rgba(255, 255, 255, 0.2);
+                                    border-radius: 50%;
+                                    transform: translate(-50%, -50%);
+                                    transition: width 0.6s ease-out, height 0.6s ease-out;
+                                }
+                                .btn-register:hover::after {
+                                    width: 200%;
+                                    height: 200%;
+                                }
+                                .button-content {
+                                    position: relative;
+                                    z-index: 1;
+                                    opacity: 1;
+                                    transition: opacity 0.3s ease;
+                                }
+                                .button-loader {
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    opacity: 0;
+                                    transition: opacity 0.3s ease;
+                                }
+                                .btn-register.loading .button-content {
+                                    opacity: 0;
+                                }
+                                .btn-register.loading .button-loader {
+                                    opacity: 1;
+                                }
+                                .btn-register:disabled {
+                                    cursor: not-allowed;
+                                    opacity: 0.8;
+                                }
+                            </style>
+                        </form>
+                        <div class="text-center mt-4">
+                            <div class="d-flex justify-content-center align-items-center flex-column">
+                                <div class="mb-3">
+                                    <a href="/login" class="btn btn-outline-primary btn-lg">
+                                        <i class="fas fa-sign-in-alt me-2"></i>
+                                        Já tenho uma conta
+                                    </a>
+                                </div>
+                                <p class="text-muted small mt-3">
+                                    Ao criar sua conta, você concorda com nossos 
+                                    <a href="#" class="terms-link">Termos de Serviço</a> e 
+                                    <a href="#" class="terms-link">Política de Privacidade</a>
+                                </p>
+                            </div>
+                        </div>
+                        <style>
+                            .btn-outline-primary {
+                                border: 2px solid var(--primary-color);
+                                color: var(--primary-color);
+                                border-radius: 12px;
+                                padding: 12px 30px;
+                                font-weight: 600;
+                                font-size: 1rem;
+                                transition: all 0.3s ease;
+                                background: transparent;
+                                position: relative;
+                                overflow: hidden;
+                                z-index: 1;
+                            }
+                            .btn-outline-primary::before {
+                                content: '';
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+                                opacity: 0;
+                                z-index: -1;
+                                transition: opacity 0.3s ease;
+                            }
+                            .btn-outline-primary:hover {
+                                color: white;
+                                border-color: transparent;
+                                transform: translateY(-2px);
+                                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+                            }
+                            .btn-outline-primary:hover::before {
+                                opacity: 1;
+                            }
+                            .terms-link {
+                                color: var(--primary-color);
+                                text-decoration: none;
+                                font-weight: 500;
+                                transition: color 0.2s ease;
+                            }
+                            .terms-link:hover {
+                                color: var(--secondary-color);
+                                text-decoration: underline;
+                            }
+                            .small {
+                                font-size: 0.85rem;
+                                opacity: 0.8;
+                            }
+                        </style>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePassword(inputName) {
+            const input = document.querySelector(`input[name="${inputName}"]`);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function showToast(message, type = 'error') {
+            const toastContainer = document.createElement('div');
+            toastContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                min-width: 300px;
+                z-index: 9999;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 500;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            
+            if (type === 'success') {
+                toastContainer.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+            } else {
+                toastContainer.style.background = 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)';
+            }
+            
+            toastContainer.textContent = message;
+            document.body.appendChild(toastContainer);
+            
+            setTimeout(() => toastContainer.style.opacity = '1', 100);
+            setTimeout(() => {
+                toastContainer.style.opacity = '0';
+                setTimeout(() => toastContainer.remove(), 300);
+            }, 3000);
+        }
+
+        function checkPasswordStrength(password) {
+            const lengthScore = password.length >= 8 ? 1 : 0;
+            const uppercaseScore = /[A-Z]/.test(password) ? 1 : 0;
+            const lowercaseScore = /[a-z]/.test(password) ? 1 : 0;
+            const numberScore = /[0-9]/.test(password) ? 1 : 0;
+            const specialScore = /[!@#$%^&*(),.?":{}|<>]/.test(password) ? 1 : 0;
+
+            const totalScore = lengthScore + uppercaseScore + lowercaseScore + numberScore + specialScore;
+            
+            if (password.length === 0) return { strength: 0, message: '' };
+            if (totalScore <= 2) return { strength: 1, message: 'Senha fraca' };
+            if (totalScore <= 3) return { strength: 2, message: 'Senha média' };
+            if (totalScore === 4) return { strength: 3, message: 'Senha forte' };
+            return { strength: 4, message: 'Senha muito forte' };
+        }
+
+        function updatePasswordStrength(password) {
+            const strengthMeter = document.querySelector('.password-strength-meter');
+            const bars = strengthMeter.querySelectorAll('.strength-bar');
+            const strengthText = strengthMeter.querySelector('.strength-text');
+            
+            if (password.length === 0) {
+                strengthMeter.style.display = 'none';
+                return;
+            }
+
+            strengthMeter.style.display = 'block';
+            const { strength, message } = checkPasswordStrength(password);
+
+            // Reset all bars
+            bars.forEach(bar => {
+                bar.className = 'strength-bar';
+            });
+
+            // Set active bars based on strength
+            for (let i = 0; i < strength; i++) {
+                const className = strength === 1 ? 'weak' : 
+                                strength === 2 ? 'medium' : 
+                                strength === 3 ? 'strong' : 
+                                'very-strong';
+                bars[i].className = `strength-bar ${className}`;
+            }
+
+            // Update message
+            strengthText.textContent = message;
+            strengthText.className = `strength-text ${
+                strength === 1 ? 'weak' : 
+                strength === 2 ? 'medium' : 
+                strength === 3 ? 'strong' : 
+                'very-strong'
+            }`;
+        }
+
+        // Add password strength check
+        document.querySelector('input[name="password"]').addEventListener('input', function() {
+            updatePasswordStrength(this.value);
+        });
+
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.querySelector('input[name="password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+            
+            if (password !== confirmPassword) {
+                showToast('As senhas não conferem!');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('A senha deve ter pelo menos 6 caracteres!');
+                return;
+            }
+            
+            const formData = {
+                nome_completo: document.querySelector('input[name="nome_completo"]').value,
+                username: document.querySelector('input[name="username"]').value,
+                email: document.querySelector('input[name="email"]').value,
+                password: password
+            };
+            
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;            fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Conta criada com sucesso! Redirecionando...', 'success');
+                    setTimeout(() => window.location.href = '/login', 2000);
+                } else {
+                    showToast(data.error || 'Erro ao criar conta.');
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                showToast('Erro ao criar conta. Tente novamente.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

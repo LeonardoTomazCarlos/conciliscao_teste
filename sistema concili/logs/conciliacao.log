@@ -687,3 +687,10 @@ WHERE lancamento_contabil.hash_transacao = ?
 2025-09-01 12:58:17,866 - werkzeug - INFO - 127.0.0.1 - - [01/Sep/2025 12:58:17] "GET /api/conciliacoes?page=1&per_page=10 HTTP/1.1" 200 -
 2025-09-01 12:58:17,870 - werkzeug - INFO - 127.0.0.1 - - [01/Sep/2025 12:58:17] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
 2025-09-01 12:58:24,099 - werkzeug - INFO - 127.0.0.1 - - [01/Sep/2025 12:58:24] "GET /api/conciliacoes?page=1&per_page=10&data_inicio=2025-08-31&data_fim=2025-08-31 HTTP/1.1" 200 -
+2025-09-01 14:36:56,397 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-01 14:41:45,780 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-01 14:44:53,169 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-01 14:56:21,162 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-01 14:58:17,614 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-01 15:00:51,385 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-01 15:01:33,437 - waitress - INFO - Serving on http://0.0.0.0:8080

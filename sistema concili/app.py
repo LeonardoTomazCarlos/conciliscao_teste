@@ -700,8 +700,62 @@ def verificar_divergencias():
 @app.route('/')
 def index():
     if not current_user.is_authenticated:
-        return redirect(url_for('login'))
+        return redirect(url_for('register'))
     return render_template('index.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+    return render_template('register.html')
+
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    try:
+        data = request.get_json()
+        
+        # Validar dados necessários
+        required_fields = ['username', 'email', 'password', 'nome_completo']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'error': f'O campo {field} é obrigatório'}), 400
+        
+        # Verificar se usuário já existe
+        if Usuario.query.filter_by(username=data['username']).first():
+            return jsonify({'error': 'Nome de usuário já existe'}), 400
+        
+        # Verificar se email já existe
+        if Usuario.query.filter_by(email=data['email']).first():
+            return jsonify({'error': 'Email já está em uso'}), 400
+        
+        # Criar novo usuário
+        novo_usuario = Usuario(
+            username=data['username'],
+            email=data['email'],
+            password_hash=generate_password_hash(data['password']),
+            nome_completo=data['nome_completo'],
+            perfil='usuario'  # Perfil padrão para novos usuários
+        )
+        
+        db.session.add(novo_usuario)
+        db.session.commit()
+        
+        log_auditoria(
+            'criar_usuario',
+            'usuario',
+            novo_usuario.id,
+            None,
+            {'username': data['username'], 'email': data['email']}
+        )
+        
+        return jsonify({
+            'success': True,
+            'message': 'Usuário criado com sucesso'
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao criar usuário: {e}")
+        return jsonify({'error': 'Erro ao criar usuário'}), 500
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

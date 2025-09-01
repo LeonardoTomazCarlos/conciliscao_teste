@@ -10,8 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2563eb;
-            --secondary-color: #3b82f6;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
             --accent-color: #10b981;
             --danger-color: #ef4444;
             --warning-color: #f59e0b;
@@ -33,7 +33,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -66,7 +66,7 @@
         }
 
         .login-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 3rem 2.5rem;
             text-align: center;
@@ -169,7 +169,7 @@
         }
 
         .btn-login {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             border: none;
             border-radius: 12px;
             padding: 1rem 2rem;
@@ -200,9 +200,9 @@
         }
 
         .btn-login:hover {
-            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
             color: white;
         }
 
@@ -360,8 +360,12 @@
             <div class="login-logo">
                 <i class="fas fa-university fa-2x"></i>
             </div>
-            <h1>FinanceSync</h1>
-            <p>Sistema Profissional de Conciliação Bancária</p>
+            <h1>Login</h1>
+            <p>Entre com suas credenciais ou</p>
+            <a href="/register" class="btn btn-light btn-lg fw-bold px-4 py-2 mt-3 shadow-sm">
+                <i class="fas fa-user-plus me-2"></i>
+                Criar Nova Conta
+            </a>
         </div>
 
         <div class="login-body">
@@ -404,9 +408,67 @@
                 </button>
             </form>
 
-            <div class="forgot-password">
-                <a href="#" onclick="esqueceuSenha()">Esqueceu sua senha?</a>
+            <div class="d-flex flex-column align-items-center mt-4">
+                <div class="mb-3">
+                    <a href="#" onclick="esqueceuSenha()" class="forgot-password-link">
+                        <i class="fas fa-key me-1"></i>
+                        Esqueceu sua senha?
+                    </a>
+                </div>
+                <div class="or-divider">
+                    <span class="line"></span>
+                    <span class="or-text">Novo por aqui?</span>
+                    <span class="line"></span>
+                </div>
+                <a href="/register" class="btn btn-outline-light btn-lg mt-3" style="width: auto; min-width: 200px;">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Criar Nova Conta
+                </a>
             </div>
+
+            <style>
+                .forgot-password-link {
+                    color: rgba(255, 255, 255, 0.8);
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                }
+                .forgot-password-link:hover {
+                    color: white;
+                }
+                .or-divider {
+                    width: 100%;
+                    text-align: center;
+                    margin: 20px 0;
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .line {
+                    height: 1px;
+                    flex: 1;
+                    background: rgba(255, 255, 255, 0.2);
+                }
+                .or-text {
+                    color: rgba(255, 255, 255, 0.8);
+                    margin: 0 15px;
+                    font-size: 0.9rem;
+                }
+                .btn-outline-light {
+                    border: 2px solid rgba(255, 255, 255, 0.8);
+                    color: rgba(255, 255, 255, 0.9);
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                    padding: 12px 24px;
+                }
+                .btn-outline-light:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    border-color: white;
+                    color: white;
+                    transform: translateY(-2px);
+                }
+            </style>
+
         </div>
 
         <div class="login-footer">
