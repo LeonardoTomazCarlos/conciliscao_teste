@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinanceSync Pro - Sistema de Conciliação Bancária</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%2310b981;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M25 35h50v5H25zm0 15h50v5H25zm0 15h35v5H25z' fill='white'/%3E%3Ccircle cx='72' cy='65' r='8' fill='white'/%3E%3Cpath d='M69 65l2 2 4-4' stroke='%23059669' stroke-width='2' fill='none'/%3E%3C/svg%3E">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -30,6 +31,38 @@
             box-sizing: border-box;
         }
 
+        /* Scrollbar global elegante */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-bg);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--light-text);
+        }
+
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--light-bg);
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--light-bg);
@@ -44,7 +77,7 @@
 
         /* Sidebar Styles */
         .sidebar {
-            width: 280px;
+            width: 240px;
             background: linear-gradient(180deg, var(--primary-color) 0%, #0f172a 100%);
             position: fixed;
             height: 100vh;
@@ -88,6 +121,28 @@
             height: calc(100vh - 160px); /* Altura da sidebar menos header e user section */
             overflow-y: auto;
             padding-bottom: 140px; /* Espaço para a seção do usuário */
+            /* Customizar scrollbar */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        /* Scrollbar customizada para webkit browsers */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
         }
 
         .nav-section {
@@ -155,8 +210,8 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            width: 280px;
-            padding: 1.5rem;
+            width: 240px;
+            padding: 0.75rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
             backdrop-filter: blur(10px);
@@ -165,25 +220,26 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             color: white;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
+            font-size: 0.75rem;
         }
 
         .user-details h6 {
             margin: 0;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
@@ -193,10 +249,17 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
+        .user-section .btn {
+            border-radius: 6px;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.75rem;
+            margin: 0;
+        }
+
         /* Main Content */
         .main-content {
             flex: 1;
-            margin-left: 280px;
+            margin-left: 240px;
             transition: all 0.3s ease;
             min-height: 100vh;
             display: flex;
@@ -227,10 +290,11 @@
         }
 
         .content-area {
-            padding: 2rem;
-            margin-left: 280px;
-            min-height: calc(100vh - 80px);
-            width: calc(100% - 280px);
+            padding: 1.5rem;
+            margin-left: 240px;
+            height: 100vh;
+            width: calc(100% - 240px);
+            overflow-y: auto;
         }
 
         /* Cards */

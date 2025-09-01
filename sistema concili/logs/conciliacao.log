@@ -295,3 +295,11 @@ WHERE lancamento_contabil.hash_transacao = ?
 2025-08-29 17:12:36,246 - werkzeug - INFO -  * Restarting with stat
 2025-08-29 17:12:37,435 - werkzeug - WARNING -  * Debugger is active!
 2025-08-29 17:12:37,436 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-08-29 17:59:44,300 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-08-29 17:59:44,301 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-29 17:59:44,302 - werkzeug - INFO -  * Restarting with stat
+2025-08-29 17:59:45,379 - werkzeug - WARNING -  * Debugger is active!
+2025-08-29 17:59:45,381 - werkzeug - INFO -  * Debugger PIN: 394-551-152
