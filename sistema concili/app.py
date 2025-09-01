@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, send_file, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -706,9 +706,22 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
+        # Tentar primeiro obter dados JSON (para requisições AJAX)
+        if request.is_json:
+            data = request.get_json()
+            username = data.get('username')
+            password = data.get('password')
+        else:
+            # Fallback para dados de formulário HTML
+            username = request.form.get('username')
+            password = request.form.get('password')
+        
+        if not username or not password:
+            if request.is_json:
+                return jsonify({'error': 'Usuário e senha são obrigatórios'}), 400
+            else:
+                flash('Usuário e senha são obrigatórios', 'error')
+                return render_template('login.html')
         
         user = Usuario.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
@@ -717,18 +730,38 @@ def login():
             db.session.commit()
             
             log_auditoria('login', 'usuario', user.id)
-            return jsonify({'success': True, 'redirect': url_for('index')})
+            
+            if request.is_json:
+                return jsonify({'success': True, 'redirect': url_for('index')})
+            else:
+                return redirect(url_for('index'))
         else:
-            return jsonify({'error': 'Usuário ou senha inválidos'}), 401
+            if request.is_json:
+                return jsonify({'error': 'Usuário ou senha inválidos'}), 401
+            else:
+                flash('Usuário ou senha inválidos', 'error')
+                return render_template('login.html')
     
     return render_template('login.html')
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
-    log_auditoria('logout', 'usuario', current_user.id)
-    logout_user()
-    return redirect(url_for('login'))
+    try:
+        log_auditoria('logout', 'usuario', current_user.id)
+        logout_user()
+        
+        # Se for uma requisição POST (AJAX), retornar JSON
+        if request.method == 'POST':
+            return jsonify({'success': True, 'message': 'Logout realizado com sucesso'})
+        
+        # Se for GET, redirecionar normalmente
+        return redirect(url_for('login'))
+    except Exception as e:
+        logging.error(f"Erro no logout: {e}")
+        if request.method == 'POST':
+            return jsonify({'success': False, 'error': str(e)}), 500
+        return redirect(url_for('login'))
 
 @app.route('/api/usuarios', methods=['GET'])
 @login_required
@@ -864,10 +897,154 @@ def executar_conciliacao_automatica():
         
         return jsonify({
             'success': True,
-            'message': f'Conciliação automática executada. {conciliacoes} conciliações realizadas.'
+            'message': f'Conciliação automática executada. {conciliacoes} conciliações realizadas.',
+            'conciliados': conciliacoes
         })
     except Exception as e:
         logging.error(f"Erro na conciliação automática: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/conciliacoes', methods=['GET'])
+@login_required
+def get_conciliacoes():
+    try:
+        # Parâmetros de filtro
+        data_inicio = request.args.get('data_inicio')
+        data_fim = request.args.get('data_fim')
+        tipo = request.args.get('tipo')
+        status = request.args.get('status')
+        usuario_id = request.args.get('usuario_id')
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        
+        # Construir query base
+        query = Conciliacao.query
+        
+        # Aplicar filtros
+        if data_inicio:
+            query = query.filter(Conciliacao.data_conciliacao >= datetime.strptime(data_inicio, '%Y-%m-%d'))
+        if data_fim:
+            query = query.filter(Conciliacao.data_conciliacao <= datetime.strptime(data_fim, '%Y-%m-%d'))
+        if tipo:
+            query = query.filter(Conciliacao.tipo_conciliacao == tipo)
+        if status:
+            query = query.filter(Conciliacao.status == status)
+        if usuario_id:
+            query = query.filter(Conciliacao.usuario_id == usuario_id)
+        
+        # Ordenar por data mais recente
+        query = query.order_by(Conciliacao.data_conciliacao.desc())
+        
+        # Paginação
+        conciliacoes = query.paginate(
+            page=page, 
+            per_page=per_page, 
+            error_out=False
+        )
+        
+        # Formatear resposta
+        resultado = {
+            'conciliacoes': [{
+                'id': c.id,
+                'data_conciliacao': c.data_conciliacao.strftime('%Y-%m-%d %H:%M:%S'),
+                'tipo_conciliacao': c.tipo_conciliacao,
+                'status': c.status,
+                'observacoes': c.observacoes,
+                'usuario': {
+                    'id': c.usuario.id,
+                    'nome': c.usuario.nome_completo,
+                    'username': c.usuario.username
+                } if c.usuario else None,
+                'extrato': {
+                    'id': c.extrato.id,
+                    'data': c.extrato.data.strftime('%Y-%m-%d'),
+                    'descricao': c.extrato.descricao,
+                    'valor': c.extrato.valor,
+                    'tipo': c.extrato.tipo,
+                    'conta': {
+                        'banco': c.extrato.conta.banco,
+                        'agencia': c.extrato.conta.agencia,
+                        'conta': c.extrato.conta.conta
+                    } if c.extrato.conta else None
+                } if c.extrato else None,
+                'lancamento': {
+                    'id': c.lancamento.id,
+                    'data': c.lancamento.data.strftime('%Y-%m-%d'),
+                    'descricao': c.lancamento.descricao,
+                    'valor': c.lancamento.valor,
+                    'tipo': c.lancamento.tipo,
+                    'categoria': c.lancamento.categoria
+                } if c.lancamento else None
+            } for c in conciliacoes.items],
+            'pagination': {
+                'page': conciliacoes.page,
+                'pages': conciliacoes.pages,
+                'per_page': conciliacoes.per_page,
+                'total': conciliacoes.total,
+                'has_next': conciliacoes.has_next,
+                'has_prev': conciliacoes.has_prev
+            }
+        }
+        
+        return jsonify(resultado)
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar conciliações: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/conciliacoes/estatisticas', methods=['GET'])
+@login_required
+def get_estatisticas_conciliacoes():
+    try:
+        # Estatísticas gerais
+        total_conciliacoes = Conciliacao.query.count()
+        conciliacoes_ativas = Conciliacao.query.filter_by(status='ativa').count()
+        conciliacoes_canceladas = Conciliacao.query.filter_by(status='cancelada').count()
+        conciliacoes_automaticas = Conciliacao.query.filter_by(tipo_conciliacao='automatica').count()
+        conciliacoes_manuais = Conciliacao.query.filter_by(tipo_conciliacao='manual').count()
+        
+        # Estatísticas por período (últimos 30 dias)
+        data_limite = datetime.utcnow() - timedelta(days=30)
+        conciliacoes_recentes = Conciliacao.query.filter(
+            Conciliacao.data_conciliacao >= data_limite
+        ).count()
+        
+        # Top 5 usuários que mais conciliaram
+        top_usuarios = db.session.query(
+            Usuario.nome_completo,
+            db.func.count(Conciliacao.id).label('total_conciliacoes')
+        ).join(Conciliacao).group_by(Usuario.id).order_by(
+            db.desc('total_conciliacoes')
+        ).limit(5).all()
+        
+        # Conciliações por dia dos últimos 7 dias
+        conciliacoes_por_dia = []
+        for i in range(7):
+            data = datetime.utcnow() - timedelta(days=i)
+            count = Conciliacao.query.filter(
+                db.func.date(Conciliacao.data_conciliacao) == data.date()
+            ).count()
+            conciliacoes_por_dia.append({
+                'data': data.strftime('%Y-%m-%d'),
+                'count': count
+            })
+        
+        return jsonify({
+            'total_conciliacoes': total_conciliacoes,
+            'conciliacoes_ativas': conciliacoes_ativas,
+            'conciliacoes_canceladas': conciliacoes_canceladas,
+            'conciliacoes_automaticas': conciliacoes_automaticas,
+            'conciliacoes_manuais': conciliacoes_manuais,
+            'conciliacoes_recentes': conciliacoes_recentes,
+            'top_usuarios': [{
+                'nome': usuario[0],
+                'total': usuario[1]
+            } for usuario in top_usuarios],
+            'conciliacoes_por_dia': conciliacoes_por_dia
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar estatísticas: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/divergencias', methods=['GET'])
@@ -1308,58 +1485,139 @@ def desconciliar(conciliacao_id):
         logging.error(f"Erro ao desconciliar: {e}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/conciliacoes')
-@login_required
-def get_conciliacoes():
-    try:
-        conciliacoes = Conciliacao.query.filter_by(status='ativa').all()
-        return jsonify([{
-            'id': c.id,
-            'extrato': {
-                'id': c.extrato.id,
-                'data': c.extrato.data.strftime('%Y-%m-%d'),
-                'descricao': c.extrato.descricao,
-                'valor': c.extrato.valor,
-                'tipo': c.extrato.tipo
-            },
-            'lancamento': {
-                'id': c.lancamento.id,
-                'data': c.lancamento.data.strftime('%Y-%m-%d'),
-                'descricao': c.lancamento.descricao,
-                'valor': c.lancamento.valor,
-                'tipo': c.lancamento.tipo
-            },
-            'data_conciliacao': c.data_conciliacao.strftime('%Y-%m-%d %H:%M:%S'),
-            'observacoes': c.observacoes,
-            'tipo_conciliacao': c.tipo_conciliacao,
-            'usuario': c.usuario.username if c.usuario else 'Sistema'
-        } for c in conciliacoes])
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 @app.route('/api/estatisticas')
 @login_required
 def get_estatisticas():
     try:
-        total_extratos = ExtratoBancario.query.count()
-        total_lancamentos = LancamentoContabil.query.count()
-        extratos_conciliados = ExtratoBancario.query.filter_by(conciliado=True).count()
-        lancamentos_conciliados = LancamentoContabil.query.filter_by(conciliado=True).count()
-        divergencias_pendentes = Divergencia.query.filter_by(status='pendente').count()
-        transacoes_recorrentes = ExtratoBancario.query.filter_by(transacao_recorrente=True).count()
+        # Parâmetros de filtro de período
+        periodo = request.args.get('periodo', 'total')  # hoje, semana, mes, ano, personalizado, total
+        data_inicio = request.args.get('data_inicio')
+        data_fim = request.args.get('data_fim')
+        
+        # Definir datas baseadas no período
+        hoje = datetime.now().date()
+        
+        if periodo == 'hoje':
+            data_inicio = hoje
+            data_fim = hoje
+        elif periodo == 'semana':
+            # Início da semana (segunda-feira)
+            inicio_semana = hoje - timedelta(days=hoje.weekday())
+            data_inicio = inicio_semana
+            data_fim = hoje
+        elif periodo == 'mes':
+            # Início do mês
+            data_inicio = hoje.replace(day=1)
+            data_fim = hoje
+        elif periodo == 'ano':
+            # Início do ano
+            data_inicio = hoje.replace(month=1, day=1)
+            data_fim = hoje
+        elif periodo == 'personalizado':
+            if data_inicio:
+                data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+            if data_fim:
+                data_fim = datetime.strptime(data_fim, '%Y-%m-%d').date()
+        else:
+            # Total (sem filtro de data)
+            data_inicio = None
+            data_fim = None
+        
+        # Queries base
+        query_extratos = ExtratoBancario.query
+        query_lancamentos = LancamentoContabil.query
+        query_conciliacoes = Conciliacao.query
+        query_divergencias = Divergencia.query
+        
+        # Aplicar filtros de data
+        if data_inicio and data_fim:
+            query_extratos = query_extratos.filter(
+                ExtratoBancario.data >= data_inicio,
+                ExtratoBancario.data <= data_fim
+            )
+            query_lancamentos = query_lancamentos.filter(
+                LancamentoContabil.data >= data_inicio,
+                LancamentoContabil.data <= data_fim
+            )
+            query_conciliacoes = query_conciliacoes.filter(
+                Conciliacao.data_conciliacao >= datetime.combine(data_inicio, datetime.min.time()),
+                Conciliacao.data_conciliacao <= datetime.combine(data_fim, datetime.max.time())
+            )
+            query_divergencias = query_divergencias.filter(
+                Divergencia.created_at >= datetime.combine(data_inicio, datetime.min.time()),
+                Divergencia.created_at <= datetime.combine(data_fim, datetime.max.time())
+            )
+        
+        # Calcular estatísticas
+        total_extratos = query_extratos.count()
+        total_lancamentos = query_lancamentos.count()
+        extratos_conciliados = query_extratos.filter_by(conciliado=True).count()
+        lancamentos_conciliados = query_lancamentos.filter_by(conciliado=True).count()
+        divergencias_pendentes = query_divergencias.filter_by(status='pendente').count()
+        transacoes_recorrentes = query_extratos.filter_by(transacao_recorrente=True).count()
+        total_conciliacoes = query_conciliacoes.count()
+        
+        # Calcular valores financeiros
+        valor_total_extratos = query_extratos.with_entities(db.func.sum(ExtratoBancario.valor)).scalar() or 0
+        valor_extratos_conciliados = query_extratos.filter_by(conciliado=True).with_entities(db.func.sum(ExtratoBancario.valor)).scalar() or 0
         
         return jsonify({
+            'periodo': periodo,
+            'data_inicio': data_inicio.strftime('%Y-%m-%d') if data_inicio else None,
+            'data_fim': data_fim.strftime('%Y-%m-%d') if data_fim else None,
             'total_extratos': total_extratos,
             'total_lancamentos': total_lancamentos,
             'extratos_conciliados': extratos_conciliados,
             'lancamentos_conciliados': lancamentos_conciliados,
             'divergencias_pendentes': divergencias_pendentes,
             'transacoes_recorrentes': transacoes_recorrentes,
+            'total_conciliacoes': total_conciliacoes,
+            'valor_total_extratos': float(valor_total_extratos),
+            'valor_extratos_conciliados': float(valor_extratos_conciliados),
             'percentual_extratos': (extratos_conciliados / total_extratos * 100) if total_extratos > 0 else 0,
-            'percentual_lancamentos': (lancamentos_conciliados / total_lancamentos * 100) if total_lancamentos > 0 else 0
+            'percentual_lancamentos': (lancamentos_conciliados / total_lancamentos * 100) if total_lancamentos > 0 else 0,
+            'percentual_conciliacao': (valor_extratos_conciliados / valor_total_extratos * 100) if valor_total_extratos > 0 else 0
         })
+        
     except Exception as e:
+        logging.error(f"Erro ao buscar estatísticas: {e}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/usuario')
+def get_usuario():
+    try:
+        # Simulação de dados do usuário (em produção, usar dados reais do banco)
+        if current_user.is_authenticated:
+            usuario = {
+                'nome': current_user.username,
+                'email': getattr(current_user, 'email', 'admin@financesync.com'),
+                'iniciais': ''.join([n[0].upper() for n in current_user.username.split()[:2]]),
+                'role': 'Administrador' if current_user.is_admin else 'Usuário',
+                'ultimo_acesso': datetime.now().strftime('%d/%m/%Y %H:%M'),
+                'avatar_url': None  # Pode ser implementado depois
+            }
+        else:
+            # Dados padrão para usuário não logado
+            usuario = {
+                'nome': 'Leonardo Carlos',
+                'email': 'leonardo@financesync.com', 
+                'iniciais': 'LC',
+                'role': 'Administrador',
+                'ultimo_acesso': datetime.now().strftime('%d/%m/%Y %H:%M'),
+                'avatar_url': None
+            }
+        
+        return jsonify(usuario)
+    except Exception as e:
+        # Retornar dados padrão em caso de erro
+        return jsonify({
+            'nome': 'Usuário Sistema',
+            'email': 'usuario@financesync.com',
+            'iniciais': 'US',
+            'role': 'Usuário',
+            'ultimo_acesso': datetime.now().strftime('%d/%m/%Y %H:%M'),
+            'avatar_url': None
+        })
 
 @app.route('/api/limpar-dados', methods=['DELETE'])
 @login_required
@@ -1384,6 +1642,145 @@ def limpar_dados():
         
         return jsonify({'success': True, 'message': 'Todos os dados foram removidos'})
     except Exception as e:
+        logging.error(f"Erro ao limpar dados: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/criar-dados-exemplo', methods=['POST'])
+@login_required
+def criar_dados_exemplo():
+    try:
+        from random import uniform, choice, randint
+        
+        # Criar conta bancária exemplo se não existir
+        conta = ContaBancaria.query.first()
+        if not conta:
+            conta = ContaBancaria(
+                banco='Banco Exemplo',
+                agencia='1234',
+                conta='56789-0',
+                tipo_conta='corrente',
+                saldo_atual=10000.0
+            )
+            db.session.add(conta)
+            db.session.commit()
+        
+        # Criar extratos de exemplo para diferentes períodos
+        hoje = datetime.now().date()
+        
+        # Dados de hoje
+        for i in range(5):
+            extrato = ExtratoBancario(
+                conta_id=conta.id,
+                data=hoje,
+                descricao=f'Transação do dia {i+1}',
+                valor=round(uniform(100, 1000), 2),
+                tipo=choice(['credito', 'debito']),
+                categoria='Exemplo',
+                arquivo_origem='dados_exemplo.csv'
+            )
+            db.session.add(extrato)
+        
+        # Dados desta semana
+        for i in range(10):
+            data_semana = hoje - timedelta(days=randint(1, 7))
+            extrato = ExtratoBancario(
+                conta_id=conta.id,
+                data=data_semana,
+                descricao=f'Transação da semana {i+1}',
+                valor=round(uniform(50, 800), 2),
+                tipo=choice(['credito', 'debito']),
+                categoria='Exemplo',
+                arquivo_origem='dados_exemplo.csv'
+            )
+            db.session.add(extrato)
+        
+        # Dados deste mês
+        for i in range(20):
+            data_mes = hoje - timedelta(days=randint(8, 30))
+            extrato = ExtratoBancario(
+                conta_id=conta.id,
+                data=data_mes,
+                descricao=f'Transação do mês {i+1}',
+                valor=round(uniform(25, 1500), 2),
+                tipo=choice(['credito', 'debito']),
+                categoria='Exemplo',
+                arquivo_origem='dados_exemplo.csv'
+            )
+            db.session.add(extrato)
+        
+        # Lançamentos contábeis correspondentes
+        extratos = ExtratoBancario.query.filter_by(arquivo_origem='dados_exemplo.csv').all()
+        for extrato in extratos[:15]:  # Conciliar apenas alguns
+            lancamento = LancamentoContabil(
+                data=extrato.data,
+                descricao=extrato.descricao,
+                valor=extrato.valor,
+                tipo=extrato.tipo,
+                categoria=extrato.categoria,
+                arquivo_origem='dados_exemplo.csv'
+            )
+            db.session.add(lancamento)
+            
+            # Marcar como conciliado
+            extrato.conciliado = True
+            lancamento.conciliado = True
+            
+            # Criar registro de conciliação
+            conciliacao = Conciliacao(
+                extrato_id=extrato.id,
+                lancamento_id=lancamento.id,
+                usuario_id=current_user.id if current_user.is_authenticated else 1,
+                tipo_conciliacao='automatica',
+                status='ativa'
+            )
+            db.session.add(conciliacao)
+        
+        # Criar algumas divergências
+        for i in range(3):
+            divergencia = Divergencia(
+                tipo='valor_incorreto',
+                descricao=f'Divergência de exemplo {i+1}',
+                status='pendente'
+            )
+            db.session.add(divergencia)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Dados de exemplo criados com sucesso!',
+            'extratos_criados': len(extratos),
+            'conciliacoes_criadas': 15,
+            'divergencias_criadas': 3
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao criar dados de exemplo: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/limpar-todos-dados', methods=['POST'])
+@login_required
+def limpar_todos_dados():
+    try:
+        # Deletar todos os dados em ordem (respeitando foreign keys)
+        Conciliacao.query.delete()
+        Divergencia.query.delete()
+        ExtratoBancario.query.delete()
+        LancamentoContabil.query.delete()
+        ContaBancaria.query.delete()
+        RegraConciliacao.query.delete()
+        
+        db.session.commit()
+        
+        logging.info("Todos os dados foram limpos do sistema")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Todos os dados foram removidos com sucesso!'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
         logging.error(f"Erro ao limpar dados: {e}")
         return jsonify({'error': str(e)}), 500
 

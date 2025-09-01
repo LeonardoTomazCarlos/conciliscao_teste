@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinanceSync Pro - Sistema de Conciliação Bancária</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%2310b981;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M25 35h50v5H25zm0 15h50v5H25zm0 15h35v5H25z' fill='white'/%3E%3Ccircle cx='72' cy='65' r='8' fill='white'/%3E%3Cpath d='M69 65l2 2 4-4' stroke='%23059669' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232563eb;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%2310b981;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M25 35h50v5H25zm0 15h50v5H25zm0 15h35v5H25z' fill='white'/%3E%3Ccircle cx='72' cy='65' r='8' fill='white'/%3E%3Cpath d='M69 65l2 2 4-4' stroke='%2310b981' stroke-width='2' fill='none'/%3E%3C/svg%3E">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1e293b;
+            --primary-color: #2563eb;
             --secondary-color: #3b82f6;
             --accent-color: #10b981;
             --danger-color: #ef4444;
@@ -31,7 +31,14 @@
             box-sizing: border-box;
         }
 
-        /* Scrollbar global elegante */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: var(--dark-text);
+        }
+
+        /* Scrollbar customizado */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -43,1412 +50,1337 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
+            background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
             border-radius: 4px;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--light-text);
+            background: linear-gradient(180deg, var(--secondary-color), var(--accent-color));
         }
 
-        /* Firefox scrollbar */
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-color) var(--light-bg);
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 50%, #475569 100%);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-xl);
         }
-
-        html, body {
-            height: 100%;
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            margin: 4px 8px;
+            padding: 12px 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            position: relative;
             overflow: hidden;
         }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--light-bg);
-            color: var(--dark-text);
-            line-height: 1.6;
-        }
-
-        .main-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            width: 240px;
-            background: linear-gradient(180deg, var(--primary-color) 0%, #0f172a 100%);
-            position: fixed;
-            height: 100vh;
-            left: 0;
+        .sidebar .nav-link::before {
+            content: '';
+            position: absolute;
             top: 0;
-            z-index: 1000;
-            overflow-y: auto;
-            transition: all 0.3s ease;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .sidebar .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(16, 185, 129, 0.3));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.2);
+        }
+
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
         }
 
         .sidebar-header {
-            padding: 2rem 1.5rem;
+            padding: 2rem 1rem;
+            text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
         }
 
         .sidebar-logo {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .sidebar-logo i {
-            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
-            padding: 0.5rem;
-            border-radius: 10px;
-            font-size: 1.2rem;
-        }
-
-        .sidebar-subtitle {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        .sidebar-nav {
-            padding: 1rem 0;
-            height: calc(100vh - 160px); /* Altura da sidebar menos header e user section */
-            overflow-y: auto;
-            padding-bottom: 140px; /* Espaço para a seção do usuário */
-            /* Customizar scrollbar */
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-        }
-
-        /* Scrollbar customizada para webkit browsers */
-        .sidebar-nav::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-            transition: background 0.3s ease;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-section-title {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .nav-item {
-            margin: 0.25rem 1rem;
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            padding: 0.875rem 1rem;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .nav-link:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(4px);
-        }
-
-        .nav-link.active {
-            color: white;
-            background: linear-gradient(135deg, var(--secondary-color), #2563eb);
-            box-shadow: var(--shadow-md);
-        }
-
-        .nav-link.active::before {
-            content: '';
-            position: absolute;
-            left: -1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 24px;
-            background: var(--accent-color);
-            border-radius: 0 2px 2px 0;
-        }
-
-        .nav-link i {
-            width: 20px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-
-        .user-section {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 240px;
-            padding: 0.75rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
-            backdrop-filter: blur(10px);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: white;
-            margin-bottom: 0.75rem;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
-            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 0.75rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
         }
 
-        .user-details h6 {
-            margin: 0;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .user-details p {
-            margin: 0;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .user-section .btn {
-            border-radius: 6px;
-            font-size: 0.75rem;
-            padding: 0.4rem 0.75rem;
-            margin: 0;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 240px;
-            transition: all 0.3s ease;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .top-header {
-            background: white;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-title {
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: var(--dark-text);
-            margin: 0;
-        }
-
-        .header-subtitle {
-            color: var(--light-text);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        .content-area {
-            padding: 1.5rem;
-            margin-left: 240px;
-            height: 100vh;
-            width: calc(100% - 240px);
-            overflow-y: auto;
-        }
-
-        /* Cards */
-        .card-modern {
-            background: white;
+        .card-dashboard {
             border: none;
-            border-radius: 16px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
-        }
-
-        .card-modern:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-
-        .card-header-modern {
-            background: white;
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-text);
-        }
-
-        /* Stats Cards */
-        .stats-card {
-            background: white;
-            border: none;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
             position: relative;
-            overflow: hidden;
         }
 
-        .stats-card::before {
+        .card-dashboard::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
         }
 
-        .stats-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
+        .card-dashboard:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .stats-icon {
-            width: 56px;
-            height: 56px;
+        .card-stat {
+            border: none;
             border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            transform: translateY(0);
         }
 
-        .stats-icon.primary {
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            color: var(--secondary-color);
+        .card-stat:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .stats-icon.success {
-            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-            color: var(--accent-color);
+        .card-stat .card-body {
+            padding: 1.5rem;
         }
 
-        .stats-icon.warning {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: var(--warning-color);
-        }
-
-        .stats-icon.danger {
-            background: linear-gradient(135deg, #fee2e2, #fecaca);
-            color: var(--danger-color);
-        }
-
-        .stats-value {
-            font-size: 2.25rem;
+        .card-stat h3 {
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--dark-text);
-            line-height: 1;
-            margin-bottom: 0.5rem;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .stats-label {
-            color: var(--light-text);
-            font-size: 0.875rem;
+        .card-stat h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .bg-gradient-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .bg-gradient-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .btn-group .btn {
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
             font-weight: 500;
         }
 
-        /* Buttons */
-        .btn-modern {
-            border: none;
-            border-radius: 12px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+        .btn-group .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.2);
         }
 
-        .btn-primary-modern {
-            background: linear-gradient(135deg, var(--secondary-color), #2563eb);
+        .btn-group .btn.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-color: var(--primary-color);
             color: white;
-            box-shadow: var(--shadow-sm);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.3);
         }
 
-        .btn-primary-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+        #filtro-personalizado-container {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding-top: 1rem;
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 8px;
+            margin-top: 1rem;
+            padding: 1rem;
         }
-
-        .btn-success-modern {
-            background: linear-gradient(135deg, var(--accent-color), #059669);
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
             color: white;
-            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-success-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
         }
 
-        /* Upload Areas */
-        .upload-zone {
+        .stat-card:hover::after {
+            animation: shimmer 0.8s ease-in-out;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .upload-area {
             border: 2px dashed var(--border-color);
             border-radius: 16px;
             padding: 3rem 2rem;
             text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            background: #fafbfc;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
         }
 
-        .upload-zone:hover {
-            border-color: var(--secondary-color);
-            background: #f0f7ff;
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        .upload-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            color: var(--secondary-color);
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+        }
+
+        .upload-area:hover::before {
+            opacity: 0.05;
+        }
+
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .table thead th {
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(16, 185, 129, 0.05));
+            transform: scale(1.01);
+        }
+
+        .btn-action {
+            border-radius: 12px;
+            padding: 10px 24px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-action:hover::before {
+            left: 100%;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .alert-custom {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            margin: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .icon-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 8px 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .user-area:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.75rem;
-            margin: 0 auto 1rem;
-        }
-
-        /* Tables */
-        .table-modern {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .table-modern thead {
-            background: var(--light-bg);
-        }
-
-        .table-modern th {
-            border: none;
-            padding: 1rem;
+            color: white;
             font-weight: 600;
-            color: var(--dark-text);
-            font-size: 0.875rem;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
-        .table-modern td {
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            margin-right: 8px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark-text);
+            margin-bottom: 2px;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--light-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
             border: none;
-            padding: 1rem;
-            border-top: 1px solid var(--border-color);
-            color: var(--dark-text);
+            color: white;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .content-area {
-                padding: 1rem;
-                margin-left: 0;
-                width: 100%;
-            }
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            color: white;
         }
 
-        /* Tab Content */
-        .tab-content {
-            background: transparent;
+        .dropdown-toggle::after {
+            display: none;
         }
 
-        .tab-pane {
-            animation: fadeIn 0.3s ease;
+        .user-dropdown {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            margin-top: 8px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .user-dropdown .dropdown-item {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 8px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .user-dropdown .dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+            transform: translateX(4px);
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <a href="#" class="sidebar-logo">
-                    <i class="fas fa-chart-line"></i>
-                    <div>
-                        <div>FinanceSync Pro</div>
-                        <div class="sidebar-subtitle">Conciliação Bancária</div>
-                    </div>
-                </a>
-            </div>
-            
-            <div class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Principal</div>
-                    <div class="nav-item">
-                        <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
-                            <i class="fas fa-home"></i>
-                            Dashboard
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="#importacao" data-bs-toggle="tab">
-                            <i class="fas fa-upload"></i>
-                            Importação
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="#conciliacao" data-bs-toggle="tab">
-                            <i class="fas fa-link"></i>
-                            Conciliação
-                        </a>
-                    </div>
+    <!-- Área do Usuário -->
+    <div class="user-area">
+        <div class="dropdown">
+            <div class="user-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" role="button">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <div class="user-details">
+                    <div class="user-name" id="user-name">Usuário Admin</div>
+                    <div class="user-role">Administrador</div>
                 </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Análise</div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="#divergencias" data-bs-toggle="tab">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            Divergências
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="#relatorios" data-bs-toggle="tab">
-                            <i class="fas fa-chart-bar"></i>
-                            Relatórios
-                        </a>
-                    </div>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Sistema</div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="#configuracoes" data-bs-toggle="tab">
-                            <i class="fas fa-cog"></i>
-                            Configurações
-                        </a>
-                    </div>
-                </div>
+                <i class="fas fa-chevron-down ms-2 text-muted"></i>
             </div>
-            
-            <div class="user-section">
-                <div class="user-info">
-                    <div class="user-avatar">
-                        {{ current_user.username[0].upper() if current_user and current_user.username else 'U' }}
-                    </div>
-                    <div class="user-details">
-                        <h6>{{ current_user.username if current_user and current_user.username else 'Usuário' }}</h6>
-                        <p>Administrador</p>
-                    </div>
-                </div>
-                <a href="/logout" class="btn btn-outline-light btn-sm w-100">
-                    <i class="fas fa-sign-out-alt me-2"></i>Sair
-                </a>
-            </div>
-        </nav>
+            <ul class="dropdown-menu user-dropdown">
+                <li>
+                    <a class="dropdown-item" href="#" onclick="abrirPerfilUsuario()">
+                        <i class="fas fa-user me-2"></i>Meu Perfil
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" onclick="abrirConfiguracoes()">
+                        <i class="fas fa-cog me-2"></i>Configurações
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger" href="#" onclick="confirmarLogout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>Sair do Sistema
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="top-header">
-                <h1 class="header-title">Dashboard de Conciliação</h1>
-                <p class="header-subtitle">Gerencie suas conciliações bancárias de forma eficiente</p>
-            </div>
-
-            <div class="content-area">
-                <div class="tab-content">
-                    <!-- Dashboard -->
-                    <div class="tab-pane fade show active" id="dashboard">
-                        <!-- Action Buttons -->
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div>
-                                <h2 class="h4 mb-1">Visão Geral</h2>
-                                <p class="text-muted mb-0">Acompanhe o status das suas conciliações</p>
-                            </div>
-                            <button class="btn btn-primary-modern btn-modern" onclick="executarConciliacaoAutomatica()">
-                                <i class="fas fa-magic"></i>
-                                Conciliação Automática
-                            </button>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="sidebar-header">
+                        <div class="sidebar-logo">
+                            <i class="fas fa-university fa-2x text-white"></i>
                         </div>
+                        <h4 class="text-white fw-bold">FinanceSync</h4>
+                        <small class="text-white-50 text-uppercase tracking-wider">Pro System</small>
+                    </div>
+                    
+                    <ul class="nav flex-column px-2">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                                <i class="fas fa-tachometer-alt me-3"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#importacao" data-bs-toggle="tab">
+                                <i class="fas fa-upload me-3"></i>
+                                <span>Importação</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#conciliacao" data-bs-toggle="tab">
+                                <i class="fas fa-link me-3"></i>
+                                <span>Conciliação</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#divergencias" data-bs-toggle="tab">
+                                <i class="fas fa-exclamation-triangle me-3"></i>
+                                <span>Divergências</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#relatorios" data-bs-toggle="tab">
+                                <i class="fas fa-chart-bar me-3"></i>
+                                <span>Relatórios</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
-                        <!-- Statistics Cards -->
-                        <div class="row g-4 mb-5" id="estatisticas">
-                            <div class="col-lg-3 col-md-6">
-                                <div class="stats-card">
-                                    <div class="stats-icon primary">
-                                        <i class="fas fa-file-invoice"></i>
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="main-content">
+                    <div class="tab-content">
+                        <!-- Dashboard -->
+                        <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                            <div class="page-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h1 class="h2 fw-bold mb-2">
+                                            <i class="fas fa-tachometer-alt icon-gradient me-3"></i>Dashboard
+                                        </h1>
+                                        <p class="text-muted mb-0">Visão geral do sistema de conciliação bancária</p>
                                     </div>
-                                    <div class="stats-value" id="total-extratos">0</div>
-                                    <div class="stats-label">Extratos Bancários</div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-primary btn-action" onclick="carregarEstatisticas(periodoAtualDashboard)">
+                                            <i class="fas fa-sync-alt me-2"></i>Atualizar
+                                        </button>
+                                        <button type="button" class="btn btn-outline-info btn-action" onclick="criarDadosExemplo()">
+                                            <i class="fas fa-database me-2"></i>Dados Exemplo
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-action" onclick="limparTodosDados()">
+                                            <i class="fas fa-trash-alt me-2"></i>Limpar Tudo
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="stats-card">
-                                    <div class="stats-icon success">
-                                        <i class="fas fa-book"></i>
-                                    </div>
-                                    <div class="stats-value" id="total-lancamentos">0</div>
-                                    <div class="stats-label">Lançamentos Contábeis</div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="stats-card">
-                                    <div class="stats-icon success">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <div class="stats-value" id="conciliados">0</div>
-                                    <div class="stats-label">Itens Conciliados</div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="stats-card">
-                                    <div class="stats-icon danger">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </div>
-                                    <div class="stats-value" id="divergencias-pendentes">0</div>
-                                    <div class="stats-label">Divergências Pendentes</div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Quick Upload Section -->
-                        <div class="row g-4 mb-5">
-                            <div class="col-lg-6">
-                                <div class="card-modern">
-                                    <div class="card-header-modern">
-                                        <i class="fas fa-university me-2"></i>
-                                        Importar Extrato Bancário
+                            <!-- Filtros de Período -->
+                            <div class="card card-dashboard mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title mb-1">
+                                                <i class="fas fa-filter me-2 text-primary"></i>Filtros de Período
+                                            </h5>
+                                            <p class="text-muted mb-0">Visualize dados por diferentes períodos de tempo</p>
+                                        </div>
+                                        <div class="btn-group" role="group" aria-label="Filtros de período">
+                                            <button type="button" class="btn btn-outline-primary active" id="filtro-hoje" onclick="aplicarFiltroPeriodo('hoje')">
+                                                <i class="fas fa-calendar-day me-2"></i>Hoje
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary" id="filtro-semana" onclick="aplicarFiltroPeriodo('semana')">
+                                                <i class="fas fa-calendar-week me-2"></i>Esta Semana
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary" id="filtro-mes" onclick="aplicarFiltroPeriodo('mes')">
+                                                <i class="fas fa-calendar-alt me-2"></i>Este Mês
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary" id="filtro-ano" onclick="aplicarFiltroPeriodo('ano')">
+                                                <i class="fas fa-calendar me-2"></i>Este Ano
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary" id="filtro-personalizado" onclick="mostrarFiltroPersonalizado()">
+                                                <i class="fas fa-calendar-plus me-2"></i>Personalizado
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="p-4">
-                                        <div class="upload-zone" onclick="document.getElementById('extrato-file').click()">
-                                            <div class="upload-icon">
-                                                <i class="fas fa-cloud-upload-alt"></i>
+                                    
+                                    <!-- Filtro Personalizado (inicialmente oculto) -->
+                                    <div id="filtro-personalizado-container" class="mt-3" style="display: none;">
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <label for="data-inicio-dashboard" class="form-label">Data Início</label>
+                                                <input type="date" class="form-control" id="data-inicio-dashboard">
                                             </div>
-                                            <h6 class="mb-2">Clique para selecionar arquivo</h6>
-                                            <p class="text-muted mb-0">Suporte para CSV, Excel, OFX, CNAB, PDF</p>
-                                        </div>
-                                        <input type="file" id="extrato-file" style="display: none;" 
-                                               accept=".csv,.xlsx,.xls,.ofx,.cnab,.ret,.pdf" 
-                                               onchange="uploadExtrato(this)">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="card-modern">
-                                    <div class="card-header-modern">
-                                        <i class="fas fa-receipt me-2"></i>
-                                        Importar Lançamentos Contábeis
-                                    </div>
-                                    <div class="p-4">
-                                        <div class="upload-zone" onclick="document.getElementById('lancamento-file').click()">
-                                            <div class="upload-icon">
-                                                <i class="fas fa-cloud-upload-alt"></i>
+                                            <div class="col-md-3">
+                                                <label for="data-fim-dashboard" class="form-label">Data Fim</label>
+                                                <input type="date" class="form-control" id="data-fim-dashboard">
                                             </div>
-                                            <h6 class="mb-2">Clique para selecionar arquivo</h6>
-                                            <p class="text-muted mb-0">Suporte para CSV, Excel</p>
-                                        </div>
-                                                                                <input type="file" id="lancamento-file" style="display: none;" 
-                                               accept=".csv,.xlsx,.xls" 
-                                               onchange="uploadLancamento(this)">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recent Activity -->
-                        <div class="row g-4">
-                            <div class="col-lg-8">
-                                <div class="card-modern">
-                                    <div class="card-header-modern">
-                                        <i class="fas fa-history me-2"></i>
-                                        Atividade Recente
-                                    </div>
-                                    <div class="table-modern">
-                                        <table class="table mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th>Data</th>
-                                                    <th>Ação</th>
-                                                    <th>Arquivo</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="atividade-recente">
-                                                <tr>
-                                                    <td colspan="4" class="text-center text-muted py-4">
-                                                        Nenhuma atividade registrada
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="card-modern">
-                                    <div class="card-header-modern">
-                                        <i class="fas fa-tasks me-2"></i>
-                                        Ações Rápidas
-                                    </div>
-                                    <div class="p-4">
-                                        <div class="d-grid gap-3">
-                                            <button class="btn btn-success-modern btn-modern" onclick="exportarExtratos()">
-                                                <i class="fas fa-download"></i>
-                                                Exportar Extratos
-                                            </button>
-                                            <button class="btn btn-success-modern btn-modern" onclick="exportarLancamentos()">
-                                                <i class="fas fa-download"></i>
-                                                Exportar Lançamentos
-                                            </button>
-                                            <button class="btn btn-success-modern btn-modern" onclick="exportarConciliacoes()">
-                                                <i class="fas fa-download"></i>
-                                                Exportar Conciliações
-                                            </button>
-                                            <button class="btn btn-primary-modern btn-modern" onclick="limparDados()">
-                                                <i class="fas fa-trash"></i>
-                                                Limpar Dados
-                                            </button>
+                                            <div class="col-md-6 d-flex align-items-end">
+                                                <button class="btn btn-primary me-2" onclick="aplicarFiltroPersonalizado()">
+                                                    <i class="fas fa-search me-2"></i>Aplicar
+                                                </button>
+                                                <button class="btn btn-outline-secondary" onclick="ocultarFiltroPersonalizado()">
+                                                    <i class="fas fa-times me-2"></i>Cancelar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Últimas Atividades -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-clock"></i> Últimas Conciliações</h5>
-                                    </div>
-                                    <div class="card-body table-container">
-                                        <div id="ultimas-conciliacoes">Carregando...</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-exclamation-circle"></i> Divergências Recentes</h5>
-                                    </div>
-                                    <div class="card-body table-container">
-                                        <div id="divergencias-recentes">Carregando...</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Importação -->
-                    <div class="tab-pane fade" id="importacao">
-                        <div class="top-header">
-                            <h1 class="header-title">Importação de Dados</h1>
-                            <p class="header-subtitle">Importe seus extratos bancários e lançamentos contábeis</p>
-                        </div>
-
-                        <div class="content-area">
+                            <!-- Cards de Estatísticas -->
                             <div class="row g-4 mb-5">
-                                <div class="col-lg-6">
-                                    <div class="card-modern">
-                                        <div class="card-header-modern">
-                                            <i class="fas fa-university me-2"></i>
-                                            Importar Extrato Bancário
-                                        </div>
-                                        <div class="p-4">
-                                            <form id="form-extrato">
-                                                <div class="mb-4">
-                                                    <label class="form-label fw-semibold">Selecionar Arquivo</label>
-                                                    <input type="file" class="form-control" id="extrato-file-detailed" 
-                                                           accept=".csv,.xlsx,.xls,.ofx,.cnab,.ret,.pdf" required>
-                                                    <div class="form-text mt-2">
-                                                        <i class="fas fa-info-circle me-1"></i>
-                                                        Formatos suportados: CSV, Excel, OFX, CNAB, PDF
-                                                    </div>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary-modern btn-modern w-100">
-                                                    <i class="fas fa-upload"></i>
-                                                    Importar Extrato
-                                                </button>
-                                            </form>
+                                <div class="col-md-3">
+                                    <div class="card card-dashboard stat-card">
+                                        <div class="card-body text-center p-4">
+                                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                                <i class="fas fa-file-invoice fa-3x"></i>
+                                            </div>
+                                            <h3 class="fw-bold mb-1" id="total-extratos">0</h3>
+                                            <p class="card-text mb-0 text-uppercase fw-medium">Total de Extratos</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="card-modern">
-                                        <div class="card-header-modern">
-                                            <i class="fas fa-receipt me-2"></i>
-                                            Importar Lançamentos Contábeis
+                                <div class="col-md-3">
+                                    <div class="card card-dashboard stat-card">
+                                        <div class="card-body text-center p-4">
+                                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                                <i class="fas fa-receipt fa-3x"></i>
+                                            </div>
+                                            <h3 class="fw-bold mb-1" id="total-lancamentos">0</h3>
+                                            <p class="card-text mb-0 text-uppercase fw-medium">Total de Lançamentos</p>
                                         </div>
-                                        <div class="p-4">
-                                            <form id="form-lancamento">
-                                                <div class="mb-4">
-                                                    <label class="form-label fw-semibold">Selecionar Arquivo</label>
-                                                    <input type="file" class="form-control" id="lancamento-file-detailed" 
-                                                           accept=".csv,.xlsx,.xls" required>
-                                                    <div class="form-text mt-2">
-                                                        <i class="fas fa-info-circle me-1"></i>
-                                                        Formatos suportados: CSV, Excel
-                                                    </div>
-                                                </div>
-                                                <button type="submit" class="btn btn-success-modern btn-modern w-100">
-                                                    <i class="fas fa-upload"></i>
-                                                    Importar Lançamentos
-                                                </button>
-                                            </form>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card card-dashboard stat-card">
+                                        <div class="card-body text-center p-4">
+                                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                                <i class="fas fa-check-circle fa-3x"></i>
+                                            </div>
+                                            <h3 class="fw-bold mb-1" id="total-conciliados">0</h3>
+                                            <p class="card-text mb-0 text-uppercase fw-medium">Conciliados</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card card-dashboard stat-card">
+                                        <div class="card-body text-center p-4">
+                                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                                <i class="fas fa-exclamation-triangle fa-3x"></i>
+                                            </div>
+                                            <h3 class="fw-bold mb-1" id="total-divergencias">0</h3>
+                                            <p class="card-text mb-0 text-uppercase fw-medium">Divergências</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="card-modern">
-                                <div class="card-header-modern">
-                                    <i class="fas fa-history me-2"></i>
-                                    Histórico de Importações
+                            <!-- Resumo Financeiro -->
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="card card-dashboard h-100">
+                                        <div class="card-header bg-transparent border-0 pt-4">
+                                            <h5 class="fw-bold mb-0">
+                                                <i class="fas fa-chart-line icon-gradient me-3"></i>Resumo Financeiro
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                                <span class="fw-medium">Saldo Extratos:</span>
+                                                <strong id="saldo-extratos" class="fs-5" style="color: var(--primary-color)">R$ 0,00</strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                                <span class="fw-medium">Saldo Lançamentos:</span>
+                                                <strong id="saldo-lancamentos" class="fs-5" style="color: var(--secondary-color)">R$ 0,00</strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center py-3">
+                                                <span class="fw-bold fs-5">Diferença:</span>
+                                                <strong id="diferenca-saldo" class="fs-4" style="color: var(--warning-color)">R$ 0,00</strong>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="table-modern">
-                                    <div id="historico-importacoes" class="p-4">Carregando...</div>
+                                <div class="col-md-6">
+                                    <div class="card card-dashboard h-100">
+                                        <div class="card-header bg-transparent border-0 pt-4">
+                                            <h5 class="fw-bold mb-0">
+                                                <i class="fas fa-magic icon-gradient me-3"></i>Conciliação Automática
+                                            </h5>
+                                        </div>
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <div class="mb-4">
+                                                <i class="fas fa-robot fa-3x icon-gradient mb-3"></i>
+                                                <p class="text-muted mb-0">Execute a conciliação automática dos dados importados</p>
+                                            </div>
+                                            <button class="btn btn-success btn-action btn-lg" onclick="executarConciliacaoAutomatica()">
+                                                <i class="fas fa-play me-2"></i>Executar Conciliação
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Importação -->
+                        <div class="tab-pane fade" id="importacao" role="tabpanel">
+                            <div class="page-header">
+                                <h2 class="fw-bold mb-2">
+                                    <i class="fas fa-upload icon-gradient me-3"></i>Importação de Dados
+                                </h2>
+                                <p class="text-muted mb-0">Faça upload dos arquivos CSV de extratos bancários e lançamentos contábeis</p>
+                            </div>
+                            
+                            <div class="row g-4">
+                                <!-- Upload de Extratos -->
+                                <div class="col-md-6">
+                                    <div class="card card-dashboard h-100">
+                                        <div class="card-header bg-transparent border-0 pt-4">
+                                            <h5 class="fw-bold text-primary">
+                                                <i class="fas fa-file-csv me-2"></i>Extratos Bancários
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="upload-area" id="upload-extratos">
+                                                <i class="fas fa-cloud-upload-alt fa-4x text-muted mb-4"></i>
+                                                <h6 class="fw-bold mb-2">Arraste o arquivo aqui</h6>
+                                                <p class="text-muted mb-3">ou clique para selecionar</p>
+                                                <input type="file" id="file-extratos" accept=".csv" class="d-none">
+                                                <button class="btn btn-primary btn-action" onclick="document.getElementById('file-extratos').click()">
+                                                    <i class="fas fa-folder-open me-2"></i>Selecionar Arquivo
+                                                </button>
+                                                <small class="d-block text-muted mt-3">Formato: CSV com colunas Data, Descrição, Valor</small>
+                                            </div>
+                                            <div id="preview-extratos" class="mt-3"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Upload de Lançamentos -->
+                                <div class="col-md-6">
+                                    <div class="card card-dashboard h-100">
+                                        <div class="card-header bg-transparent border-0 pt-4">
+                                            <h5 class="fw-bold text-info">
+                                                <i class="fas fa-file-invoice me-2"></i>Lançamentos Contábeis
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="upload-area" id="upload-lancamentos">
+                                                <i class="fas fa-cloud-upload-alt fa-4x text-muted mb-4"></i>
+                                                <h6 class="fw-bold mb-2">Arraste o arquivo aqui</h6>
+                                                <p class="text-muted mb-3">ou clique para selecionar</p>
+                                                <input type="file" id="file-lancamentos" accept=".csv" class="d-none">
+                                                <button class="btn btn-info btn-action" onclick="document.getElementById('file-lancamentos').click()">
+                                                    <i class="fas fa-folder-open me-2"></i>Selecionar Arquivo
+                                                </button>
+                                                <small class="d-block text-muted mt-3">Formato: CSV com colunas Data, Descrição, Valor</small>
+                                            </div>
+                                            <div id="preview-lancamentos" class="mt-3"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status dos Uploads -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div id="upload-status" class="alert alert-info alert-custom d-none">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-info-circle me-3 fa-lg"></i>
+                                            <span id="upload-message" class="fw-medium">Pronto para upload</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     <!-- Conciliação -->
-                    <div class="tab-pane fade" id="conciliacao">
-                        <div class="top-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h1 class="header-title">Conciliação Bancária</h1>
-                                    <p class="header-subtitle">Execute e gerencie suas conciliações automáticas</p>
+                    <div class="tab-pane fade" id="conciliacao" role="tabpanel">
+                        <h2 class="mb-4"><i class="fas fa-link text-success me-2"></i>Conciliação Bancária</h2>
+                        
+                        <div class="alert alert-info alert-custom">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Atenção:</strong> Certifique-se de ter importado os extratos bancários e lançamentos contábeis antes de iniciar a conciliação.
+                        </div>
+
+                        <!-- Estatísticas Rápidas -->
+                        <div class="row mb-4">
+                            <div class="col-md-3 mb-3">
+                                <div class="card card-stat bg-gradient-primary text-white">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h5 class="card-title">Total</h5>
+                                                <h3 id="stat-total-conciliacoes">0</h3>
+                                            </div>
+                                            <i class="fas fa-link fa-2x opacity-75"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card card-stat bg-gradient-success text-white">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h5 class="card-title">Ativas</h5>
+                                                <h3 id="stat-conciliacoes-ativas">0</h3>
+                                            </div>
+                                            <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card card-stat bg-gradient-warning text-white">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h5 class="card-title">Automáticas</h5>
+                                                <h3 id="stat-conciliacoes-automaticas">0</h3>
+                                            </div>
+                                            <i class="fas fa-robot fa-2x opacity-75"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card card-stat bg-gradient-info text-white">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h5 class="card-title">Últimos 30 dias</h5>
+                                                <h3 id="stat-conciliacoes-recentes">0</h3>
+                                            </div>
+                                            <i class="fas fa-calendar fa-2x opacity-75"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ações Principais -->
+                        <div class="card card-dashboard mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">Processo de Conciliação</h5>
+                                <p class="text-muted">O sistema irá comparar automaticamente os extratos bancários com os lançamentos contábeis.</p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success btn-action" onclick="iniciarConciliacao()">
+                                        <i class="fas fa-play me-2"></i>Iniciar Conciliação
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-action" onclick="limparDados()">
+                                        <i class="fas fa-trash me-2"></i>Limpar Dados
+                                    </button>
+                                    <button class="btn btn-info btn-action" onclick="atualizarConciliacoes()">
+                                        <i class="fas fa-sync me-2"></i>Atualizar Lista
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtros -->
+                        <div class="card card-dashboard mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros de Conciliação</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <label for="filtro-data-inicio" class="form-label">Data Início</label>
+                                        <input type="date" class="form-control" id="filtro-data-inicio">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="filtro-data-fim" class="form-label">Data Fim</label>
+                                        <input type="date" class="form-control" id="filtro-data-fim">
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="filtro-tipo" class="form-label">Tipo</label>
+                                        <select class="form-select" id="filtro-tipo">
+                                            <option value="">Todos</option>
+                                            <option value="automatica">Automática</option>
+                                            <option value="manual">Manual</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="filtro-status" class="form-label">Status</label>
+                                        <select class="form-select" id="filtro-status">
+                                            <option value="">Todos</option>
+                                            <option value="ativa">Ativa</option>
+                                            <option value="cancelada">Cancelada</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="filtro-por-pagina" class="form-label">Por Página</label>
+                                        <select class="form-select" id="filtro-por-pagina">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-success-modern btn-modern" onclick="executarConciliacaoAutomatica()">
-                                        <i class="fas fa-magic"></i>
-                                        Conciliação Automática
+                                    <button class="btn btn-primary" onclick="aplicarFiltros()">
+                                        <i class="fas fa-search me-2"></i>Aplicar Filtros
                                     </button>
-                                    <button class="btn btn-primary-modern btn-modern" onclick="carregarDadosConciliacao()">
-                                        <i class="fas fa-sync"></i>
-                                        Atualizar
+                                    <button class="btn btn-outline-secondary" onclick="limparFiltros()">
+                                        <i class="fas fa-times me-2"></i>Limpar Filtros
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="content-area">
-                            <div class="row g-4 mb-5">
-                                <div class="col-lg-6">
-                                    <div class="card-modern">
-                                        <div class="card-header-modern">
-                                            <i class="fas fa-university me-2"></i>
-                                            Extratos Não Conciliados
-                                        </div>
-                                        <div class="table-modern">
-                                            <div id="extratos-nao-conciliados" class="p-4">Carregando...</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="card-modern">
-                                        <div class="card-header-modern">
-                                            <i class="fas fa-receipt me-2"></i>
-                                            Lançamentos Não Conciliados
-                                        </div>
-                                        <div class="table-modern">
-                                            <div id="lancamentos-nao-conciliados" class="p-4">Carregando...</div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <!-- Lista de Conciliações -->
+                        <div class="card card-dashboard">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Histórico de Conciliações</h5>
                             </div>
-
-                            <div class="card-modern">
-                                <div class="card-header-modern">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    Conciliações Realizadas
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="table table-striped table-hover">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Data/Hora</th>
+                                                <th>Tipo</th>
+                                                <th>Status</th>
+                                                <th>Usuário</th>
+                                                <th>Extrato</th>
+                                                <th>Lançamento</th>
+                                                <th>Valor</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabela-conciliacoes">
+                                            <tr>
+                                                <td colspan="9" class="text-center text-muted">
+                                                    <i class="fas fa-hourglass-half me-2"></i>Carregando conciliações...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div class="table-modern">
-                                    <div id="conciliacoes-realizadas" class="p-4">Carregando...</div>
-                                </div>
+                                
+                                <!-- Paginação -->
+                                <nav aria-label="Paginação das conciliações" class="mt-3">
+                                    <ul class="pagination justify-content-center" id="paginacao-conciliacoes">
+                                        <!-- Paginação será inserida aqui via JavaScript -->
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
+
+                        <!-- Resultados da Conciliação -->
+                        <div id="resultados-conciliacao" class="mt-4"></div>
                     </div>
 
                     <!-- Divergências -->
-                    <div class="tab-pane fade" id="divergencias">
-                        <div class="top-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h1 class="header-title">Divergências</h1>
-                                    <p class="header-subtitle">Analise e resolva as divergências encontradas</p>
-                                </div>
-                                <button class="btn btn-primary-modern btn-modern" onclick="carregarDivergencias()">
-                                    <i class="fas fa-sync"></i>
-                                    Atualizar
-                                </button>
+                    <div class="tab-pane fade" id="divergencias" role="tabpanel">
+                        <h2 class="mb-4"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Divergências</h2>
+                        
+                        <div class="card card-dashboard">
+                            <div class="card-header bg-warning text-dark">
+                                <h5><i class="fas fa-search me-2"></i>Divergências Encontradas</h5>
                             </div>
-                        </div>
-
-                        <div class="content-area">
-                            <div class="card-modern">
-                                <div class="card-header-modern">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    Divergências Pendentes
-                                </div>
-                                <div class="table-modern">
-                                    <div id="lista-divergencias" class="p-4">Carregando...</div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="table table-striped table-hover">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <th>Descrição</th>
+                                                <th>Valor</th>
+                                                <th>Data</th>
+                                                <th>Status</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabela-divergencias">
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">
+                                                    <i class="fas fa-search me-2"></i>Nenhuma divergência encontrada
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Relatórios -->
-                    <div class="tab-pane fade" id="relatorios">
-                        <div class="top-header">
-                            <h1 class="header-title">Relatórios</h1>
-                            <p class="header-subtitle">Gere relatórios e análises detalhadas</p>
-                        </div>
-
-                        <div class="content-area">
-                            <div class="row g-4 mb-5">
-                                <div class="col-lg-6">
-                                    <div class="card-modern">
-                                        <div class="card-header-modern">
-                                            <i class="fas fa-chart-pie me-2"></i>
-                                            Relatório Consolidado
-                                        </div>
-                                        <div class="p-4">
-                                            <form id="form-relatorio">
-                                                <div class="row g-3">
-                                                    <div class="col-md-6">
-                                                        <label class="form-label fw-semibold">Data Início</label>
-                                                        <input type="date" class="form-control" id="data-inicio">
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label class="form-label fw-semibold">Data Fim</label>
-                                                        <input type="date" class="form-control" id="data-fim">
-                                                    </div>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary-modern btn-modern w-100 mt-4">
-                                                    <i class="fas fa-chart-bar"></i>
-                                                    Gerar Relatório
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="card-modern">
-                                        <div class="card-header-modern">
-                                            <i class="fas fa-download me-2"></i>
-                                            Exportar Dados
-                                        </div>
-                                    <div class="card-body">
-                                        <button class="btn btn-success btn-action mb-2 w-100" onclick="exportarExtratos()">
-                                            <i class="fas fa-file-csv"></i> Exportar Extratos
-                                        </button>
-                                        <button class="btn btn-info btn-action mb-2 w-100" onclick="exportarLancamentos()">
-                                            <i class="fas fa-file-csv"></i> Exportar Lançamentos
-                                        </button>
-                                        <button class="btn btn-warning btn-action w-100" onclick="exportarConciliacoes()">
-                                            <i class="fas fa-file-csv"></i> Exportar Conciliações
+                    <div class="tab-pane fade" id="relatorios" role="tabpanel">
+                        <h2 class="mb-4"><i class="fas fa-chart-bar text-info me-2"></i>Relatórios</h2>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card card-dashboard">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                                        <h5>Relatório de Conciliação</h5>
+                                        <p class="text-muted">Gerar relatório completo da conciliação</p>
+                                        <button class="btn btn-danger btn-action" onclick="gerarRelatorioPDF()">
+                                            <i class="fas fa-download me-2"></i>Gerar PDF
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col-12">
+                            <div class="col-md-4 mb-3">
                                 <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-chart-line"></i> Resultados do Relatório</h5>
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-file-excel fa-3x text-success mb-3"></i>
+                                        <h5>Exportar Divergências</h5>
+                                        <p class="text-muted">Exportar lista de divergências para Excel</p>
+                                        <button class="btn btn-success btn-action" onclick="exportarDivergencias()">
+                                            <i class="fas fa-download me-2"></i>Exportar Excel
+                                        </button>
                                     </div>
-                                    <div class="card-body">
-                                        <div id="resultado-relatorio">Selecione um período e gere um relatório</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card card-dashboard">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                                        <h5>Análise Estatística</h5>
+                                        <p class="text-muted">Visualizar estatísticas detalhadas</p>
+                                        <button class="btn btn-primary btn-action" onclick="mostrarEstatisticas()">
+                                            <i class="fas fa-chart-bar me-2"></i>Ver Estatísticas
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Configurações -->
-                    <div class="tab-pane fade" id="configuracoes">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Configurações</h1>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-users"></i> Gestão de Usuários</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarUsuarios()">
-                                            <i class="fas fa-list"></i> Listar Usuários
-                                        </button>
-                                        <div id="lista-usuarios">Clique em "Listar Usuários" para ver os usuários cadastrados</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-university"></i> Contas Bancárias</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarContas()">
-                                            <i class="fas fa-list"></i> Listar Contas
-                                        </button>
-                                        <div id="lista-contas">Clique em "Listar Contas" para ver as contas cadastradas</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-cogs"></i> Regras de Conciliação</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarRegras()">
-                                            <i class="fas fa-list"></i> Listar Regras
-                                        </button>
-                                        <div id="lista-regras">Clique em "Listar Regras" para ver as regras configuradas</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- Alertas -->
-    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-        <div id="alert-container"></div>
-    </div>
-
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // Funções principais
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alert-container');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-custom alert-dismissible fade show`;
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            alertContainer.appendChild(alert);
+        // Funções de upload e manipulação de arquivos
+        document.getElementById('file-extratos').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                uploadFile(file, 'extratos');
+            }
+        });
+
+        document.getElementById('file-lancamentos').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                uploadFile(file, 'lancamentos');
+            }
+        });
+
+        function uploadFile(file, tipo) {
+            const formData = new FormData();
+            formData.append('file', file);
             
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
+            // Mostrar status de upload
+            const statusDiv = document.getElementById('upload-status');
+            const messageSpan = document.getElementById('upload-message');
+            statusDiv.className = 'alert alert-info alert-custom';
+            statusDiv.classList.remove('d-none');
+            messageSpan.textContent = `Uploading ${tipo}...`;
+            
+            fetch(`/api/upload-${tipo}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusDiv.className = 'alert alert-success alert-custom';
+                    messageSpan.textContent = `${tipo} uploaded successfully! ${data.count} records processed.`;
+                    carregarEstatisticas();
+                } else {
+                    statusDiv.className = 'alert alert-danger alert-custom';
+                    messageSpan.textContent = `Error uploading ${tipo}: ${data.error}`;
+                }
+            })
+            .catch(error => {
+                statusDiv.className = 'alert alert-danger alert-custom';
+                messageSpan.textContent = `Error uploading ${tipo}: ${error.message}`;
+            });
         }
 
-        function carregarEstatisticas() {
-            fetch('/api/estatisticas')
+        function carregarEstatisticas(periodo = 'total', dataInicio = null, dataFim = null) {
+            // Construir parâmetros da requisição
+            const params = new URLSearchParams();
+            if (periodo && periodo !== 'total') {
+                params.append('periodo', periodo);
+            }
+            if (dataInicio) {
+                params.append('data_inicio', dataInicio);
+            }
+            if (dataFim) {
+                params.append('data_fim', dataFim);
+            }
+
+            // Exibir indicador de carregamento
+            const elementos = ['total-extratos', 'total-lancamentos', 'total-conciliados', 'total-divergencias'];
+            elementos.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = '...';
+            });
+
+            fetch(`/api/estatisticas?${params}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('total-extratos').textContent = data.total_extratos;
-                    document.getElementById('total-lancamentos').textContent = data.total_lancamentos;
-                    document.getElementById('conciliados').textContent = data.extratos_conciliados + data.lancamentos_conciliados;
-                    document.getElementById('divergencias-pendentes').textContent = data.divergencias_pendentes;
+                    // Atualizar elementos básicos
+                    const totalExtratosEl = document.getElementById('total-extratos');
+                    const totalLancamentosEl = document.getElementById('total-lancamentos');
+                    const totalConciliadosEl = document.getElementById('total-conciliados');
+                    const totalDivergenciasEl = document.getElementById('total-divergencias');
+                    
+                    if (totalExtratosEl) totalExtratosEl.textContent = data.total_extratos || 0;
+                    if (totalLancamentosEl) totalLancamentosEl.textContent = data.total_lancamentos || 0;
+                    if (totalConciliadosEl) totalConciliadosEl.textContent = data.extratos_conciliados || 0;
+                    if (totalDivergenciasEl) totalDivergenciasEl.textContent = data.divergencias_pendentes || 0;
+                    
+                    // Atualizar valores financeiros
+                    const saldoExtratosElement = document.getElementById('saldo-extratos');
+                    const saldoLancamentosElement = document.getElementById('saldo-lancamentos');
+                    const diferencaSaldoElement = document.getElementById('diferenca-saldo');
+                    
+                    if (saldoExtratosElement) {
+                        saldoExtratosElement.textContent = `R$ ${formatarMoeda(data.valor_total_extratos || 0)}`;
+                    }
+                    
+                    if (saldoLancamentosElement) {
+                        saldoLancamentosElement.textContent = `R$ ${formatarMoeda(data.valor_extratos_conciliados || 0)}`;
+                    }
+                    
+                    if (diferencaSaldoElement) {
+                        const diferenca = (data.valor_total_extratos || 0) - (data.valor_extratos_conciliados || 0);
+                        diferencaSaldoElement.textContent = `R$ ${formatarMoeda(diferenca)}`;
+                        diferencaSaldoElement.className = diferenca === 0 ? 'text-success' : 'text-warning';
+                    }
+
+                    // Atualizar percentuais se existirem
+                    const percentualElement = document.getElementById('percentual-conciliacao');
+                    if (percentualElement) {
+                        percentualElement.textContent = `${(data.percentual_conciliacao || 0).toFixed(1)}%`;
+                    }
+
+                    // Atualizar título do período se aplicável
+                    atualizarTituloPeriodo(data.periodo, data.data_inicio, data.data_fim);
                 })
                 .catch(error => {
                     console.error('Erro ao carregar estatísticas:', error);
-                });
-        }
-
-        function executarConciliacaoAutomatica() {
-            fetch('/api/conciliacao-automatica', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert(data.message, 'success');
-                    carregarEstatisticas();
-                } else {
-                    showAlert(data.error, 'danger');
-                }
-            })
-            .catch(error => {
-                showAlert('Erro ao executar conciliação automática', 'danger');
-            });
-        }
-
-        function uploadExtrato(input) {
-            if (!input.files[0]) return;
-            
-            const formData = new FormData();
-            formData.append('file', input.files[0]);
-            
-            fetch('/api/upload-extrato', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert(data.message, 'success');
-                    carregarEstatisticas();
-                } else {
-                    showAlert(data.error, 'danger');
-                }
-            })
-            .catch(error => {
-                showAlert('Erro no upload do arquivo', 'danger');
-            });
-        }
-
-        function uploadLancamento(input) {
-            if (!input.files[0]) return;
-            
-            const formData = new FormData();
-            formData.append('file', input.files[0]);
-            
-            fetch('/api/upload-lancamentos', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert(data.message, 'success');
-                    carregarEstatisticas();
-                } else {
-                    showAlert(data.error, 'danger');
-                }
-            })
-            .catch(error => {
-                showAlert('Erro no upload do arquivo', 'danger');
-            });
-        }
-
-        function carregarDadosConciliacao() {
-            // Carregar extratos não conciliados
-            fetch('/api/extratos')
-                .then(response => response.json())
-                .then(data => {
-                    const naoConciliados = data.filter(e => !e.conciliado);
-                    const html = naoConciliados.length > 0 ? 
-                        naoConciliados.slice(0, 10).map(e => `
-                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
-                                <div>
-                                    <strong>${e.descricao}</strong><br>
-                                    <small class="text-muted">${e.data} - R$ ${e.valor.toFixed(2)}</small>
-                                </div>
-                                <span class="badge bg-secondary">${e.tipo}</span>
-                            </div>
-                        `).join('') : '<p class="text-muted">Nenhum extrato não conciliado</p>';
-                    document.getElementById('extratos-nao-conciliados').innerHTML = html;
-                });
-
-            // Carregar lançamentos não conciliados
-            fetch('/api/lancamentos')
-                .then(response => response.json())
-                .then(data => {
-                    const naoConciliados = data.filter(l => !l.conciliado);
-                    const html = naoConciliados.length > 0 ? 
-                        naoConciliados.slice(0, 10).map(l => `
-                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
-                                <div>
-                                    <strong>${l.descricao}</strong><br>
-                                    <small class="text-muted">${l.data} - R$ ${l.valor.toFixed(2)}</small>
-                                </div>
-                                <span class="badge bg-secondary">${l.tipo}</span>
-                            </div>
-                        `).join('') : '<p class="text-muted">Nenhum lançamento não conciliado</p>';
-                    document.getElementById('lancamentos-nao-conciliados').innerHTML = html;
-                });
-
-            // Carregar conciliações realizadas
-            fetch('/api/conciliacoes')
-                .then(response => response.json())
-                .then(data => {
-                    const html = data.length > 0 ? 
-                        data.slice(0, 10).map(c => `
-                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
-                                <div>
-                                    <strong>${c.extrato.descricao}</strong><br>
-                                    <small class="text-muted">${c.data_conciliacao} - ${c.usuario}</small>
-                                </div>
-                                <span class="badge bg-success">Conciliado</span>
-                            </div>
-                        `).join('') : '<p class="text-muted">Nenhuma conciliação realizada</p>';
-                    document.getElementById('conciliacoes-realizadas').innerHTML = html;
-                });
-        }
-
-        function carregarDivergencias() {
-            fetch('/api/divergencias')
-                .then(response => response.json())
-                .then(data => {
-                    const html = data.length > 0 ? 
-                        data.map(d => `
-                            <div class="alert alert-warning alert-custom">
-                                <h6>${d.tipo.toUpperCase()}</h6>
-                                <p class="mb-1">${d.descricao}</p>
-                                <small class="text-muted">${d.created_at}</small>
-                                <button class="btn btn-sm btn-outline-warning float-end" onclick="resolverDivergencia(${d.id})">
-                                    Resolver
-                                </button>
-                            </div>
-                        `).join('') : '<p class="text-muted">Nenhuma divergência pendente</p>';
-                    document.getElementById('lista-divergencias').innerHTML = html;
-                });
-        }
-
-        function resolverDivergencia(id) {
-            const justificativa = prompt('Digite a justificativa para resolver esta divergência:');
-            if (!justificativa) return;
-
-            fetch(`/api/divergencias/${id}/resolver`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ justificativa })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert('Divergência resolvida com sucesso', 'success');
-                    carregarDivergencias();
-                    carregarEstatisticas();
-                } else {
-                    showAlert(data.error, 'danger');
-                }
-            });
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            carregarEstatisticas();
-            carregarDadosConciliacao();
-            carregarDivergencias();
-
-            // Form handlers
-            document.getElementById('form-extrato').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const file = document.getElementById('extrato-file-detailed').files[0];
-                if (file) {
-                    const input = { files: [file] };
-                    uploadExtrato(input);
-                }
-            });
-
-            document.getElementById('form-lancamento').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const file = document.getElementById('lancamento-file-detailed').files[0];
-                if (file) {
-                    const input = { files: [file] };
-                    uploadLancamento(input);
-                }
-            });
-
-            document.getElementById('form-relatorio').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const dataInicio = document.getElementById('data-inicio').value;
-                const dataFim = document.getElementById('data-fim').value;
-                
-                fetch(`/api/relatorios/consolidado?data_inicio=${dataInicio}&data_fim=${dataFim}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const html = `
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Estatísticas do Período</h6>
-                                    <ul class="list-unstyled">
-                                        <li>Extratos: ${data.estatisticas.total_extratos}</li>
-                                        <li>Lançamentos: ${data.estatisticas.total_lancamentos}</li>
-                                        <li>Extratos Conciliados: ${data.estatisticas.extratos_conciliados} (${data.estatisticas.percentual_extratos.toFixed(1)}%)</li>
-                                        <li>Lançamentos Conciliados: ${data.estatisticas.lancamentos_conciliados} (${data.estatisticas.percentual_lancamentos.toFixed(1)}%)</li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Período</h6>
-                                    <p>De: ${data.periodo.inicio || 'N/A'}<br>
-                                    Até: ${data.periodo.fim || 'N/A'}</p>
-                                </div>
-                            </div>
-                        `;
-                        document.getElementById('resultado-relatorio').innerHTML = html;
+                    // Restaurar valores em caso de erro
+                    elementos.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element) element.textContent = 'Erro';
                     });
+                });
+        }
+
+        // Variável global para armazenar o período atual
+        let periodoAtualDashboard = 'total';
+
+        // Aplicar filtro de período
+        function aplicarFiltroPeriodo(periodo) {
+            periodoAtualDashboard = periodo;
+            
+            // Atualizar estado visual dos botões
+            document.querySelectorAll('#dashboard .btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
             });
-        });
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Utility Functions
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alert-container');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show shadow-sm border-0`;
-            alert.style.borderRadius = '12px';
-            alert.innerHTML = `
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
-                    <span>${message}</span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            alertContainer.appendChild(alert);
+            document.getElementById(`filtro-${periodo}`).classList.add('active');
             
-            setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.remove();
+            // Ocultar filtro personalizado se estiver visível
+            const containerPersonalizado = document.getElementById('filtro-personalizado-container');
+            if (containerPersonalizado) {
+                containerPersonalizado.style.display = 'none';
+            }
+            
+            // Carregar estatísticas com o novo período
+            carregarEstatisticas(periodo);
+        }
+
+        // Mostrar filtro personalizado
+        function mostrarFiltroPersonalizado() {
+            // Remover active de outros botões
+            document.querySelectorAll('#dashboard .btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('filtro-personalizado').classList.add('active');
+            
+            // Mostrar container do filtro personalizado
+            document.getElementById('filtro-personalizado-container').style.display = 'block';
+            
+            // Definir datas padrão (últimos 30 dias)
+            const hoje = new Date();
+            const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+            
+            document.getElementById('data-inicio-dashboard').value = inicioMes.toISOString().split('T')[0];
+            document.getElementById('data-fim-dashboard').value = hoje.toISOString().split('T')[0];
+        }
+
+        // Aplicar filtro personalizado
+        function aplicarFiltroPersonalizado() {
+            const dataInicio = document.getElementById('data-inicio-dashboard').value;
+            const dataFim = document.getElementById('data-fim-dashboard').value;
+            
+            if (!dataInicio || !dataFim) {
+                alert('Por favor, selecione as datas de início e fim.');
+                return;
+            }
+            
+            if (new Date(dataInicio) > new Date(dataFim)) {
+                alert('A data de início deve ser menor ou igual à data de fim.');
+                return;
+            }
+            
+            periodoAtualDashboard = 'personalizado';
+            carregarEstatisticas('personalizado', dataInicio, dataFim);
+            
+            // Ocultar container do filtro personalizado
+            document.getElementById('filtro-personalizado-container').style.display = 'none';
+        }
+
+        // Ocultar filtro personalizado
+        function ocultarFiltroPersonalizado() {
+            document.getElementById('filtro-personalizado-container').style.display = 'none';
+            
+            // Voltar para o período anterior ou hoje
+            if (periodoAtualDashboard !== 'personalizado') {
+                aplicarFiltroPeriodo(periodoAtualDashboard);
+            } else {
+                aplicarFiltroPeriodo('hoje');
+            }
+        }
+
+        // Atualizar título do período
+        function atualizarTituloPeriodo(periodo, dataInicio, dataFim) {
+            const tituloPeriodoElement = document.querySelector('#dashboard .page-header p.text-muted');
+            if (!tituloPeriodoElement) return;
+            
+            let texto = 'Visão geral do sistema de conciliação bancária';
+            
+            if (periodo === 'hoje') {
+                texto += ' - Hoje';
+            } else if (periodo === 'semana') {
+                texto += ' - Esta Semana';
+            } else if (periodo === 'mes') {
+                texto += ' - Este Mês';
+            } else if (periodo === 'ano') {
+                texto += ' - Este Ano';
+            } else if (periodo === 'personalizado' && dataInicio && dataFim) {
+                const inicio = new Date(dataInicio).toLocaleDateString('pt-BR');
+                const fim = new Date(dataFim).toLocaleDateString('pt-BR');
+                texto += ` - ${inicio} a ${fim}`;
+            }
+            
+            tituloPeriodoElement.textContent = texto;
+        }
+
+        // Criar dados de exemplo
+        function criarDadosExemplo() {
+            if (!confirm('Isso criará dados de exemplo para testar os filtros. Continuar?')) {
+                return;
+            }
+
+            fetch('/api/criar-dados-exemplo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            }, 5000);
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Dados criados com sucesso!\n\nExtratos: ${data.extratos_criados}\nConciliações: ${data.conciliacoes_criadas}\nDivergências: ${data.divergencias_criadas}`);
+                    // Recarregar estatísticas
+                    carregarEstatisticas(periodoAtualDashboard);
+                } else {
+                    alert('Erro ao criar dados: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Erro ao criar dados: ' + error.message);
+            });
         }
 
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        }
-
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('pt-BR');
-        }
-
-        // Data Loading Functions
-        function carregarEstatisticas() {
-            fetch('/api/estatisticas')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('total-extratos').textContent = data.total_extratos || 0;
-                    document.getElementById('total-lancamentos').textContent = data.total_lancamentos || 0;
-                    document.getElementById('conciliados').textContent = (data.extratos_conciliados || 0) + (data.lancamentos_conciliados || 0);
-                    document.getElementById('divergencias-pendentes').textContent = data.divergencias_pendentes || 0;
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar estatísticas:', error);
-                    showAlert('Erro ao carregar estatísticas', 'danger');
-                });
-        }
-
-        // Upload Functions
-        function uploadExtrato(input) {
-            if (input.files && input.files[0]) {
-                const formData = new FormData();
-                formData.append('file', input.files[0]);
-                
-                showAlert('Uploading extrato...', 'info');
-                
-                fetch('/api/upload-extrato', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showAlert(data.message || 'Extrato importado com sucesso!', 'success');
-                        carregarEstatisticas();
-                        adicionarAtividadeRecente('Upload Extrato', input.files[0].name, 'Sucesso');
-                    } else {
-                        showAlert(data.message || 'Erro ao importar extrato', 'danger');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    showAlert('Erro ao fazer upload do extrato', 'danger');
-                });
+        // Limpar todos os dados
+        function limparTodosDados() {
+            if (!confirm('⚠️ ATENÇÃO: Isso irá DELETAR TODOS os dados do sistema!\n\n• Todos os extratos bancários\n• Todos os lançamentos contábeis\n• Todas as conciliações\n• Todas as divergências\n• Todas as contas bancárias\n\nEsta ação é IRREVERSÍVEL!\n\nTem certeza que deseja continuar?')) {
+                return;
             }
-        }
-
-        function uploadLancamento(input) {
-            if (input.files && input.files[0]) {
-                const formData = new FormData();
-                formData.append('file', input.files[0]);
-                
-                showAlert('Uploading lançamentos...', 'info');
-                
-                fetch('/api/upload-lancamento', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showAlert(data.message || 'Lançamentos importados com sucesso!', 'success');
-                        carregarEstatisticas();
-                        adicionarAtividadeRecente('Upload Lançamentos', input.files[0].name, 'Sucesso');
-                    } else {
-                        showAlert(data.message || 'Erro ao importar lançamentos', 'danger');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    showAlert('Erro ao fazer upload dos lançamentos', 'danger');
-                });
-            }
-        }
-
-        // Conciliation Functions
-        function executarConciliacaoAutomatica() {
-            showAlert('Executando conciliação automática...', 'info');
             
+            // Segunda confirmação para operação crítica
+            if (!confirm('🚨 CONFIRMAÇÃO FINAL!\n\nVocê está prestes a deletar TODOS os dados!\n\nDigite OK no próximo prompt para confirmar.')) {
+                return;
+            }
+
+            const confirmacao = prompt('Digite "DELETAR TUDO" (sem aspas) para confirmar:');
+            if (confirmacao !== 'DELETAR TUDO') {
+                alert('Operação cancelada. Texto de confirmação incorreto.');
+                return;
+            }
+
+            fetch('/api/limpar-todos-dados', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ Todos os dados foram removidos com sucesso!\n\nO sistema está agora completamente limpo.');
+                    // Recarregar estatísticas
+                    carregarEstatisticas(periodoAtualDashboard);
+                    // Recarregar a página para garantir limpeza completa
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    alert('Erro ao limpar dados: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Erro ao limpar dados: ' + error.message);
+            });
+        }
+
+        function executarConciliacaoAutomatica() {
             fetch('/api/conciliacao-automatica', {
                 method: 'POST',
                 headers: {
@@ -1458,203 +1390,424 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showAlert(`Conciliação realizada! ${data.conciliados} itens conciliados.`, 'success');
+                    alert(`Conciliação realizada! ${data.conciliados} itens conciliados.`);
                     carregarEstatisticas();
-                    adicionarAtividadeRecente('Conciliação Automática', '-', 'Sucesso');
+                    // Atualizar dados da aba de conciliação se estiver ativa
+                    if (document.getElementById('conciliacao').classList.contains('active')) {
+                        carregarEstatisticasConciliacoes();
+                        carregarConciliacoes(paginaAtualConciliacoes);
+                    }
                 } else {
-                    showAlert(data.message || 'Erro na conciliação automática', 'danger');
+                    alert('Erro na conciliação: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Erro:', error);
-                showAlert('Erro ao executar conciliação automática', 'danger');
+                alert('Erro na conciliação: ' + error.message);
             });
         }
 
-        // Export Functions
-        function exportarExtratos() {
-            showAlert('Exportando extratos...', 'info');
-            
-            fetch('/api/exporta-extratos')
-                .then(response => {
-                    if (response.ok) {
-                        return response.blob();
-                    }
-                    throw new Error('Erro na exportação');
-                })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `extratos_${new Date().toISOString().split('T')[0]}.csv`;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    showAlert('Extratos exportados com sucesso!', 'success');
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    showAlert('Erro ao exportar extratos', 'danger');
-                });
+        function iniciarConciliacao() {
+            executarConciliacaoAutomatica();
         }
 
-        function exportarLancamentos() {
-            showAlert('Exportando lançamentos...', 'info');
-            
-            fetch('/api/exporta-lancamentos')
-                .then(response => {
-                    if (response.ok) {
-                        return response.blob();
-                    }
-                    throw new Error('Erro na exportação');
-                })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `lancamentos_${new Date().toISOString().split('T')[0]}.csv`;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    showAlert('Lançamentos exportados com sucesso!', 'success');
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    showAlert('Erro ao exportar lançamentos', 'danger');
-                });
-        }
-
-        function exportarConciliacoes() {
-            showAlert('Exportando conciliações...', 'info');
-            
-            fetch('/api/exporta-conciliacoes')
-                .then(response => {
-                    if (response.ok) {
-                        return response.blob();
-                    }
-                    throw new Error('Erro na exportação');
-                })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `conciliacoes_${new Date().toISOString().split('T')[0]}.csv`;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    showAlert('Conciliações exportadas com sucesso!', 'success');
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    showAlert('Erro ao exportar conciliações', 'danger');
-                });
-        }
-
-        // Utility Functions
         function limparDados() {
-            if (confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
+            if (confirm('Tem certeza que deseja limpar todos os dados?')) {
                 fetch('/api/limpar-dados', {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showAlert('Dados limpos com sucesso!', 'success');
+                        alert('Dados limpos com sucesso!');
                         carregarEstatisticas();
-                        limparAtividadeRecente();
                     } else {
-                        showAlert('Erro ao limpar dados', 'danger');
+                        alert('Erro ao limpar dados: ' + data.message);
                     }
                 })
                 .catch(error => {
-                    console.error('Erro:', error);
-                    showAlert('Erro ao limpar dados', 'danger');
+                    alert('Erro ao limpar dados: ' + error.message);
                 });
             }
         }
 
-        function adicionarAtividadeRecente(acao, arquivo, status) {
-            const tbody = document.querySelector('#atividade-recente');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${new Date().toLocaleString('pt-BR')}</td>
-                <td>${acao}</td>
-                <td>${arquivo}</td>
-                <td><span class="badge bg-${status === 'Sucesso' ? 'success' : 'danger'}">${status}</span></td>
-            `;
-            
-            if (tbody.children.length === 1 && tbody.children[0].children.length === 1) {
-                tbody.innerHTML = '';
-            }
-            
-            tbody.insertBefore(row, tbody.firstChild);
-            
-            if (tbody.children.length > 10) {
-                tbody.removeChild(tbody.lastChild);
-            }
+        function gerarRelatorioPDF() {
+            window.open('/api/relatorio-pdf', '_blank');
         }
 
-        function limparAtividadeRecente() {
-            document.querySelector('#atividade-recente').innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center text-muted py-4">
-                        Nenhuma atividade registrada
-                    </td>
-                </tr>
-            `;
+        function exportarDivergencias() {
+            window.open('/api/exportar-divergencias', '_blank');
         }
 
-        // Tab Navigation
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Remove active class from all nav links
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Hide all tab panes
-                document.querySelectorAll('.tab-pane').forEach(tab => {
-                    tab.classList.remove('show', 'active');
+        // Variáveis globais para conciliações
+        let paginaAtualConciliacoes = 1;
+        let totalPaginasConciliacoes = 1;
+
+        // Carregar estatísticas das conciliações
+        function carregarEstatisticasConciliacoes() {
+            fetch('/api/conciliacoes/estatisticas')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('stat-total-conciliacoes').textContent = data.total_conciliacoes || 0;
+                    document.getElementById('stat-conciliacoes-ativas').textContent = data.conciliacoes_ativas || 0;
+                    document.getElementById('stat-conciliacoes-automaticas').textContent = data.conciliacoes_automaticas || 0;
+                    document.getElementById('stat-conciliacoes-recentes').textContent = data.conciliacoes_recentes || 0;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar estatísticas:', error);
                 });
+        }
+
+        // Carregar lista de conciliações
+        function carregarConciliacoes(pagina = 1) {
+            const params = new URLSearchParams({
+                page: pagina,
+                per_page: document.getElementById('filtro-por-pagina').value || 10
+            });
+
+            // Adicionar filtros se preenchidos
+            const dataInicio = document.getElementById('filtro-data-inicio').value;
+            const dataFim = document.getElementById('filtro-data-fim').value;
+            const tipo = document.getElementById('filtro-tipo').value;
+            const status = document.getElementById('filtro-status').value;
+
+            if (dataInicio) params.append('data_inicio', dataInicio);
+            if (dataFim) params.append('data_fim', dataFim);
+            if (tipo) params.append('tipo', tipo);
+            if (status) params.append('status', status);
+
+            fetch(`/api/conciliacoes?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    exibirConciliacoes(data.conciliacoes);
+                    atualizarPaginacao(data.pagination);
+                    paginaAtualConciliacoes = data.pagination.page;
+                    totalPaginasConciliacoes = data.pagination.pages;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar conciliações:', error);
+                    document.getElementById('tabela-conciliacoes').innerHTML = `
+                        <tr>
+                            <td colspan="9" class="text-center text-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar conciliações
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        // Exibir conciliações na tabela
+        function exibirConciliacoes(conciliacoes) {
+            const tbody = document.getElementById('tabela-conciliacoes');
+            
+            if (conciliacoes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">
+                            <i class="fas fa-search me-2"></i>Nenhuma conciliação encontrada
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = conciliacoes.map(conciliacao => {
+                const tipoClass = conciliacao.tipo_conciliacao === 'automatica' ? 'bg-success' : 'bg-info';
+                const statusClass = conciliacao.status === 'ativa' ? 'bg-success' : 'bg-warning';
                 
-                // Show target tab pane
-                const target = this.getAttribute('href').substring(1);
-                const targetTab = document.getElementById(target);
-                if (targetTab) {
-                    targetTab.classList.add('show', 'active');
-                }
+                return `
+                    <tr>
+                        <td><strong>#${conciliacao.id}</strong></td>
+                        <td>${formatarDataHora(conciliacao.data_conciliacao)}</td>
+                        <td>
+                            <span class="badge ${tipoClass}">
+                                <i class="fas ${conciliacao.tipo_conciliacao === 'automatica' ? 'fa-robot' : 'fa-user'} me-1"></i>
+                                ${conciliacao.tipo_conciliacao === 'automatica' ? 'Automática' : 'Manual'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge ${statusClass}">
+                                <i class="fas ${conciliacao.status === 'ativa' ? 'fa-check-circle' : 'fa-times-circle'} me-1"></i>
+                                ${conciliacao.status === 'ativa' ? 'Ativa' : 'Cancelada'}
+                            </span>
+                        </td>
+                        <td>
+                            ${conciliacao.usuario ? `
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-circle me-2"></i>
+                                    <div>
+                                        <div class="fw-bold">${conciliacao.usuario.nome}</div>
+                                        <small class="text-muted">@${conciliacao.usuario.username}</small>
+                                    </div>
+                                </div>
+                            ` : '<span class="text-muted">N/A</span>'}
+                        </td>
+                        <td>
+                            ${conciliacao.extrato ? `
+                                <div>
+                                    <div class="fw-bold">${conciliacao.extrato.descricao}</div>
+                                    <small class="text-muted">${conciliacao.extrato.data}</small>
+                                    ${conciliacao.extrato.conta ? `
+                                        <br><small class="text-info">${conciliacao.extrato.conta.banco} - ${conciliacao.extrato.conta.agencia}/${conciliacao.extrato.conta.conta}</small>
+                                    ` : ''}
+                                </div>
+                            ` : '<span class="text-muted">N/A</span>'}
+                        </td>
+                        <td>
+                            ${conciliacao.lancamento ? `
+                                <div>
+                                    <div class="fw-bold">${conciliacao.lancamento.descricao}</div>
+                                    <small class="text-muted">${conciliacao.lancamento.data}</small>
+                                    <br><small class="badge bg-secondary">${conciliacao.lancamento.categoria || 'Sem categoria'}</small>
+                                </div>
+                            ` : '<span class="text-muted">N/A</span>'}
+                        </td>
+                        <td>
+                            ${conciliacao.extrato || conciliacao.lancamento ? `
+                                <span class="fw-bold ${(conciliacao.extrato?.valor || conciliacao.lancamento?.valor) >= 0 ? 'text-success' : 'text-danger'}">
+                                    R$ ${formatarMoeda(conciliacao.extrato?.valor || conciliacao.lancamento?.valor || 0)}
+                                </span>
+                            ` : '<span class="text-muted">N/A</span>'}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-outline-info" onclick="verDetalhesConciliacao(${conciliacao.id})" title="Ver detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                ${conciliacao.status === 'ativa' ? `
+                                    <button class="btn btn-sm btn-outline-warning" onclick="cancelarConciliacao(${conciliacao.id})" title="Cancelar">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Atualizar paginação
+        function atualizarPaginacao(pagination) {
+            const paginacaoElement = document.getElementById('paginacao-conciliacoes');
+            
+            let html = '';
+            
+            // Botão anterior
+            html += `
+                <li class="page-item ${!pagination.has_prev ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="carregarConciliacoes(${pagination.page - 1})" ${!pagination.has_prev ? 'tabindex="-1" aria-disabled="true"' : ''}>
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </a>
+                </li>
+            `;
+            
+            // Páginas
+            const startPage = Math.max(1, pagination.page - 2);
+            const endPage = Math.min(pagination.pages, pagination.page + 2);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <li class="page-item ${i === pagination.page ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="carregarConciliacoes(${i})">${i}</a>
+                    </li>
+                `;
+            }
+            
+            // Botão próximo
+            html += `
+                <li class="page-item ${!pagination.has_next ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="carregarConciliacoes(${pagination.page + 1})" ${!pagination.has_next ? 'tabindex="-1" aria-disabled="true"' : ''}>
+                        Próximo <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            `;
+            
+            paginacaoElement.innerHTML = html;
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            carregarConciliacoes(1);
+        }
+
+        // Limpar filtros
+        function limparFiltros() {
+            document.getElementById('filtro-data-inicio').value = '';
+            document.getElementById('filtro-data-fim').value = '';
+            document.getElementById('filtro-tipo').value = '';
+            document.getElementById('filtro-status').value = '';
+            document.getElementById('filtro-por-pagina').value = '10';
+            carregarConciliacoes(1);
+        }
+
+        // Atualizar conciliações
+        function atualizarConciliacoes() {
+            carregarEstatisticasConciliacoes();
+            carregarConciliacoes(paginaAtualConciliacoes);
+        }
+
+        // Ver detalhes da conciliação
+        function verDetalhesConciliacao(id) {
+            // TODO: Implementar modal com detalhes
+            alert('Funcionalidade em desenvolvimento - Conciliação ID: ' + id);
+        }
+
+        // Cancelar conciliação
+        function cancelarConciliacao(id) {
+            if (confirm('Tem certeza que deseja cancelar esta conciliação?')) {
+                // TODO: Implementar cancelamento
+                alert('Funcionalidade em desenvolvimento - Cancelar conciliação ID: ' + id);
+            }
+        }
+
+        // Funções utilitárias
+        function formatarDataHora(dataString) {
+            const data = new Date(dataString);
+            return data.toLocaleString('pt-BR');
+        }
+
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(Math.abs(valor));
+        }
+
+        function mostrarEstatisticas() {
+            alert('Funcionalidade em desenvolvimento');
+        }
+
+        // Carregar dados iniciais
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir período inicial como hoje
+            periodoAtualDashboard = 'hoje';
+            carregarEstatisticas('hoje'); // Carregar estatísticas de hoje por padrão
+            inicializarUsuario();
+        });
+
+        // Manipulação de abas
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const target = this.getAttribute('href').substring(1);
+                    document.querySelectorAll('.tab-pane').forEach(tab => {
+                        tab.classList.remove('show', 'active');
+                    });
+                    document.getElementById(target).classList.add('show', 'active');
+                    
+                    // Carregar dados específicos da aba
+                    if (target === 'conciliacao') {
+                        carregarEstatisticasConciliacoes();
+                        carregarConciliacoes(1);
+                    }
+                });
             });
         });
 
-        // Form Handlers
-        document.getElementById('form-extrato')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('extrato-file-detailed');
-            uploadExtrato(fileInput);
-        });
+        // Funções do usuário
+        function inicializarUsuario() {
+            // Buscar dados do usuário do backend
+            fetch('/api/usuario')
+                .then(response => response.json())
+                .then(usuario => {
+                    document.getElementById('user-name').textContent = usuario.nome;
+                    document.getElementById('user-avatar').textContent = usuario.iniciais;
+                    document.querySelector('.user-role').textContent = usuario.role;
+                    
+                    // Armazenar dados do usuário para uso futuro
+                    window.currentUser = usuario;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar dados do usuário:', error);
+                    // Usar dados padrão em caso de erro
+                    const usuarioPadrao = {
+                        nome: 'Usuário Sistema',
+                        iniciais: 'US',
+                        role: 'Usuário'
+                    };
+                    
+                    document.getElementById('user-name').textContent = usuarioPadrao.nome;
+                    document.getElementById('user-avatar').textContent = usuarioPadrao.iniciais;
+                    document.querySelector('.user-role').textContent = usuarioPadrao.role;
+                });
+        }
 
-        document.getElementById('form-lancamento')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('lancamento-file-detailed');
-            uploadLancamento(fileInput);
-        });
+        function abrirPerfilUsuario() {
+            const usuario = window.currentUser || {
+                nome: 'Usuário Sistema',
+                email: 'usuario@financesync.com',
+                role: 'Usuário',
+                ultimo_acesso: 'N/A'
+            };
+            
+            alert(`📊 PERFIL DO USUÁRIO\n\n` +
+                  `👤 Nome: ${usuario.nome}\n` +
+                  `📧 Email: ${usuario.email}\n` +
+                  `🔑 Perfil: ${usuario.role}\n` +
+                  `⏰ Último Acesso: ${usuario.ultimo_acesso}\n\n` +
+                  `⚙️ Em breve você poderá:\n` +
+                  `• Editar dados pessoais\n` +
+                  `• Alterar senha\n` +
+                  `• Configurar preferências\n` +
+                  `• Upload de foto de perfil`);
+        }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            carregarEstatisticas();
-            
-            // Set default dates for report form
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            
-            const dataInicioInput = document.getElementById('data-inicio');
-            const dataFimInput = document.getElementById('data-fim');
-            
-            if (dataInicioInput) {
-                dataInicioInput.value = firstDay.toISOString().split('T')[0];
+        function abrirConfiguracoes() {
+            alert('Funcionalidade de configurações em desenvolvimento.\n\nEm breve você poderá:\n• Configurar notificações\n• Definir tema da interface\n• Configurar integrações');
+        }
+
+        function confirmarLogout() {
+            if (confirm('Tem certeza que deseja sair do sistema?')) {
+                // Animação de saída
+                document.body.style.opacity = '0.5';
+                document.body.style.transform = 'scale(0.98)';
+                document.body.style.transition = 'all 0.5s ease';
+                
+                // Fazer logout no backend
+                fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        setTimeout(() => {
+                            // Redirecionar para a página de login
+                            window.location.href = '/login';
+                        }, 500);
+                    } else {
+                        // Em caso de erro, ainda redirecionar
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 500);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro no logout:', error);
+                    // Mesmo em caso de erro, redirecionar
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 500);
+                });
             }
-            if (dataFimInput) {
-                dataFimInput.value = today.toISOString().split('T')[0];
-            }
-        });
+        }
+
+        // Função para atualizar nome do usuário dinamicamente
+        function atualizarUsuario(nome, email, role = 'Usuário') {
+            const iniciais = nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            
+            document.getElementById('user-name').textContent = nome;
+            document.getElementById('user-avatar').textContent = iniciais;
+            document.querySelector('.user-role').textContent = role;
+        }
     </script>
 </body>
 </html>
