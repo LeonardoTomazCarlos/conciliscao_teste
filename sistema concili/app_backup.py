@@ -871,12 +871,25 @@ def logout():
             return jsonify({'success': False, 'error': str(e)}), 500
         return redirect(url_for('login'))
 
-# === ROTAS DE ADMINISTRAÇÃO ===
-
-@app.route('/api/admin/usuarios', methods=['GET'])
+@app.route('/api/usuarios', methods=['GET'])
 @login_required
 @admin_required
 def get_usuarios():
+    usuarios = Usuario.query.all()
+    return jsonify([{
+        'id': u.id,
+        'username': u.username,
+        'email': u.email,
+        'nome_completo': u.nome_completo,
+        'perfil': u.perfil,
+        'ativo': u.ativo,
+        'ultimo_acesso': u.ultimo_acesso.strftime('%Y-%m-%d %H:%M:%S') if u.ultimo_acesso else None
+    } for u in usuarios])
+
+@app.route('/api/usuarios', methods=['POST'])
+@login_required
+@admin_required
+def criar_usuario():
     data = request.get_json()
     
     if Usuario.query.filter_by(username=data['username']).first():
@@ -1888,7 +1901,7 @@ def limpar_todos_dados():
 @app.route('/api/admin/usuarios', methods=['GET'])
 @login_required
 @admin_required
-def get_admin_usuarios():
+def get_usuarios():
     """Listar todos os usuários"""
     try:
         usuarios = Usuario.query.all()

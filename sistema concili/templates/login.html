@@ -361,11 +361,7 @@
                 <i class="fas fa-university fa-2x"></i>
             </div>
             <h1>Login</h1>
-            <p>Entre com suas credenciais ou</p>
-            <a href="/register" class="btn btn-light btn-lg fw-bold px-4 py-2 mt-3 shadow-sm">
-                <i class="fas fa-user-plus me-2"></i>
-                Criar Nova Conta
-            </a>
+            <p>Entre com suas credenciais para acessar o sistema</p>
         </div>
 
         <div class="login-body">
@@ -408,22 +404,24 @@
                 </button>
             </form>
 
-            <div class="d-flex flex-column align-items-center mt-4">
-                <div class="mb-3">
+            <div class="text-center mt-3">
+                <div class="or-divider mb-2">
+                    <span class="line"></span>
+                    <span class="or-text">Novo por aqui?</span>
+                    <span class="line"></span>
+                </div>
+                
+                <a href="/register" class="btn btn-outline-primary btn-lg mb-3">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Criar Nova Conta
+                </a>
+                
+                <div>
                     <a href="#" onclick="esqueceuSenha()" class="forgot-password-link">
                         <i class="fas fa-key me-1"></i>
                         Esqueceu sua senha?
                     </a>
                 </div>
-                <div class="or-divider">
-                    <span class="line"></span>
-                    <span class="or-text">Novo por aqui?</span>
-                    <span class="line"></span>
-                </div>
-                <a href="/register" class="btn btn-outline-light btn-lg mt-3" style="width: auto; min-width: 200px;">
-                    <i class="fas fa-user-plus me-2"></i>
-                    Criar Nova Conta
-                </a>
             </div>
 
             <style>
@@ -466,6 +464,27 @@
                     border-color: white;
                     color: white;
                     transform: translateY(-2px);
+                }
+                
+                .btn-outline-primary {
+                    border: 2px solid var(--primary-color);
+                    color: var(--primary-color);
+                    background: rgba(255, 255, 255, 0.9);
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    padding: 12px 30px;
+                    border-radius: 12px;
+                    text-decoration: none;
+                    display: inline-block;
+                    min-width: 200px;
+                    backdrop-filter: blur(10px);
+                }
+                .btn-outline-primary:hover {
+                    background: var(--primary-color);
+                    border-color: var(--primary-color);
+                    color: white;
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
                 }
             </style>
 
