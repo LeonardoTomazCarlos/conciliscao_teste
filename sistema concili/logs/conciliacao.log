@@ -303,3 +303,33 @@ WHERE lancamento_contabil.hash_transacao = ?
 2025-08-29 17:59:44,302 - werkzeug - INFO -  * Restarting with stat
 2025-08-29 17:59:45,379 - werkzeug - WARNING -  * Debugger is active!
 2025-08-29 17:59:45,381 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-08-31 22:04:47,748 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.12:5000
+2025-08-31 22:04:47,749 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-31 22:04:47,752 - werkzeug - INFO -  * Restarting with stat
+2025-08-31 22:04:49,724 - werkzeug - WARNING -  * Debugger is active!
+2025-08-31 22:04:49,728 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-08-31 22:05:03,995 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:05:03] "[32mGET / HTTP/1.1[0m" 302 -
+2025-08-31 22:05:04,015 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:05:04] "GET /login HTTP/1.1" 200 -
+2025-08-31 22:05:04,129 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:05:04] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-31 22:05:06,085 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:05:06] "POST /login HTTP/1.1" 200 -
+2025-08-31 22:05:07,177 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:05:07] "GET / HTTP/1.1" 200 -
+2025-08-31 22:05:07,424 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:05:07] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-31 22:14:41,261 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:14:41] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-08-31 22:14:41,274 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:14:41] "GET /login HTTP/1.1" 200 -
+2025-08-31 22:15:19,024 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:15:19] "POST /login HTTP/1.1" 200 -
+2025-08-31 22:15:20,059 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:15:20] "GET / HTTP/1.1" 200 -
+2025-08-31 22:15:20,289 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:15:20] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-31 22:15:59,024 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:15:59] "[33mGET /api/exporta-conciliacoes HTTP/1.1[0m" 404 -
+2025-08-31 22:16:00,099 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:16:00] "[33mGET /api/exporta-lancamentos HTTP/1.1[0m" 404 -
+2025-08-31 22:16:00,689 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:16:00] "[33mGET /api/exporta-extratos HTTP/1.1[0m" 404 -
+2025-08-31 22:19:30,891 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:19:30] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-08-31 22:19:30,973 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:19:30] "GET /login HTTP/1.1" 200 -
+2025-08-31 22:19:33,516 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:19:33] "GET /login HTTP/1.1" 200 -
+2025-08-31 22:19:43,648 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:19:43] "POST /login HTTP/1.1" 200 -
+2025-08-31 22:19:44,688 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:19:44] "GET / HTTP/1.1" 200 -
+2025-08-31 22:19:44,758 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:19:44] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-08-31 22:19:46,750 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:19:46] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-08-31 22:19:46,758 - werkzeug - INFO - 127.0.0.1 - - [31/Aug/2025 22:19:46] "GET /login HTTP/1.1" 200 -

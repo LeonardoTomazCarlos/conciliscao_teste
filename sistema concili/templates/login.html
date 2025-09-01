@@ -3,179 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistema de Conciliação Bancária</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <title>FinanceSync Pro - Login</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%2310b981;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M25 35h50v5H25zm0 15h50v5H25zm0 15h35v5H25z' fill='white'/%3E%3Ccircle cx='72' cy='65' r='8' fill='white'/%3E%3Cpath d='M69 65l2 2 4-4' stroke='%23059669' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
+            --primary-color: #1e293b;
+            --secondary-color: #3b82f6;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --light-bg: #f8fafc;
+            --dark-text: #1e293b;
+            --light-text: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
         }
 
         .login-container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
             overflow: hidden;
             width: 100%;
-            max-width: 400px;
+            max-width: 480px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .login-header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 30px;
+            padding: 3rem 2rem 2rem;
             text-align: center;
+            position: relative;
         }
 
-        .login-header h2 {
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .logo-container {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent-color), #06d6a0);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .login-header h1 {
             margin: 0;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.875rem;
+            position: relative;
+            z-index: 1;
         }
 
         .login-header p {
-            margin: 10px 0 0 0;
+            margin: 0.5rem 0 0 0;
             opacity: 0.9;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .login-body {
-            padding: 40px;
+            padding: 2.5rem;
+            background: white;
+        }
+
+        .form-floating {
+            margin-bottom: 1.5rem;
         }
 
         .form-control {
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            padding: 15px 20px;
-            font-size: 16px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
             transition: all 0.3s ease;
+            height: auto;
+            background: var(--light-bg);
         }
 
         .form-control:focus {
             border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15);
+            background: white;
+        }
+
+        .form-floating > label {
+            color: var(--light-text);
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
         .btn-login {
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
             border: none;
-            border-radius: 10px;
-            padding: 15px;
-            font-size: 16px;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
             font-weight: 600;
             color: white;
             width: 100%;
             transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, #2563eb, #059669);
         }
 
-        .input-group-text {
-            background: transparent;
-            border: 2px solid #e9ecef;
-            border-right: none;
-            border-radius: 10px 0 0 10px;
+        .btn-login:active {
+            transform: translateY(0);
         }
 
-        .input-group .form-control {
-            border-left: none;
-            border-radius: 0 10px 10px 0;
+        .btn-login:disabled {
+            opacity: 0.7;
+            transform: none;
+            cursor: not-allowed;
         }
 
-        .alert {
-            border-radius: 10px;
+        .alert-modern {
             border: none;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
-        .loading {
-            display: none;
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065f46;
+            border-left: 4px solid var(--accent-color);
         }
 
-        .spinner-border {
-            width: 1rem;
-            height: 1rem;
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #991b1b;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .default-credentials {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            color: #1e40af;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        .default-credentials i {
+            color: var(--secondary-color);
+            margin-right: 0.5rem;
+        }
+
+        .loading-spinner {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 0.5rem;
         }
 
         .login-footer {
             text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            color: #6c757d;
-            font-size: 14px;
+            padding: 1.5rem;
+            background: rgba(248, 250, 252, 0.5);
+            color: var(--light-text);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 1rem;
+                max-width: 100%;
+            }
+            
+            .login-header {
+                padding: 2rem 1.5rem 1.5rem;
+            }
+            
+            .login-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .logo-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-header">
-            <i class="fas fa-university fa-3x mb-3"></i>
-            <h2>Sistema de Conciliação Bancária</h2>
-            <p>Faça login para continuar</p>
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h1>FinanceSync Pro</h1>
+                <p>Sistema de Conciliação Bancária</p>
+            </div>
         </div>
         
         <div class="login-body">
             <div id="alert-container"></div>
             
             <form id="loginForm">
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="fas fa-user"></i>
-                        </span>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Usuário" required>
-                    </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Usuário" required>
+                    <label for="username">
+                        <i class="fas fa-user me-2"></i>Usuário
+                    </label>
                 </div>
                 
-                <div class="mb-4">
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="fas fa-lock"></i>
-                        </span>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
-                    </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
+                    <label for="password">
+                        <i class="fas fa-lock me-2"></i>Senha
+                    </label>
                 </div>
                 
                 <button type="submit" class="btn btn-login">
-                    <span class="loading">
-                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    <span class="loading d-none">
+                        <div class="spinner-border loading-spinner" role="status"></div>
                         Entrando...
                     </span>
                     <span class="normal">
                         <i class="fas fa-sign-in-alt me-2"></i>
-                        Entrar
+                        Entrar no Sistema
                     </span>
                 </button>
             </form>
             
-            <div class="mt-4 text-center">
-                <small class="text-muted">
-                    <i class="fas fa-info-circle me-1"></i>
-                    Usuário padrão: admin / Senha: admin123
-                </small>
+            <div class="default-credentials">
+                <i class="fas fa-info-circle"></i>
+                <strong>Credenciais padrão:</strong><br>
+                Usuário: <code>admin</code> • Senha: <code>admin</code>
             </div>
         </div>
         
         <div class="login-footer">
-            <p>&copy; 2024 Sistema de Conciliação Bancária</p>
+            <p>&copy; 2025 FinanceSync Pro - Sistema de Conciliação Bancária</p>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -184,8 +325,8 @@
             const password = document.getElementById('password').value;
             
             // Mostrar loading
-            document.querySelector('.loading').style.display = 'inline';
-            document.querySelector('.normal').style.display = 'none';
+            document.querySelector('.loading').classList.remove('d-none');
+            document.querySelector('.normal').classList.add('d-none');
             document.querySelector('.btn-login').disabled = true;
             
             // Fazer requisição de login
@@ -202,35 +343,34 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showAlert('success', 'Login realizado com sucesso! Redirecionando...');
+                    showAlert('success', '<i class="fas fa-check-circle me-2"></i>Login realizado com sucesso! Redirecionando...');
                     setTimeout(() => {
-                        window.location.href = data.redirect;
+                        window.location.href = data.redirect || '/';
                     }, 1000);
                 } else {
-                    showAlert('danger', data.error || 'Erro no login');
-                    // Resetar botão
-                    document.querySelector('.loading').style.display = 'none';
-                    document.querySelector('.normal').style.display = 'inline';
-                    document.querySelector('.btn-login').disabled = false;
+                    showAlert('danger', '<i class="fas fa-exclamation-circle me-2"></i>' + (data.error || 'Erro no login'));
+                    resetButton();
                 }
             })
             .catch(error => {
-                showAlert('danger', 'Erro de conexão. Tente novamente.');
-                // Resetar botão
-                document.querySelector('.loading').style.display = 'none';
-                document.querySelector('.normal').style.display = 'inline';
-                document.querySelector('.btn-login').disabled = false;
+                showAlert('danger', '<i class="fas fa-wifi me-2"></i>Erro de conexão. Tente novamente.');
+                resetButton();
             });
         });
+        
+        function resetButton() {
+            document.querySelector('.loading').classList.add('d-none');
+            document.querySelector('.normal').classList.remove('d-none');
+            document.querySelector('.btn-login').disabled = false;
+        }
         
         function showAlert(type, message) {
             const alertContainer = document.getElementById('alert-container');
             const alertId = 'alert-' + Date.now();
             
             const alertHtml = `
-                <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                <div id="${alertId}" class="alert-modern alert-${type}" role="alert">
                     ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             `;
             
@@ -240,7 +380,9 @@
             setTimeout(() => {
                 const alert = document.getElementById(alertId);
                 if (alert) {
-                    alert.remove();
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => alert.remove(), 300);
                 }
             }, 5000);
         }
@@ -250,6 +392,11 @@
             if (e.key === 'Enter') {
                 document.getElementById('loginForm').dispatchEvent(new Event('submit'));
             }
+        });
+        
+        // Foco automático no campo usuário
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('username').focus();
         });
     </script>
 </body>

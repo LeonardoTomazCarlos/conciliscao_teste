@@ -1023,50 +1023,68 @@
 
                     <!-- Configurações -->
                     <div class="tab-pane fade" id="configuracoes">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Configurações</h1>
+                        <div class="top-header">
+                            <h1 class="header-title">Configurações do Sistema</h1>
+                            <p class="header-subtitle">Gerencie usuários, contas bancárias e regras de conciliação</p>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-users"></i> Gestão de Usuários</h5>
+                        <div class="content-area">
+                            <div class="row g-4 mb-5">
+                                <div class="col-lg-6">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-users me-2"></i>
+                                            Gestão de Usuários
+                                        </div>
+                                        <div class="p-4">
+                                            <button class="btn btn-primary-modern btn-modern w-100 mb-3" onclick="carregarUsuarios()">
+                                                <i class="fas fa-list me-2"></i>
+                                                Listar Usuários
+                                            </button>
+                                            <div id="lista-usuarios" class="text-muted">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Clique em "Listar Usuários" para ver os usuários cadastrados
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarUsuarios()">
-                                            <i class="fas fa-list"></i> Listar Usuários
-                                        </button>
-                                        <div id="lista-usuarios">Clique em "Listar Usuários" para ver os usuários cadastrados</div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-university me-2"></i>
+                                            Contas Bancárias
+                                        </div>
+                                        <div class="p-4">
+                                            <button class="btn btn-primary-modern btn-modern w-100 mb-3" onclick="carregarContas()">
+                                                <i class="fas fa-list me-2"></i>
+                                                Listar Contas
+                                            </button>
+                                            <div id="lista-contas" class="text-muted">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Clique em "Listar Contas" para ver as contas cadastradas
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-university"></i> Contas Bancárias</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarContas()">
-                                            <i class="fas fa-list"></i> Listar Contas
-                                        </button>
-                                        <div id="lista-contas">Clique em "Listar Contas" para ver as contas cadastradas</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="card card-dashboard">
-                                    <div class="card-header">
-                                        <h5><i class="fas fa-cogs"></i> Regras de Conciliação</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <button class="btn btn-primary btn-action mb-2" onclick="carregarRegras()">
-                                            <i class="fas fa-list"></i> Listar Regras
-                                        </button>
-                                        <div id="lista-regras">Clique em "Listar Regras" para ver as regras configuradas</div>
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="card-modern">
+                                        <div class="card-header-modern">
+                                            <i class="fas fa-cogs me-2"></i>
+                                            Regras de Conciliação
+                                        </div>
+                                        <div class="p-4">
+                                            <button class="btn btn-primary-modern btn-modern w-100 mb-3" onclick="carregarRegras()">
+                                                <i class="fas fa-list me-2"></i>
+                                                Listar Regras
+                                            </button>
+                                            <div id="lista-regras" class="text-muted">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Clique em "Listar Regras" para ver as regras configuradas
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
