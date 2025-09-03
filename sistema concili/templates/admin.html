@@ -9,21 +9,207 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --success-color: #10b981;
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --accent-color: #10b981;
             --danger-color: #ef4444;
             --warning-color: #f59e0b;
             --info-color: #06b6d4;
             --dark-color: #1e293b;
             --light-color: #f8fafc;
             --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        /* Scrollbar customizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--secondary-color), var(--accent-color));
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 50%, #475569 100%);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            margin: 4px 8px;
+            padding: 12px 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .sidebar .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(16, 185, 129, 0.3));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.2);
+        }
+
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .user-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--dark-color);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 0.75rem;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--light-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-dropdown {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            margin: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .icon-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .admin-container {
@@ -37,68 +223,58 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .admin-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 2rem;
-            border-radius: 20px 20px 0 0;
-            margin-bottom: 2rem;
-        }
-
-        .admin-nav {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .nav-pills .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            background: transparent;
-            border-radius: 12px;
-            padding: 0.75rem 1.5rem;
-            margin: 0 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .nav-pills .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .nav-pills .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
         .card {
             border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             color: white;
-            border-radius: 15px 15px 0 0 !important;
+            border-radius: 20px 20px 0 0 !important;
             padding: 1.5rem;
+            border: none;
         }
 
         .table {
             background: white;
             border-radius: 12px;
             overflow: hidden;
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
         }
 
         .table thead th {
-            background: var(--light-color);
             border: none;
             font-weight: 600;
-            color: var(--dark-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
             padding: 1rem;
         }
 
@@ -110,44 +286,64 @@
 
         .table tbody tr {
             border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(16, 185, 129, 0.05));
+            transform: scale(1.01);
         }
 
         .badge {
             padding: 0.5rem 1rem;
             border-radius: 50px;
-            font-weight: 500;
-        }
-
-        .badge.admin {
-            background: linear-gradient(135deg, var(--danger-color), #dc2626);
-            color: white;
-        }
-
-        .badge.auditor {
-            background: linear-gradient(135deg, var(--info-color), #0891b2);
-            color: white;
-        }
-
-        .badge.usuario {
-            background: linear-gradient(135deg, var(--success-color), #059669);
-            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
         }
 
         .btn {
-            border-radius: 10px;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            padding: 10px 24px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             border: none;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.3);
         }
 
         .btn-sm {
@@ -189,16 +385,7 @@
 
         .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .stats-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .stats-icon {
@@ -212,64 +399,259 @@
             color: white;
         }
 
-        .return-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
-            padding: 0.75rem 1.5rem;
-            color: var(--dark-color);
-            text-decoration: none;
+        .status-ativo {
+            color: var(--accent-color);
+        }
+
+        .status-inativo {
+            color: var(--danger-color);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--light-text);
+        }
+
+        .avatar {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .badge.admin {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+        }
+
+        .badge.auditor {
+            background: linear-gradient(135deg, var(--info-color), #0891b2);
+        }
+
+        .badge.usuario {
+            background: linear-gradient(135deg, var(--accent-color), #059669);
+            color: white;
+        }
+
+        /* Ajustar largura do card de usuários para ficar igual ao header */
+        #tab-usuarios .card {
+            width: 100%;
+            max-width: none;
+        }
+
+        #tab-usuarios .row {
+            margin: 0;
+        }
+
+        #tab-usuarios .col {
+            padding: 0;
+        }
+
+        /* Garantir que o card ocupe toda a largura disponível */
+        .main-content .card {
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Estilos para o perfil do usuário */
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
             transition: all 0.3s ease;
         }
 
-        .return-btn:hover {
-            background: white;
-            color: var(--primary-color);
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .stats-item {
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            margin: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .stats-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Melhorar aparência dos modais */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            border-radius: 20px 20px 0 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 20px 20px;
+        }
+
+        /* Estilos específicos para tabela de usuários */
+        #tabela-usuarios {
+            min-width: 1000px;
+            width: 100%;
+        }
+
+        #tabela-usuarios th,
+        #tabela-usuarios td {
+            white-space: nowrap;
+            padding: 0.75rem 0.5rem;
+        }
+
+        #tabela-usuarios th:first-child,
+        #tabela-usuarios td:first-child {
+            min-width: 200px;
+        }
+
+        #tabela-usuarios th:nth-child(2),
+        #tabela-usuarios td:nth-child(2) {
+            min-width: 180px;
+        }
+
+        #tabela-usuarios th:nth-child(3),
+        #tabela-usuarios td:nth-child(3) {
+            min-width: 100px;
+        }
+
+        #tabela-usuarios th:nth-child(4),
+        #tabela-usuarios td:nth-child(4) {
+            min-width: 80px;
+        }
+
+        #tabela-usuarios th:nth-child(5),
+        #tabela-usuarios td:nth-child(5) {
+            min-width: 120px;
+        }
+
+        #tabela-usuarios th:nth-child(6),
+        #tabela-usuarios td:nth-child(6) {
+            min-width: 120px;
+        }
+
+        #tabela-usuarios th:last-child,
+        #tabela-usuarios td:last-child {
+            min-width: 150px;
+        }
+
+        .table-responsive {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
 <body>
-    <!-- Botão de retorno -->
-    <a href="/" class="return-btn">
-        <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
-    </a>
+    <!-- Área do Usuário -->
+    <div class="user-area">
+        <div class="dropdown">
+            <div class="user-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" role="button">
+                <div class="user-avatar" id="user-avatar">A</div>
+                <div class="user-details">
+                    <div class="user-name" id="user-name">Admin</div>
+                    <div class="user-role">Administrador</div>
+                </div>
+                <i class="fas fa-chevron-down ms-2 text-muted"></i>
+            </div>
+            <ul class="dropdown-menu user-dropdown">
+                <li>
+                    <a class="dropdown-item" href="/">
+                        <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" onclick="abrirPerfilUsuario()">
+                        <i class="fas fa-user me-2"></i>Meu Perfil
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" onclick="abrirConfiguracoes()">
+                        <i class="fas fa-cog me-2"></i>Configurações
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger" href="#" onclick="confirmarLogout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>Sair do Sistema
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <div class="container-fluid">
-        <div class="admin-container">
-            <div class="admin-header">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h1 class="mb-0">
-                            <i class="fas fa-users-cog me-3"></i>
-                            Painel de Administração
-                        </h1>
-                        <p class="mb-0 mt-2 opacity-75">Gerencie usuários e permissões do sistema</p>
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="sidebar-header">
+                        <div class="sidebar-logo">
+                            <i class="fas fa-users-cog fa-2x text-white"></i>
+                        </div>
+                        <h4 class="text-white fw-bold">Admin Panel</h4>
+                        <small class="text-white-50 text-uppercase tracking-wider">Sistema de Controle</small>
                     </div>
-                    <div class="col-auto">
-                        <div class="stats-card d-inline-block">
+                    
+                    <ul class="nav flex-column px-2">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#usuarios" data-tab="usuarios">
+                                <i class="fas fa-users me-3"></i>
+                                <span>Usuários</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#permissoes" data-tab="permissoes">
+                                <i class="fas fa-shield-alt me-3"></i>
+                                <span>Permissões</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#logs" data-tab="logs">
+                                <i class="fas fa-history me-3"></i>
+                                <span>Logs de Auditoria</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="main-content">
+                    <div class="page-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h1 class="h2 fw-bold mb-2">
+                                    <i class="fas fa-users-cog icon-gradient me-3"></i>Painel de Administração
+                                </h1>
+                                <p class="text-muted mb-0">Gerencie usuários e permissões do sistema</p>
+                            </div>
                             <div class="d-flex align-items-center">
-                                <div class="stats-icon bg-success me-3">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <div>
-                                    <div class="h4 mb-0" id="total-usuarios">-</div>
-                                    <small class="text-muted">Usuários Ativos</small>
+                                <div class="card-dashboard me-3" style="padding: 1rem;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="sidebar-logo me-3" style="width: 50px; height: 50px;">
+                                            <i class="fas fa-users text-white"></i>
+                                        </div>
+                                        <div>
+                                            <div class="h4 mb-0" id="total-usuarios">-</div>
+                                            <small class="text-muted">Usuários Ativos</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Navegação -->
-                <div class="admin-nav">
-                    <ul class="nav nav-pills justify-content-center">
                         <li class="nav-item">
                             <a class="nav-link active" href="#usuarios" data-tab="usuarios">
                                 <i class="fas fa-users me-2"></i>Usuários
@@ -277,44 +659,49 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#permissoes" data-tab="permissoes">
-                                <i class="fas fa-shield-alt me-2"></i>Permissões
+                                <i class="fas fa-shield-alt me-3"></i>
+                                <span>Permissões</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#logs" data-tab="logs">
-                                <i class="fas fa-history me-2"></i>Logs de Auditoria
+                                <i class="fas fa-history me-3"></i>
+                                <span>Logs de Auditoria</span>
                             </a>
                         </li>
                     </ul>
                 </div>
-            </div>
+            </nav>
 
-            <div class="px-4 pb-4">
-                <!-- Tab: Usuários -->
-                <div id="tab-usuarios" class="tab-content active">
-                    <div class="row mb-4">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-users me-2"></i>
-                                        Gerenciamento de Usuários
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-primary" onclick="atualizarUsuarios()">
-                                                <i class="fas fa-sync-alt me-2"></i>Atualizar
-                                            </button>
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="main-content">
+                    <div class="tab-content">
+                        <!-- Tab: Usuários -->
+                        <div id="tab-usuarios" class="tab-pane fade show active" role="tabpanel">
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-users me-2"></i>
+                                                Gerenciamento de Usuários
+                                            </h5>
                                         </div>
-                                        <div class="d-flex gap-2">
-                                            <select class="form-select" id="filtro-perfil" onchange="filtrarUsuarios()">
-                                                <option value="">Todos os perfis</option>
-                                                <option value="admin">Administradores</option>
-                                                <option value="auditor">Auditores</option>
-                                                <option value="usuario">Usuários</option>
-                                            </select>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between mb-3">
+                                                <div class="d-flex gap-2">
+                                                    <button class="btn btn-primary" onclick="atualizarUsuarios()">
+                                                        <i class="fas fa-sync-alt me-2"></i>Atualizar
+                                                    </button>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <select class="form-select" id="filtro-perfil" onchange="filtrarUsuarios()">
+                                                        <option value="">Todos os perfis</option>
+                                                        <option value="admin">Administradores</option>
+                                                        <option value="auditor">Auditores</option>
+                                                        <option value="usuario">Usuários</option>
+                                                    </select>
                                         </div>
                                     </div>
 
@@ -348,7 +735,7 @@
                 </div>
 
                 <!-- Tab: Permissões -->
-                <div id="tab-permissoes" class="tab-content">
+                <div id="tab-permissoes" class="tab-pane fade" role="tabpanel">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="card">
@@ -402,7 +789,7 @@
                 </div>
 
                 <!-- Tab: Logs -->
-                <div id="tab-logs" class="tab-content">
+                <div id="tab-logs" class="tab-pane fade" role="tabpanel">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0">
@@ -411,11 +798,93 @@
                             </h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted">Funcionalidade em desenvolvimento...</p>
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary" onclick="carregarLogs()">
+                                        <i class="fas fa-sync-alt me-2"></i>Atualizar
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="exportarLogs()">
+                                        <i class="fas fa-download me-2"></i>Exportar
+                                    </button>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <select class="form-select" id="filtro-acao" onchange="filtrarLogs()">
+                                        <option value="">Todas as ações</option>
+                                        <option value="login">Login</option>
+                                        <option value="logout">Logout</option>
+                                        <option value="create">Criar</option>
+                                        <option value="update">Atualizar</option>
+                                        <option value="delete">Excluir</option>
+                                    </select>
+                                    <input type="date" class="form-control" id="data-filtro" onchange="filtrarLogs()">
+                                </div>
+                            </div>
+
+                            <div class="loading" id="loading-logs" style="display: none;">
+                                <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                                <p class="mt-2">Carregando logs...</p>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tabela-logs">
+                                    <thead>
+                                        <tr>
+                                            <th>Data/Hora</th>
+                                            <th>Usuário</th>
+                                            <th>Ação</th>
+                                            <th>Tabela</th>
+                                            <th>Registro ID</th>
+                                            <th>IP Address</th>
+                                            <th class="text-center">Detalhes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-logs">
+                                        <!-- Logs serão carregados aqui -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Estatísticas dos Logs -->
+                            <div class="row mt-4">
+                                <div class="col-md-3">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body text-center">
+                                            <h3 id="total-logs">0</h3>
+                                            <small>Total de Logs</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body text-center">
+                                            <h3 id="logs-hoje">0</h3>
+                                            <small>Logs Hoje</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body text-center">
+                                            <h3 id="usuarios-ativos">0</h3>
+                                            <small>Usuários Ativos</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body text-center">
+                                            <h3 id="acoes-criticas">0</h3>
+                                            <small>Ações Críticas</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -501,22 +970,293 @@
         </div>
     </div>
 
+    <!-- Modal para Perfil do Usuário -->
+    <div class="modal fade" id="modalPerfilUsuario" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user me-2"></i>
+                        Meu Perfil
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Informações do Usuário -->
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <div class="profile-avatar mx-auto mb-3" id="profile-avatar">
+                                <i class="fas fa-user fa-3x text-white"></i>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm" onclick="uploadFotoPerfil()">
+                                <i class="fas fa-camera me-2"></i>Alterar Foto
+                            </button>
+                            <input type="file" id="upload-foto" accept="image/*" style="display: none;" onchange="processarFotoPerfil(this)">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-info-circle me-2"></i>Informações do Perfil
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <strong>Nome:</strong>
+                                            <p id="profile-nome" class="mb-2">Usuário Sistema</p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Email:</strong>
+                                            <p id="profile-email" class="mb-2">usuario@financesync.com</p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Perfil:</strong>
+                                            <p id="profile-perfil" class="mb-2">
+                                                <span class="badge usuario">👤 Usuário</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Último Acesso:</strong>
+                                            <p id="profile-ultimo-acesso" class="mb-2">02/09/2025 22:58</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidades Disponíveis -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-cogs me-2"></i>Em breve você poderá:
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <button class="btn btn-outline-primary btn-sm w-100" onclick="editarDadosPessoais()">
+                                                <i class="fas fa-edit me-2"></i>Editar dados pessoais
+                                            </button>
+                                        </li>
+                                        <li class="mb-2">
+                                            <button class="btn btn-outline-warning btn-sm w-100" onclick="alterarSenha()">
+                                                <i class="fas fa-key me-2"></i>Alterar senha
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <button class="btn btn-outline-info btn-sm w-100" onclick="configurarPreferencias()">
+                                                <i class="fas fa-sliders-h me-2"></i>Configurar preferências
+                                            </button>
+                                        </li>
+                                        <li class="mb-2">
+                                            <button class="btn btn-outline-success btn-sm w-100" onclick="uploadFotoPerfil()">
+                                                <i class="fas fa-camera me-2"></i>Upload de foto de perfil
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estatísticas do Usuário -->
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>Suas Estatísticas
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <div class="stats-item">
+                                        <div class="h4 text-primary mb-1" id="stats-extratos">0</div>
+                                        <small class="text-muted">Extratos</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stats-item">
+                                        <div class="h4 text-info mb-1" id="stats-lancamentos">0</div>
+                                        <small class="text-muted">Lançamentos</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stats-item">
+                                        <div class="h4 text-success mb-1" id="stats-conciliacoes">0</div>
+                                        <small class="text-muted">Conciliações</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stats-item">
+                                        <div class="h4 text-warning mb-1" id="stats-divergencias">0</div>
+                                        <small class="text-muted">Divergências</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Dados Pessoais -->
+    <div class="modal fade" id="modalEditarDados" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i>Editar Dados Pessoais
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-editar-dados">
+                        <div class="mb-3">
+                            <label for="edit-nome" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="edit-nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="edit-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-telefone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="edit-telefone">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="salvarDadosPessoais()">
+                        <i class="fas fa-save me-2"></i>Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Alterar Senha -->
+    <div class="modal fade" id="modalAlterarSenha" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-key me-2"></i>Alterar Senha
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-alterar-senha">
+                        <div class="mb-3">
+                            <label for="senha-atual" class="form-label">Senha Atual</label>
+                            <input type="password" class="form-control" id="senha-atual" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nova-senha" class="form-label">Nova Senha</label>
+                            <input type="password" class="form-control" id="nova-senha" required minlength="6">
+                            <div class="form-text">Mínimo 6 caracteres</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmar-senha" class="form-label">Confirmar Nova Senha</label>
+                            <input type="password" class="form-control" id="confirmar-senha" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" onclick="salvarNovaSenha()">
+                        <i class="fas fa-key me-2"></i>Alterar Senha
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Detalhes do Log -->
+    <div class="modal fade" id="modalDetalhesLog" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Detalhes do Log de Auditoria
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-clock me-2"></i>Informações Temporais</h6>
+                            <p><strong>Data/Hora:</strong> <span id="log-data-hora">-</span></p>
+                            <p><strong>Usuário:</strong> <span id="log-usuario">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-network-wired me-2"></i>Informações Técnicas</h6>
+                            <p><strong>IP Address:</strong> <span id="log-ip">-</span></p>
+                            <p><strong>ID do Log:</strong> <span id="log-id">-</span></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6><i class="fas fa-cog me-2"></i>Detalhes da Ação</h6>
+                            <p><strong>Ação:</strong> <span id="log-acao" class="badge bg-primary">-</span></p>
+                            <p><strong>Tabela:</strong> <span id="log-tabela">-</span></p>
+                            <p><strong>Registro ID:</strong> <span id="log-registro-id">-</span></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6><i class="fas fa-database me-2"></i>Dados Anteriores</h6>
+                            <pre id="log-dados-anteriores" class="bg-light p-3 rounded" style="max-height: 200px; overflow-y: auto;">Não disponível</pre>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6><i class="fas fa-database me-2"></i>Dados Novos</h6>
+                            <pre id="log-dados-novos" class="bg-light p-3 rounded" style="max-height: 200px; overflow-y: auto;">Não disponível</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let usuarios = [];
 
-        // Navegação entre tabs
+        // Navegação entre tabs (usando Bootstrap)
         document.querySelectorAll('[data-tab]').forEach(tab => {
             tab.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 // Remover active das tabs
-                document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.sidebar .nav-link').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(t => {
+                    t.classList.remove('show', 'active');
+                });
                 
                 // Ativar tab clicada
                 this.classList.add('active');
-                document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+                const targetTab = document.getElementById('tab-' + this.dataset.tab);
+                if (targetTab) {
+                    targetTab.classList.add('show', 'active');
+                }
             });
         });
 
@@ -691,6 +1431,421 @@
                 alert('Erro ao resetar senha: ' + error.message);
             }
         }
+
+        // === FUNÇÕES DO PERFIL DO USUÁRIO ===
+
+        function abrirPerfilUsuario() {
+            // Carregar dados do usuário atual
+            carregarDadosPerfilUsuario();
+            
+            // Abrir modal
+            const modal = new bootstrap.Modal(document.getElementById('modalPerfilUsuario'));
+            modal.show();
+        }
+
+        async function carregarDadosPerfilUsuario() {
+            try {
+                const response = await fetch('/api/usuario/perfil');
+                const data = await response.json();
+                
+                if (data.usuario) {
+                    const usuario = data.usuario;
+                    
+                    // Atualizar informações do perfil
+                    document.getElementById('profile-nome').textContent = usuario.nome_completo;
+                    document.getElementById('profile-email').textContent = usuario.email;
+                    document.getElementById('profile-ultimo-acesso').textContent = usuario.ultimo_acesso || 'Nunca';
+                    
+                    // Atualizar badge do perfil
+                    const perfilBadge = document.getElementById('profile-perfil');
+                    const emoji = usuario.perfil === 'admin' ? '👑' : usuario.perfil === 'auditor' ? '🔍' : '👤';
+                    perfilBadge.innerHTML = `<span class="badge ${usuario.perfil}">${emoji} ${usuario.perfil.charAt(0).toUpperCase() + usuario.perfil.slice(1)}</span>`;
+                    
+                    // Atualizar avatar
+                    const avatar = document.getElementById('profile-avatar');
+                    if (usuario.foto_perfil) {
+                        avatar.innerHTML = `<img src="${usuario.foto_perfil}" alt="Foto de perfil" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    } else {
+                        avatar.innerHTML = `<div style="font-size: 2.5rem; font-weight: bold; color: white;">${usuario.nome_completo.charAt(0).toUpperCase()}</div>`;
+                    }
+                    
+                    // Atualizar estatísticas
+                    if (usuario.estatisticas) {
+                        document.getElementById('stats-extratos').textContent = usuario.estatisticas.extratos || 0;
+                        document.getElementById('stats-lancamentos').textContent = usuario.estatisticas.lancamentos || 0;
+                        document.getElementById('stats-conciliacoes').textContent = usuario.estatisticas.conciliacoes || 0;
+                        document.getElementById('stats-divergencias').textContent = usuario.estatisticas.divergencias || 0;
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar perfil:', error);
+                alert('Erro ao carregar dados do perfil');
+            }
+        }
+
+        function editarDadosPessoais() {
+            // Carregar dados atuais nos campos
+            document.getElementById('edit-nome').value = document.getElementById('profile-nome').textContent;
+            document.getElementById('edit-email').value = document.getElementById('profile-email').textContent;
+            
+            // Fechar modal do perfil e abrir modal de edição
+            const modalPerfil = bootstrap.Modal.getInstance(document.getElementById('modalPerfilUsuario'));
+            modalPerfil.hide();
+            
+            const modalEditar = new bootstrap.Modal(document.getElementById('modalEditarDados'));
+            modalEditar.show();
+        }
+
+        async function salvarDadosPessoais() {
+            const nome = document.getElementById('edit-nome').value;
+            const email = document.getElementById('edit-email').value;
+            const telefone = document.getElementById('edit-telefone').value;
+            
+            if (!nome || !email) {
+                alert('Nome e email são obrigatórios');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/usuario/perfil', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nome_completo: nome,
+                        email: email,
+                        telefone: telefone
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Dados atualizados com sucesso!');
+                    
+                    // Fechar modal e recarregar dados
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarDados'));
+                    modal.hide();
+                    
+                    // Atualizar dados na tela
+                    document.getElementById('profile-nome').textContent = nome;
+                    document.getElementById('profile-email').textContent = email;
+                    
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar dados: ' + error.message);
+            }
+        }
+
+        function alterarSenha() {
+            // Fechar modal do perfil e abrir modal de alteração de senha
+            const modalPerfil = bootstrap.Modal.getInstance(document.getElementById('modalPerfilUsuario'));
+            modalPerfil.hide();
+            
+            const modalSenha = new bootstrap.Modal(document.getElementById('modalAlterarSenha'));
+            modalSenha.show();
+        }
+
+        async function salvarNovaSenha() {
+            const senhaAtual = document.getElementById('senha-atual').value;
+            const novaSenha = document.getElementById('nova-senha').value;
+            const confirmarSenha = document.getElementById('confirmar-senha').value;
+            
+            if (!senhaAtual || !novaSenha || !confirmarSenha) {
+                alert('Todos os campos são obrigatórios');
+                return;
+            }
+            
+            if (novaSenha !== confirmarSenha) {
+                alert('A confirmação da senha não confere');
+                return;
+            }
+            
+            if (novaSenha.length < 6) {
+                alert('A nova senha deve ter pelo menos 6 caracteres');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/usuario/alterar-senha', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        senha_atual: senhaAtual,
+                        nova_senha: novaSenha
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Senha alterada com sucesso!');
+                    
+                    // Limpar campos e fechar modal
+                    document.getElementById('form-alterar-senha').reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalAlterarSenha'));
+                    modal.hide();
+                    
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao alterar senha: ' + error.message);
+            }
+        }
+
+        function configurarPreferencias() {
+            alert('Funcionalidade em desenvolvimento!\n\nEm breve você poderá:\n• Configurar tema claro/escuro\n• Definir idioma\n• Personalizar notificações\n• Ajustar configurações de relatórios');
+        }
+
+        function uploadFotoPerfil() {
+            document.getElementById('upload-foto').click();
+        }
+
+        function processarFotoPerfil(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Validar tipo de arquivo
+            if (!file.type.startsWith('image/')) {
+                alert('Apenas arquivos de imagem são permitidos');
+                return;
+            }
+            
+            // Validar tamanho (máximo 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('A imagem deve ter no máximo 2MB');
+                return;
+            }
+            
+            // Preview da imagem
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const avatar = document.getElementById('profile-avatar');
+                avatar.innerHTML = `<img src="${e.target.result}" alt="Foto de perfil" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            };
+            reader.readAsDataURL(file);
+            
+            // Aqui você implementaria o upload real
+            // uploadFotoParaServidor(file);
+            alert('Funcionalidade de upload em desenvolvimento!\nA imagem foi carregada apenas para preview.');
+        }
+
+        function abrirConfiguracoes() {
+            alert('Configurações do Sistema\n\nEm breve você poderá:\n• Personalizar interface\n• Configurar notificações\n• Definir preferências de relatórios\n• Gerenciar integrações');
+        }
+
+        function confirmarLogout() {
+            if (confirm('Tem certeza que deseja sair do sistema?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        // === FUNÇÕES PARA LOGS DE AUDITORIA ===
+
+        let logsData = [];
+
+        async function carregarLogs() {
+            const loading = document.getElementById('loading-logs');
+            const tabela = document.getElementById('tabela-logs');
+            
+            loading.style.display = 'block';
+            tabela.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/auditoria');
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    logsData = data;
+                    renderizarLogs(logsData);
+                    atualizarEstatisticasLogs(logsData);
+                } else {
+                    throw new Error('Formato de dados inválido');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao carregar logs: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+                tabela.style.display = 'table';
+            }
+        }
+
+        function renderizarLogs(logs) {
+            const tbody = document.getElementById('lista-logs');
+            
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>
+                        <small>${log.created_at}</small>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                 style="width: 30px; height: 30px; font-size: 0.8rem;">
+                                ${log.usuario.charAt(0).toUpperCase()}
+                            </div>
+                            <span>${log.usuario}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge ${getAcaoBadgeClass(log.acao)}">${formatarAcao(log.acao)}</span>
+                    </td>
+                    <td>
+                        <code>${log.tabela || '-'}</code>
+                    </td>
+                    <td>
+                        <small>${log.registro_id || '-'}</small>
+                    </td>
+                    <td>
+                        <small class="text-muted">${log.ip_address || '-'}</small>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-info btn-sm" onclick="verDetalhesLog(${log.id})" title="Ver detalhes">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getAcaoBadgeClass(acao) {
+            const classes = {
+                'login': 'bg-success',
+                'logout': 'bg-secondary',
+                'create': 'bg-primary',
+                'update': 'bg-warning',
+                'delete': 'bg-danger',
+                'resolver_divergencia': 'bg-info'
+            };
+            return classes[acao] || 'bg-secondary';
+        }
+
+        function formatarAcao(acao) {
+            const acoes = {
+                'login': 'Login',
+                'logout': 'Logout',
+                'create': 'Criar',
+                'update': 'Atualizar',
+                'delete': 'Excluir',
+                'resolver_divergencia': 'Resolver Divergência'
+            };
+            return acoes[acao] || acao;
+        }
+
+        function atualizarEstatisticasLogs(logs) {
+            const hoje = new Date().toDateString();
+            const logsHoje = logs.filter(log => new Date(log.created_at).toDateString() === hoje);
+            const usuariosUnicos = [...new Set(logs.map(log => log.usuario))];
+            const acoesCriticas = logs.filter(log => ['delete', 'resolver_divergencia'].includes(log.acao));
+            
+            document.getElementById('total-logs').textContent = logs.length;
+            document.getElementById('logs-hoje').textContent = logsHoje.length;
+            document.getElementById('usuarios-ativos').textContent = usuariosUnicos.length;
+            document.getElementById('acoes-criticas').textContent = acoesCriticas.length;
+        }
+
+        function filtrarLogs() {
+            const filtroAcao = document.getElementById('filtro-acao').value;
+            const dataFiltro = document.getElementById('data-filtro').value;
+            
+            let logsFiltrados = logsData;
+            
+            if (filtroAcao) {
+                logsFiltrados = logsFiltrados.filter(log => log.acao === filtroAcao);
+            }
+            
+            if (dataFiltro) {
+                logsFiltrados = logsFiltrados.filter(log => 
+                    log.created_at.startsWith(dataFiltro)
+                );
+            }
+            
+            renderizarLogs(logsFiltrados);
+            atualizarEstatisticasLogs(logsFiltrados);
+        }
+
+        function verDetalhesLog(logId) {
+            const log = logsData.find(l => l.id === logId);
+            if (!log) return;
+            
+            // Preencher modal com dados do log
+            document.getElementById('log-data-hora').textContent = log.created_at;
+            document.getElementById('log-usuario').textContent = log.usuario;
+            document.getElementById('log-ip').textContent = log.ip_address || 'Não disponível';
+            document.getElementById('log-id').textContent = log.id;
+            document.getElementById('log-acao').textContent = formatarAcao(log.acao);
+            document.getElementById('log-acao').className = `badge ${getAcaoBadgeClass(log.acao)}`;
+            document.getElementById('log-tabela').textContent = log.tabela || 'Não especificada';
+            document.getElementById('log-registro-id').textContent = log.registro_id || 'Não disponível';
+            
+            // Dados anteriores e novos (se disponíveis)
+            document.getElementById('log-dados-anteriores').textContent = log.dados_anteriores ? 
+                JSON.stringify(JSON.parse(log.dados_anteriores), null, 2) : 'Não disponível';
+            document.getElementById('log-dados-novos').textContent = log.dados_novos ? 
+                JSON.stringify(JSON.parse(log.dados_novos), null, 2) : 'Não disponível';
+            
+            // Abrir modal
+            const modal = new bootstrap.Modal(document.getElementById('modalDetalhesLog'));
+            modal.show();
+        }
+
+        function exportarLogs() {
+            const filtroAcao = document.getElementById('filtro-acao').value;
+            const dataFiltro = document.getElementById('data-filtro').value;
+            
+            let logsFiltrados = logsData;
+            
+            if (filtroAcao) {
+                logsFiltrados = logsFiltrados.filter(log => log.acao === filtroAcao);
+            }
+            
+            if (dataFiltro) {
+                logsFiltrados = logsFiltrados.filter(log => 
+                    log.created_at.startsWith(dataFiltro)
+                );
+            }
+            
+            // Converter para CSV
+            const headers = ['Data/Hora', 'Usuário', 'Ação', 'Tabela', 'Registro ID', 'IP Address'];
+            const csvContent = [
+                headers.join(','),
+                ...logsFiltrados.map(log => [
+                    log.created_at,
+                    log.usuario,
+                    formatarAcao(log.acao),
+                    log.tabela || '',
+                    log.registro_id || '',
+                    log.ip_address || ''
+                ].join(','))
+            ].join('\n');
+            
+            // Download do arquivo
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `logs_auditoria_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Carregar logs automaticamente quando a tab for ativada
+        document.querySelector('[data-tab="logs"]').addEventListener('click', function() {
+            setTimeout(() => {
+                if (logsData.length === 0) {
+                    carregarLogs();
+                }
+            }, 100);
+        });
     </script>
 </body>
 </html>

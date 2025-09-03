@@ -495,6 +495,23 @@
             background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
             transform: translateX(4px);
         }
+
+        /* Estilos para o perfil do usuário */
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -1747,24 +1764,210 @@
                 });
         }
 
+        // === FUNÇÕES DO PERFIL DO USUÁRIO ===
+
         function abrirPerfilUsuario() {
-            const usuario = window.currentUser || {
-                nome: 'Usuário Sistema',
-                email: 'usuario@financesync.com',
-                role: 'Usuário',
-                ultimo_acesso: 'N/A'
-            };
+            // Carregar dados do usuário atual
+            carregarDadosPerfilUsuario();
             
-            alert(`📊 PERFIL DO USUÁRIO\n\n` +
-                  `👤 Nome: ${usuario.nome}\n` +
-                  `📧 Email: ${usuario.email}\n` +
-                  `🔑 Perfil: ${usuario.role}\n` +
-                  `⏰ Último Acesso: ${usuario.ultimo_acesso}\n\n` +
-                  `⚙️ Em breve você poderá:\n` +
-                  `• Editar dados pessoais\n` +
-                  `• Alterar senha\n` +
-                  `• Configurar preferências\n` +
-                  `• Upload de foto de perfil`);
+            // Abrir modal
+            const modal = new bootstrap.Modal(document.getElementById('modalPerfilUsuario'));
+            modal.show();
+        }
+
+        async function carregarDadosPerfilUsuario() {
+            try {
+                const response = await fetch('/api/usuario/perfil');
+                const data = await response.json();
+                
+                if (data.usuario) {
+                    const usuario = data.usuario;
+                    
+                    // Atualizar informações do perfil
+                    document.getElementById('profile-nome').textContent = usuario.nome_completo;
+                    document.getElementById('profile-email').textContent = usuario.email;
+                    document.getElementById('profile-ultimo-acesso').textContent = usuario.ultimo_acesso || 'Nunca';
+                    
+                    // Atualizar badge do perfil
+                    const perfilBadge = document.getElementById('profile-perfil');
+                    const emoji = usuario.perfil === 'admin' ? '👑' : usuario.perfil === 'auditor' ? '🔍' : '👤';
+                    perfilBadge.innerHTML = `<span class="badge ${usuario.perfil}">${emoji} ${usuario.perfil.charAt(0).toUpperCase() + usuario.perfil.slice(1)}</span>`;
+                    
+                    // Atualizar avatar
+                    const avatar = document.getElementById('profile-avatar');
+                    if (usuario.foto_perfil) {
+                        avatar.innerHTML = `<img src="${usuario.foto_perfil}" alt="Foto de perfil" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    } else {
+                        avatar.innerHTML = `<div style="font-size: 2.5rem; font-weight: bold; color: white;">${usuario.nome_completo.charAt(0).toUpperCase()}</div>`;
+                    }
+                    
+                    // Atualizar estatísticas
+                    if (usuario.estatisticas) {
+                        document.getElementById('stats-extratos').textContent = usuario.estatisticas.extratos || 0;
+                        document.getElementById('stats-lancamentos').textContent = usuario.estatisticas.lancamentos || 0;
+                        document.getElementById('stats-conciliacoes').textContent = usuario.estatisticas.conciliacoes || 0;
+                        document.getElementById('stats-divergencias').textContent = usuario.estatisticas.divergencias || 0;
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar perfil:', error);
+                alert('Erro ao carregar dados do perfil');
+            }
+        }
+
+        function editarDadosPessoais() {
+            // Carregar dados atuais nos campos
+            document.getElementById('edit-nome').value = document.getElementById('profile-nome').textContent;
+            document.getElementById('edit-email').value = document.getElementById('profile-email').textContent;
+            
+            // Fechar modal do perfil e abrir modal de edição
+            const modalPerfil = bootstrap.Modal.getInstance(document.getElementById('modalPerfilUsuario'));
+            modalPerfil.hide();
+            
+            const modalEditar = new bootstrap.Modal(document.getElementById('modalEditarDados'));
+            modalEditar.show();
+        }
+
+        async function salvarDadosPessoais() {
+            const nome = document.getElementById('edit-nome').value;
+            const email = document.getElementById('edit-email').value;
+            const telefone = document.getElementById('edit-telefone').value;
+            
+            if (!nome || !email) {
+                alert('Nome e email são obrigatórios');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/usuario/perfil', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nome_completo: nome,
+                        email: email,
+                        telefone: telefone
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Dados atualizados com sucesso!');
+                    
+                    // Fechar modal e recarregar dados
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarDados'));
+                    modal.hide();
+                    
+                    // Atualizar dados na tela
+                    document.getElementById('profile-nome').textContent = nome;
+                    document.getElementById('profile-email').textContent = email;
+                    
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar dados: ' + error.message);
+            }
+        }
+
+        function alterarSenha() {
+            // Fechar modal do perfil e abrir modal de alteração de senha
+            const modalPerfil = bootstrap.Modal.getInstance(document.getElementById('modalPerfilUsuario'));
+            modalPerfil.hide();
+            
+            const modalSenha = new bootstrap.Modal(document.getElementById('modalAlterarSenha'));
+            modalSenha.show();
+        }
+
+        async function salvarNovaSenha() {
+            const senhaAtual = document.getElementById('senha-atual').value;
+            const novaSenha = document.getElementById('nova-senha').value;
+            const confirmarSenha = document.getElementById('confirmar-senha').value;
+            
+            if (!senhaAtual || !novaSenha || !confirmarSenha) {
+                alert('Todos os campos são obrigatórios');
+                return;
+            }
+            
+            if (novaSenha !== confirmarSenha) {
+                alert('A confirmação da senha não confere');
+                return;
+            }
+            
+            if (novaSenha.length < 6) {
+                alert('A nova senha deve ter pelo menos 6 caracteres');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/usuario/alterar-senha', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        senha_atual: senhaAtual,
+                        nova_senha: novaSenha
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Senha alterada com sucesso!');
+                    
+                    // Limpar campos e fechar modal
+                    document.getElementById('form-alterar-senha').reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalAlterarSenha'));
+                    modal.hide();
+                    
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao alterar senha: ' + error.message);
+            }
+        }
+
+        function configurarPreferencias() {
+            alert('Funcionalidade em desenvolvimento!\n\nEm breve você poderá:\n• Configurar tema claro/escuro\n• Definir idioma\n• Personalizar notificações\n• Ajustar configurações de relatórios');
+        }
+
+        function uploadFotoPerfil() {
+            document.getElementById('upload-foto').click();
+        }
+
+        function processarFotoPerfil(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Validar tipo de arquivo
+            if (!file.type.startsWith('image/')) {
+                alert('Apenas arquivos de imagem são permitidos');
+                return;
+            }
+            
+            // Validar tamanho (máximo 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('A imagem deve ter no máximo 2MB');
+                return;
+            }
+            
+            // Preview da imagem
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const avatar = document.getElementById('profile-avatar');
+                avatar.innerHTML = `<img src="${e.target.result}" alt="Foto de perfil" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            };
+            reader.readAsDataURL(file);
+            
+            // Aqui você implementaria o upload real
+            // uploadFotoParaServidor(file);
+            alert('Funcionalidade de upload em desenvolvimento!\nA imagem foi carregada apenas para preview.');
         }
 
         function abrirConfiguracoes() {
@@ -1817,5 +2020,218 @@
             document.querySelector('.user-role').textContent = role;
         }
     </script>
+
+    <!-- Modal para Perfil do Usuário -->
+    <div class="modal fade" id="modalPerfilUsuario" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user me-2"></i>
+                        Meu Perfil
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Informações do Usuário -->
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <div class="profile-avatar mx-auto mb-3" id="profile-avatar">
+                                <i class="fas fa-user fa-3x text-white"></i>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm" onclick="uploadFotoPerfil()">
+                                <i class="fas fa-camera me-2"></i>Alterar Foto
+                            </button>
+                            <input type="file" id="upload-foto" accept="image/*" style="display: none;" onchange="processarFotoPerfil(this)">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-info-circle me-2"></i>Informações do Perfil
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <strong>Nome:</strong>
+                                            <p id="profile-nome" class="mb-2">Usuário Sistema</p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Email:</strong>
+                                            <p id="profile-email" class="mb-2">usuario@financesync.com</p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Perfil:</strong>
+                                            <p id="profile-perfil" class="mb-2">
+                                                <span class="badge usuario">👤 Usuário</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Último Acesso:</strong>
+                                            <p id="profile-ultimo-acesso" class="mb-2">02/09/2025 22:58</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidades Disponíveis -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-cogs me-2"></i>Em breve você poderá:
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <button class="btn btn-outline-primary btn-sm w-100" onclick="editarDadosPessoais()">
+                                                <i class="fas fa-edit me-2"></i>Editar dados pessoais
+                                            </button>
+                                        </li>
+                                        <li class="mb-2">
+                                            <button class="btn btn-outline-warning btn-sm w-100" onclick="alterarSenha()">
+                                                <i class="fas fa-key me-2"></i>Alterar senha
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <button class="btn btn-outline-info btn-sm w-100" onclick="configurarPreferencias()">
+                                                <i class="fas fa-sliders-h me-2"></i>Configurar preferências
+                                            </button>
+                                        </li>
+                                        <li class="mb-2">
+                                            <button class="btn btn-outline-success btn-sm w-100" onclick="uploadFotoPerfil()">
+                                                <i class="fas fa-camera me-2"></i>Upload de foto de perfil
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estatísticas do Usuário -->
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>Suas Estatísticas
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <div class="stats-item">
+                                        <div class="h4 text-primary mb-1" id="stats-extratos">0</div>
+                                        <small class="text-muted">Extratos</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stats-item">
+                                        <div class="h4 text-info mb-1" id="stats-lancamentos">0</div>
+                                        <small class="text-muted">Lançamentos</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stats-item">
+                                        <div class="h4 text-success mb-1" id="stats-conciliacoes">0</div>
+                                        <small class="text-muted">Conciliações</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stats-item">
+                                        <div class="h4 text-warning mb-1" id="stats-divergencias">0</div>
+                                        <small class="text-muted">Divergências</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Dados Pessoais -->
+    <div class="modal fade" id="modalEditarDados" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i>Editar Dados Pessoais
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-editar-dados">
+                        <div class="mb-3">
+                            <label for="edit-nome" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="edit-nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="edit-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-telefone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="edit-telefone">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="salvarDadosPessoais()">
+                        <i class="fas fa-save me-2"></i>Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Alterar Senha -->
+    <div class="modal fade" id="modalAlterarSenha" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-key me-2"></i>Alterar Senha
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-alterar-senha">
+                        <div class="mb-3">
+                            <label for="senha-atual" class="form-label">Senha Atual</label>
+                            <input type="password" class="form-control" id="senha-atual" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nova-senha" class="form-label">Nova Senha</label>
+                            <input type="password" class="form-control" id="nova-senha" required minlength="6">
+                            <div class="form-text">Mínimo 6 caracteres</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmar-senha" class="form-label">Confirmar Nova Senha</label>
+                            <input type="password" class="form-control" id="confirmar-senha" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" onclick="salvarNovaSenha()">
+                        <i class="fas fa-key me-2"></i>Alterar Senha
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

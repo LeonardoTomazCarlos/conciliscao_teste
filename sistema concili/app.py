@@ -52,6 +52,26 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Verificação de usuário ativo antes de cada requisição
+@app.before_request
+def verificar_usuario_ativo():
+    """Verifica se o usuário logado ainda está ativo"""
+    # Excluir rotas que não precisam de verificação
+    rotas_excluidas = ['login', 'logout', 'static']
+    
+    # Verificar se a rota atual está nas excluídas
+    if request.endpoint in rotas_excluidas:
+        return
+    
+    # Se o usuário está logado, verificar se ainda está ativo
+    if current_user.is_authenticated:
+        # Recarregar o usuário do banco para pegar o status atual
+        usuario_atual = Usuario.query.get(current_user.id)
+        if not usuario_atual or not usuario_atual.ativo:
+            logout_user()
+            flash('Sua conta foi desativada. Entre em contato com o administrador.', 'error')
+            return redirect(url_for('login'))
+
 # Funções de controle de acesso
 def requires_permission(action='read'):
     """Decorator para controlar permissões de acesso"""
@@ -246,7 +266,11 @@ with app.app_context():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Usuario.query.get(int(user_id))
+    usuario = Usuario.query.get(int(user_id))
+    # Retornar None se o usuário não existir ou estiver inativo
+    if usuario and usuario.ativo:
+        return usuario
+    return None
 
 def log_auditoria(acao, tabela=None, registro_id=None, dados_anteriores=None, dados_novos=None):
     """Registra ação na auditoria"""
@@ -748,7 +772,17 @@ def verificar_divergencias():
 def index():
     if not current_user.is_authenticated:
         return redirect(url_for('register'))
-    return render_template('index.html')
+    
+    # Dados do usuário para passar ao template
+    user_data = {
+        'nome': current_user.nome_completo,
+        'email': current_user.email,
+        'username': current_user.username,
+        'perfil': current_user.perfil,
+        'ultimo_acesso': current_user.ultimo_acesso.strftime('%d/%m/%Y %H:%M') if current_user.ultimo_acesso else 'Nunca'
+    }
+    
+    return render_template('index.html', user=user_data)
 
 @app.route('/admin')
 @login_required
@@ -833,6 +867,14 @@ def login():
         
         user = Usuario.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
+            # Verificar se o usuário está ativo
+            if not user.ativo:
+                if request.is_json:
+                    return jsonify({'error': 'Usuário bloqueado. Entre em contato com o administrador.'}), 403
+                else:
+                    flash('Usuário bloqueado. Entre em contato com o administrador.', 'error')
+                    return render_template('login.html')
+            
             login_user(user)
             user.ultimo_acesso = datetime.utcnow()
             db.session.commit()
@@ -872,32 +914,6 @@ def logout():
         return redirect(url_for('login'))
 
 # === ROTAS DE ADMINISTRAÇÃO ===
-
-@app.route('/api/admin/usuarios', methods=['GET'])
-@login_required
-@admin_required
-def get_usuarios():
-    data = request.get_json()
-    
-    if Usuario.query.filter_by(username=data['username']).first():
-        return jsonify({'error': 'Username já existe'}), 400
-    
-    if Usuario.query.filter_by(email=data['email']).first():
-        return jsonify({'error': 'Email já existe'}), 400
-    
-    usuario = Usuario(
-        username=data['username'],
-        email=data['email'],
-        password_hash=generate_password_hash(data['password']),
-        nome_completo=data['nome_completo'],
-        perfil=data.get('perfil', 'usuario')
-    )
-    
-    db.session.add(usuario)
-    db.session.commit()
-    
-    log_auditoria('criar_usuario', 'usuario', usuario.id, None, data)
-    return jsonify({'success': True, 'message': 'Usuário criado com sucesso'})
 
 @app.route('/api/contas-bancarias', methods=['GET'])
 @login_required
@@ -1193,14 +1209,37 @@ def resolver_divergencia(divergencia_id):
 @login_required
 @admin_required
 def get_auditoria():
-    logs = LogAuditoria.query.order_by(LogAuditoria.created_at.desc()).limit(100).all()
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 100, type=int)
+    acao_filtro = request.args.get('acao')
+    data_filtro = request.args.get('data')
+    
+    query = LogAuditoria.query
+    
+    # Aplicar filtros
+    if acao_filtro:
+        query = query.filter(LogAuditoria.acao == acao_filtro)
+    
+    if data_filtro:
+        try:
+            data = datetime.strptime(data_filtro, '%Y-%m-%d').date()
+            query = query.filter(db.func.date(LogAuditoria.created_at) == data)
+        except ValueError:
+            pass
+    
+    logs = query.order_by(LogAuditoria.created_at.desc()).limit(per_page).all()
+    
     return jsonify([{
         'id': l.id,
-        'usuario': l.usuario.username if l.usuario else 'Sistema',
+        'usuario': l.usuario.nome_completo if l.usuario else 'Sistema',
+        'username': l.usuario.username if l.usuario else 'sistema',
         'acao': l.acao,
         'tabela': l.tabela,
         'registro_id': l.registro_id,
+        'dados_anteriores': l.dados_anteriores,
+        'dados_novos': l.dados_novos,
         'ip_address': l.ip_address,
+        'user_agent': l.user_agent,
         'created_at': l.created_at.strftime('%Y-%m-%d %H:%M:%S')
     } for l in logs])
 
@@ -1687,12 +1726,22 @@ def get_usuario():
     try:
         # Simulação de dados do usuário (em produção, usar dados reais do banco)
         if current_user.is_authenticated:
+            # Usar o nome completo do usuário e calcular iniciais corretamente
+            nome_completo = current_user.nome_completo if hasattr(current_user, 'nome_completo') and current_user.nome_completo else current_user.username
+            
+            # Calcular iniciais baseadas no nome completo
+            palavras = nome_completo.split()
+            iniciais = ''.join([palavra[0].upper() for palavra in palavras[:2]])
+            
+            # Determinar o perfil do usuário
+            perfil_display = 'Administrador' if current_user.perfil == 'admin' else 'Auditor' if current_user.perfil == 'auditor' else 'Usuário'
+            
             usuario = {
-                'nome': current_user.username,
-                'email': getattr(current_user, 'email', 'admin@financesync.com'),
-                'iniciais': ''.join([n[0].upper() for n in current_user.username.split()[:2]]),
-                'role': 'Administrador' if current_user.is_admin else 'Usuário',
-                'ultimo_acesso': datetime.now().strftime('%d/%m/%Y %H:%M'),
+                'nome': nome_completo,
+                'email': current_user.email if hasattr(current_user, 'email') else 'usuario@financesync.com',
+                'iniciais': iniciais,
+                'role': perfil_display,
+                'ultimo_acesso': current_user.ultimo_acesso.strftime('%d/%m/%Y %H:%M') if hasattr(current_user, 'ultimo_acesso') and current_user.ultimo_acesso else 'Nunca',
                 'avatar_url': None  # Pode ser implementado depois
             }
         else:
@@ -2029,6 +2078,127 @@ def resetar_senha_usuario(usuario_id):
         
     except Exception as e:
         logging.error(f"Erro ao resetar senha do usuário: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# === ROTAS DO PERFIL DO USUÁRIO ===
+
+@app.route('/api/usuario/perfil', methods=['GET'])
+@login_required
+def get_perfil_usuario():
+    """Obter dados do perfil do usuário atual"""
+    try:
+        usuario = current_user
+        
+        # Calcular estatísticas do usuário
+        estatisticas = {
+            'extratos': ExtratoBancario.query.filter_by(usuario_id=usuario.id).count(),
+            'lancamentos': LancamentoContabil.query.filter_by(usuario_id=usuario.id).count(),
+            'conciliacoes': Conciliacao.query.filter_by(usuario_id=usuario.id).count(),
+            'divergencias': Conciliacao.query.filter_by(usuario_id=usuario.id, status='divergente').count()
+        }
+        
+        return jsonify({
+            'success': True,
+            'usuario': {
+                'id': usuario.id,
+                'username': usuario.username,
+                'email': usuario.email,
+                'nome_completo': usuario.nome_completo,
+                'perfil': usuario.perfil,
+                'ativo': usuario.ativo,
+                'created_at': usuario.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'ultimo_acesso': usuario.ultimo_acesso.strftime('%Y-%m-%d %H:%M:%S') if usuario.ultimo_acesso else 'Nunca',
+                'foto_perfil': getattr(usuario, 'foto_perfil', None),
+                'telefone': getattr(usuario, 'telefone', ''),
+                'estatisticas': estatisticas
+            }
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar perfil do usuário: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/usuario/perfil', methods=['PUT'])
+@login_required
+def atualizar_perfil_usuario():
+    """Atualizar dados do perfil do usuário atual"""
+    try:
+        data = request.get_json()
+        usuario = current_user
+        
+        # Atualizar campos permitidos
+        if 'nome_completo' in data:
+            usuario.nome_completo = data['nome_completo']
+        
+        if 'email' in data:
+            # Verificar se o email já está em uso por outro usuário
+            existing_user = Usuario.query.filter(
+                Usuario.email == data['email'], 
+                Usuario.id != usuario.id
+            ).first()
+            
+            if existing_user:
+                return jsonify({'error': 'Este email já está em uso por outro usuário'}), 400
+            
+            usuario.email = data['email']
+        
+        if 'telefone' in data:
+            # Adicionar campo telefone se não existir na tabela
+            if hasattr(usuario, 'telefone'):
+                usuario.telefone = data['telefone']
+        
+        db.session.commit()
+        log_auditoria('atualizar_perfil', 'usuario', usuario.id, None, data)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Perfil atualizado com sucesso'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Erro ao atualizar perfil do usuário: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/usuario/alterar-senha', methods=['POST'])
+@login_required
+def alterar_senha_usuario():
+    """Alterar senha do usuário atual"""
+    try:
+        data = request.get_json()
+        usuario = current_user
+        
+        senha_atual = data.get('senha_atual')
+        nova_senha = data.get('nova_senha')
+        
+        if not senha_atual or not nova_senha:
+            return jsonify({'error': 'Senha atual e nova senha são obrigatórias'}), 400
+        
+        # Verificar senha atual
+        if not check_password_hash(usuario.password_hash, senha_atual):
+            return jsonify({'error': 'Senha atual incorreta'}), 400
+        
+        # Validar nova senha
+        if len(nova_senha) < 6:
+            return jsonify({'error': 'A nova senha deve ter pelo menos 6 caracteres'}), 400
+        
+        # Atualizar senha
+        usuario.password_hash = generate_password_hash(nova_senha)
+        db.session.commit()
+        
+        log_auditoria('alterar_senha', 'usuario', usuario.id, None, {
+            'usuario_id': usuario.id,
+            'usuario': usuario.username
+        })
+        
+        return jsonify({
+            'success': True,
+            'message': 'Senha alterada com sucesso'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Erro ao alterar senha do usuário: {e}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
