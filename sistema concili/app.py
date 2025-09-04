@@ -786,112 +786,146 @@ def aplicar_regras_conciliacao(registro, tipo='extrato'):
 
 def detectar_transacoes_recorrentes():
     """Detecta transações recorrentes baseado em padrões"""
-    extratos = ExtratoBancario.query.filter_by(transacao_recorrente=False).all()
-    
-    for extrato in extratos:
-        # Buscar transações similares
-        similares = ExtratoBancario.query.filter(
-            ExtratoBancario.descricao == extrato.descricao,
-            ExtratoBancario.valor == extrato.valor,
-            ExtratoBancario.id != extrato.id
-        ).all()
+    try:
+        extratos = ExtratoBancario.query.filter_by(transacao_recorrente=False).all()
         
-        if len(similares) >= 2:  # Se encontrou pelo menos 2 transações similares
-            extrato.transacao_recorrente = True
-            for similar in similares:
-                similar.transacao_recorrente = True
-    
-    db.session.commit()
+        for extrato in extratos:
+            # Buscar transações similares
+            similares = ExtratoBancario.query.filter(
+                ExtratoBancario.descricao == extrato.descricao,
+                ExtratoBancario.valor == extrato.valor,
+                ExtratoBancario.id != extrato.id
+            ).all()
+            
+            if len(similares) >= 2:  # Se encontrou pelo menos 2 transações similares
+                extrato.transacao_recorrente = True
+                for similar in similares:
+                    similar.transacao_recorrente = True
+        
+        db.session.commit()
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Erro ao detectar transações recorrentes: {e}")
+        raise e
 
 def conciliacao_automatica():
     """Realiza conciliação automática baseada em regras"""
-    extratos_nao_conciliados = ExtratoBancario.query.filter_by(conciliado=False).all()
-    lancamentos_nao_conciliados = LancamentoContabil.query.filter_by(conciliado=False).all()
-    
-    conciliacoes_realizadas = 0
-    
-    for extrato in extratos_nao_conciliados:
-        for lancamento in lancamentos_nao_conciliados:
-            # Verificar se já estão conciliados
-            if extrato.conciliado or lancamento.conciliado:
-                continue
-                
-            # Regras de conciliação automática
-            if (extrato.valor == lancamento.valor and 
-                extrato.data == lancamento.data and
-                extrato.tipo == lancamento.tipo):
-                
-                # Verificar se já existe conciliação
-                conciliacao_existente = Conciliacao.query.filter_by(
-                    extrato_id=extrato.id,
-                    lancamento_id=lancamento.id
-                ).first()
-                
-                if not conciliacao_existente:
-                    # Criar conciliação automática
-                    # Atribuir ao usuário autenticado quando disponível; caso contrário manter usuário sistema (id=1)
-                    usuario_responsavel = current_user.id if (hasattr(current_user, 'is_authenticated') and current_user.is_authenticated) else 1
-                    conciliacao = Conciliacao(
+    try:
+        extratos_nao_conciliados = ExtratoBancario.query.filter_by(conciliado=False).all()
+        lancamentos_nao_conciliados = LancamentoContabil.query.filter_by(conciliado=False).all()
+        
+        conciliacoes_realizadas = 0
+        
+        for extrato in extratos_nao_conciliados:
+            for lancamento in lancamentos_nao_conciliados:
+                # Verificar se já estão conciliados
+                if extrato.conciliado or lancamento.conciliado:
+                    continue
+                    
+                # Regras de conciliação automática
+                if (extrato.valor == lancamento.valor and 
+                    extrato.data == lancamento.data and
+                    extrato.tipo == lancamento.tipo):
+                    
+                    # Verificar se já existe conciliação
+                    conciliacao_existente = Conciliacao.query.filter_by(
                         extrato_id=extrato.id,
-                        lancamento_id=lancamento.id,
-                        usuario_id=usuario_responsavel,
-                        tipo_conciliacao='automatica',
-                        observacoes='Conciliação automática por valor, data e tipo'
-                    )
-                    db.session.add(conciliacao)
+                        lancamento_id=lancamento.id
+                    ).first()
                     
-                    # Marcar como conciliado
-                    extrato.conciliado = True
-                    lancamento.conciliado = True
-                    
-                    conciliacoes_realizadas += 1
-                    
-                    # Registrar na auditoria
-                    log_auditoria(
-                        'conciliacao_automatica',
-                        'conciliacao',
-                        conciliacao.id,
-                        None,
-                        {'extrato_id': extrato.id, 'lancamento_id': lancamento.id}
-                    )
-    
-    db.session.commit()
-    return conciliacoes_realizadas
+                    if not conciliacao_existente:
+                        # Criar conciliação automática
+                        # Atribuir ao usuário autenticado quando disponível; caso contrário manter usuário sistema (id=1)
+                        usuario_responsavel = current_user.id if (hasattr(current_user, 'is_authenticated') and current_user.is_authenticated) else 1
+                        conciliacao = Conciliacao(
+                            extrato_id=extrato.id,
+                            lancamento_id=lancamento.id,
+                            usuario_id=usuario_responsavel,
+                            tipo_conciliacao='automatica',
+                            observacoes='Conciliação automática por valor, data e tipo'
+                        )
+                        db.session.add(conciliacao)
+                        
+                        # Marcar como conciliado
+                        extrato.conciliado = True
+                        lancamento.conciliado = True
+                        
+                        conciliacoes_realizadas += 1
+                        
+                        # Registrar na auditoria
+                        log_auditoria(
+                            'conciliacao_automatica', 
+                            extrato.id, 
+                            lancamento.id, 
+                            usuario_responsavel,
+                            {'valor': float(extrato.valor), 'data': extrato.data.isoformat()}
+                        )
+        
+        db.session.commit()
+        return conciliacoes_realizadas
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Erro na conciliação automática: {e}")
+        raise e
 
 def verificar_divergencias():
     """Verifica e cria alertas de divergências"""
-    # Verificar duplicatas
-    extratos = ExtratoBancario.query.all()
-    for extrato in extratos:
-        duplicatas = ExtratoBancario.query.filter(
-            ExtratoBancario.descricao == extrato.descricao,
-            ExtratoBancario.valor == extrato.valor,
-            ExtratoBancario.data == extrato.data,
-            ExtratoBancario.id != extrato.id
-        ).all()
+    try:
+        # Verificar duplicatas
+        extratos = ExtratoBancario.query.all()
+        for extrato in extratos:
+            duplicatas = ExtratoBancario.query.filter(
+                ExtratoBancario.descricao == extrato.descricao,
+                ExtratoBancario.valor == extrato.valor,
+                ExtratoBancario.data == extrato.data,
+                ExtratoBancario.id != extrato.id
+            ).all()
+            
+            if duplicatas:
+                for duplicata in duplicatas:
+                    # Verificar se já existe esta divergência
+                    divergencia_existente = Divergencia.query.filter_by(
+                        tipo='duplicata',
+                        extrato_id=extrato.id
+                    ).first()
+                    
+                    if not divergencia_existente:
+                        divergencia = Divergencia(
+                            tipo='duplicata',
+                            extrato_id=extrato.id,
+                            descricao=f'Transação duplicada detectada: {extrato.descricao} - R$ {extrato.valor}'
+                        )
+                        db.session.add(divergencia)
         
-        if duplicatas:
-            for duplicata in duplicatas:
-                divergencia = Divergencia(
-                    tipo='duplicata',
-                    extrato_id=extrato.id,
-                    descricao=f'Transação duplicada detectada: {extrato.descricao} - R$ {extrato.valor}'
-                )
-                db.session.add(divergencia)
-    
-    # Verificar valores incorretos (diferença > 5%)
-    conciliacoes = Conciliacao.query.filter_by(status='ativa').all()
-    for conciliacao in conciliacoes:
-        if abs(conciliacao.extrato.valor - conciliacao.lancamento.valor) > 0.01:
-            divergencia = Divergencia(
-                tipo='valor_incorreto',
-                extrato_id=conciliacao.extrato_id,
-                lancamento_id=conciliacao.lancamento_id,
-                descricao=f'Diferença de valor detectada: Extrato R$ {conciliacao.extrato.valor} vs Lançamento R$ {conciliacao.lancamento.valor}'
-            )
-            db.session.add(divergencia)
-    
-    db.session.commit()
+        # Verificar valores incorretos (diferença > 5%)
+        conciliacoes = Conciliacao.query.filter_by(status='ativa').all()
+        for conciliacao in conciliacoes:
+            if conciliacao.extrato and conciliacao.lancamento:
+                if abs(conciliacao.extrato.valor - conciliacao.lancamento.valor) > 0.01:
+                    # Verificar se já existe esta divergência
+                    divergencia_existente = Divergencia.query.filter_by(
+                        tipo='valor_incorreto',
+                        extrato_id=conciliacao.extrato_id,
+                        lancamento_id=conciliacao.lancamento_id
+                    ).first()
+                    
+                    if not divergencia_existente:
+                        divergencia = Divergencia(
+                            tipo='valor_incorreto',
+                            extrato_id=conciliacao.extrato_id,
+                            lancamento_id=conciliacao.lancamento_id,
+                            descricao=f'Diferença de valor detectada: Extrato R$ {conciliacao.extrato.valor} vs Lançamento R$ {conciliacao.lancamento.valor}'
+                        )
+                        db.session.add(divergencia)
+        
+        db.session.commit()
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Erro ao verificar divergências: {e}")
+        raise e
 
 @app.route('/')
 def index():

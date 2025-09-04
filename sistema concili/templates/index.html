@@ -9,6 +9,21 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* IMPORTANTE: Esconder todas as abas por padrão para evitar "piscadas" */
+        .tab-content .tab-pane {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transition: none !important;
+        }
+        
+        /* Mostrar apenas a aba ativa */
+        .tab-content .tab-pane.show.active {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        
         :root {
             --primary-color: #2563eb;
             --secondary-color: #3b82f6;
@@ -841,7 +856,7 @@
                                                 <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
                                                 <p class="text-muted mb-2 small">Arraste o arquivo ou clique para selecionar</p>
                                                 <input type="file" id="file-extratos" accept=".csv" class="d-none">
-                                                <button class="btn btn-primary btn-sm" onclick="document.getElementById('file-extratos').click()">
+                                                <button class="btn btn-primary btn-sm" type="button">
                                                     <i class="fas fa-folder-open me-1"></i>Selecionar
                                                 </button>
                                                 <div class="mt-2">
@@ -865,7 +880,7 @@
                                                 <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
                                                 <p class="text-muted mb-2 small">Arraste o arquivo ou clique para selecionar</p>
                                                 <input type="file" id="file-lancamentos" accept=".csv" class="d-none">
-                                                <button class="btn btn-info btn-sm" onclick="document.getElementById('file-lancamentos').click()">
+                                                <button class="btn btn-info btn-sm" type="button">
                                                     <i class="fas fa-folder-open me-1"></i>Selecionar
                                                 </button>
                                                 <div class="mt-2">
@@ -1275,17 +1290,300 @@
                             <p class="text-muted mb-0">Gere relatórios detalhados e exporte dados do sistema de conciliação</p>
                         </div>
                         
+                        <!-- Seção Dashboard -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard Analítico
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-4">
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="card card-dashboard h-100">
+                                            <div class="card-body text-center d-flex flex-column">
+                                                <div class="mb-4">
+                                                    <i class="fas fa-chart-pie fa-3x text-success mb-3"></i>
+                                                    <h5 class="fw-bold">Relatório de Conciliação</h5>
+                                                    <p class="text-muted">Visualizar dados conciliados e divergências</p>
+                                                </div>
+                                                <div class="mt-auto">
+                                                    <button class="btn btn-success btn-action w-100" onclick="gerarRelatorioConciliacao()">
+                                                        <i class="fas fa-file-alt me-2"></i>Gerar Relatório
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="card card-dashboard h-100">
+                                            <div class="card-body text-center d-flex flex-column">
+                                                <div class="mb-4">
+                                                    <i class="fas fa-download fa-3x text-info mb-3"></i>
+                                                    <h5 class="fw-bold">Exportar Dados</h5>
+                                                    <p class="text-muted">Exportar relatórios em diferentes formatos</p>
+                                                </div>
+                                                <div class="mt-auto">
+                                                    <div class="btn-group w-100" role="group">
+                                                        <button class="btn btn-info btn-action" onclick="exportarCSVRapido()">
+                                                            <i class="fas fa-file-csv me-1"></i>CSV
+                                                        </button>
+                                                        <button class="btn btn-info btn-action" onclick="exportarJSONRapido()">
+                                                            <i class="fas fa-file-code me-1"></i>JSON
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="card card-dashboard h-100">
+                                            <div class="card-body text-center d-flex flex-column">
+                                                <div class="mb-4">
+                                                    <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                                                    <h5 class="fw-bold">Dashboard Analítico</h5>
+                                                    <p class="text-muted">Visualizar gráficos e análises dos dados filtrados</p>
+                                                </div>
+                                                <div class="mt-auto">
+                                                    <button class="btn btn-primary btn-action w-100" onclick="abrirDashboardAnalitico()">
+                                                        <i class="fas fa-chart-bar me-2"></i>Ver Dashboard
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Seção de Filtros -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-filter text-primary me-2"></i>Filtros de Relatório
+                                    </h5>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="aplicarFiltroRapido('hoje')">
+                                            <i class="fas fa-clock me-1"></i>Hoje
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-success" onclick="aplicarFiltroRapido('semana')">
+                                            <i class="fas fa-calendar-week me-1"></i>Esta Semana
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-info" onclick="aplicarFiltroRapido('mes')">
+                                            <i class="fas fa-calendar-alt me-1"></i>Este Mês
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-warning" onclick="aplicarFiltroRapido('divergencias')">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Com Divergências
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <!-- Filtro de Período -->
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-calendar text-primary me-1"></i>Período
+                                        </label>
+                                        <select class="form-select" id="filtro-periodo-relatorio">
+                                            <option value="hoje">Hoje</option>
+                                            <option value="ontem">Ontem</option>
+                                            <option value="7dias">Últimos 7 dias</option>
+                                            <option value="30dias" selected>Últimos 30 dias</option>
+                                            <option value="mes-atual">Mês atual</option>
+                                            <option value="mes-anterior">Mês anterior</option>
+                                            <option value="ano-atual">Ano atual</option>
+                                            <option value="personalizado">Período personalizado</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Datas Personalizadas -->
+                                    <div class="col-md-2" id="data-inicio-container" style="display: none;">
+                                        <label class="form-label fw-bold">Data Início</label>
+                                        <input type="date" class="form-control" id="filtro-data-inicio-relatorio">
+                                    </div>
+                                    <div class="col-md-2" id="data-fim-container" style="display: none;">
+                                        <label class="form-label fw-bold">Data Fim</label>
+                                        <input type="date" class="form-control" id="filtro-data-fim-relatorio">
+                                    </div>
+
+                                    <!-- Filtro de Usuário -->
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-user text-success me-1"></i>Usuário
+                                        </label>
+                                        <select class="form-select" id="filtro-usuario-relatorio">
+                                            <option value="">Todos os usuários</option>
+                                            <option value="admin">Administrador</option>
+                                            <option value="auditor">Auditor</option>
+                                            <option value="operador">Operador</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtro de Tipo -->
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-tags text-warning me-1"></i>Tipo
+                                        </label>
+                                        <select class="form-select" id="filtro-tipo-relatorio">
+                                            <option value="">Todos os tipos</option>
+                                            <option value="automatico">Automático</option>
+                                            <option value="manual">Manual</option>
+                                            <option value="correcao">Correção</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtro de Status -->
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-check-circle text-info me-1"></i>Status
+                                        </label>
+                                        <select class="form-select" id="filtro-status-relatorio">
+                                            <option value="">Todos os status</option>
+                                            <option value="concluido">Concluído</option>
+                                            <option value="em-andamento">Em Andamento</option>
+                                            <option value="com-erro">Com Erro</option>
+                                            <option value="cancelado">Cancelado</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Segunda linha de filtros -->
+                                <div class="row g-3 mt-2">
+                                    <!-- Filtro de Valor -->
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-dollar-sign text-success me-1"></i>Faixa de Valor
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">R$</span>
+                                            <input type="number" class="form-control" placeholder="Min" id="filtro-valor-min-relatorio" step="0.01">
+                                            <span class="input-group-text">até</span>
+                                            <input type="number" class="form-control" placeholder="Max" id="filtro-valor-max-relatorio" step="0.01">
+                                        </div>
+                                    </div>
+
+                                    <!-- Filtro de Divergências -->
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-exclamation-triangle text-danger me-1"></i>Divergências
+                                        </label>
+                                        <select class="form-select" id="filtro-divergencias-relatorio">
+                                            <option value="">Todos</option>
+                                            <option value="com-divergencia">Com Divergência</option>
+                                            <option value="sem-divergencia">Sem Divergência</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtro de Arquivo -->
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-file text-secondary me-1"></i>Arquivo/Origem
+                                        </label>
+                                        <input type="text" class="form-control" placeholder="Nome do arquivo..." id="filtro-arquivo-relatorio">
+                                    </div>
+
+                                    <!-- Botões de Ação -->
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Ações</label>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-primary" onclick="aplicarFiltrosRelatorio()" id="btn-aplicar-filtros">
+                                                <i class="fas fa-search me-1"></i>Filtrar
+                                            </button>
+                                            <button class="btn btn-outline-secondary" onclick="limparTodosFiltros()">
+                                                <i class="fas fa-times me-1"></i>Limpar
+                                            </button>
+                                            <button class="btn btn-outline-info" onclick="salvarFiltroPersonalizado()">
+                                                <i class="fas fa-save me-1"></i>Salvar
+                                            </button>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-download me-1"></i>Exportar
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="exportarCSVRapido()">
+                                                        <i class="fas fa-file-csv me-2"></i>CSV Rápido
+                                                    </a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="exportarJSONRapido()">
+                                                        <i class="fas fa-file-code me-2"></i>JSON
+                                                    </a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="exportarExcelCompleto()">
+                                                        <i class="fas fa-file-excel me-2"></i>Excel Completo
+                                                    </a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Filtros Salvos -->
+                                <div class="row mt-3" id="filtros-salvos-container" style="display: none;">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-bookmark text-info me-1"></i>Filtros Salvos
+                                        </label>
+                                        <div class="d-flex flex-wrap gap-2" id="filtros-salvos-list">
+                                            <!-- Filtros salvos serão inseridos aqui via JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resultados e Estatísticas -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-file-alt fa-2x mb-2"></i>
+                                        <h4 id="total-registros-relatorio">0</h4>
+                                        <small>Total de Registros</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-check fa-2x mb-2"></i>
+                                        <h4 id="total-conciliados-relatorio">0</h4>
+                                        <small>Conciliados</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                                        <h4 id="total-divergencias-relatorio">0</h4>
+                                        <small>Divergências</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                                        <h4 id="valor-total-relatorio">R$ 0,00</h4>
+                                        <small>Valor Total</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ações de Relatório -->
                         <div class="row g-4">
                             <div class="col-lg-4 col-md-6">
                                 <div class="card card-dashboard h-100">
                                     <div class="card-body text-center d-flex flex-column">
                                         <div class="mb-4">
                                             <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
-                                            <h5 class="fw-bold">Relatório de Conciliação</h5>
-                                            <p class="text-muted">Gerar relatório completo da conciliação</p>
+                                            <h5 class="fw-bold">Relatório PDF</h5>
+                                            <p class="text-muted">Gerar relatório completo em PDF com os filtros aplicados</p>
                                         </div>
                                         <div class="mt-auto">
-                                            <button class="btn btn-danger btn-action w-100" onclick="gerarRelatorioPDF()">
+                                            <button class="btn btn-danger btn-action w-100" onclick="gerarRelatorioPDFCompleto()">
                                                 <i class="fas fa-download me-2"></i>Gerar PDF
                                             </button>
                                         </div>
@@ -1297,11 +1595,11 @@
                                     <div class="card-body text-center d-flex flex-column">
                                         <div class="mb-4">
                                             <i class="fas fa-file-excel fa-3x text-success mb-3"></i>
-                                            <h5 class="fw-bold">Exportar Divergências</h5>
-                                            <p class="text-muted">Exportar lista de divergências para Excel</p>
+                                            <h5 class="fw-bold">Exportar Excel</h5>
+                                            <p class="text-muted">Exportar dados filtrados para planilha Excel</p>
                                         </div>
                                         <div class="mt-auto">
-                                            <button class="btn btn-success btn-action w-100" onclick="exportarDivergencias()">
+                                            <button class="btn btn-success btn-action w-100" onclick="exportarExcelCompleto()">
                                                 <i class="fas fa-download me-2"></i>Exportar Excel
                                             </button>
                                         </div>
@@ -1312,16 +1610,63 @@
                                 <div class="card card-dashboard h-100">
                                     <div class="card-body text-center d-flex flex-column">
                                         <div class="mb-4">
-                                            <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
-                                            <h5 class="fw-bold">Análise Estatística</h5>
-                                            <p class="text-muted">Visualizar estatísticas detalhadas</p>
+                                            <i class="fas fa-save fa-3x text-warning mb-3"></i>
+                                            <h5 class="fw-bold">Filtros Salvos</h5>
+                                            <p class="text-muted">Gerenciar e carregar filtros personalizados</p>
                                         </div>
                                         <div class="mt-auto">
-                                            <button class="btn btn-primary btn-action w-100" onclick="mostrarEstatisticas()">
-                                                <i class="fas fa-chart-bar me-2"></i>Ver Estatísticas
+                                            <div id="lista-filtros-salvos" class="mb-3">
+                                                <small class="text-muted">Nenhum filtro salvo</small>
+                                            </div>
+                                            <button class="btn btn-warning btn-action w-100" onclick="salvarFiltroPersonalizado()">
+                                                <i class="fas fa-save me-2"></i>Salvar Filtro Atual
                                             </button>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabela de Preview dos Dados -->
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-table text-secondary me-2"></i>Preview dos Dados
+                                        <small class="text-muted">(Mostrando primeiros 10 registros)</small>
+                                    </h5>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge bg-primary" id="total-registros">0 registros</span>
+                                        <span class="badge bg-success" id="total-conciliados">0 conciliados</span>
+                                        <span class="badge bg-warning" id="total-divergencias">0 divergências</span>
+                                        <span class="badge bg-info" id="valor-total">R$ 0,00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Data</th>
+                                                <th>Usuário</th>
+                                                <th>Tipo</th>
+                                                <th>Status</th>
+                                                <th>Valor</th>
+                                                <th>Divergências</th>
+                                                <th>Arquivo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabela-preview-relatorio">
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted">
+                                                    <i class="fas fa-search fa-2x mb-2 d-block"></i>
+                                                    Aplique os filtros para visualizar os dados
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -1336,9 +1681,44 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/funcoes_simples.js"></script>
     
+    <!-- Script IMEDIATO para evitar "piscadas" -->
+    <script>
+        // Executar IMEDIATAMENTE quando o script carrega (antes do DOMContentLoaded)
+        (function() {
+            console.log('🛡️ Script anti-piscada executado');
+            
+            // Aguardar um pouquinho para o DOM estar minimamente pronto
+            setTimeout(function() {
+                // Esconder todas as abas imediatamente
+                const allTabs = document.querySelectorAll('.tab-pane');
+                const allLinks = document.querySelectorAll('.nav-link');
+                
+                allTabs.forEach(tab => {
+                    tab.style.display = 'none';
+                    tab.style.opacity = '0';
+                    tab.style.visibility = 'hidden';
+                    tab.classList.remove('show', 'active');
+                });
+                
+                allLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                console.log('🚫 Todas as abas escondidas preventivamente');
+            }, 10); // 10ms apenas para garantir que o DOM básico existe
+        })();
+    </script>
+    
     <script>
         // Configurar drag and drop para as áreas de upload
         function setupDragAndDrop() {
+            // Verificar se já foi inicializado para evitar eventos duplicados
+            if (window.dragDropInitialized) {
+                console.log('⚠️ Drag and drop já inicializado, pulando...');
+                return;
+            }
+            
+            console.log('🔧 Configurando drag and drop...');
             const uploadAreas = ['upload-extratos', 'upload-lancamentos'];
             
             uploadAreas.forEach(areaId => {
@@ -1372,12 +1752,26 @@
                     
                     // Adicionar clique na área toda
                     area.addEventListener('click', function(e) {
-                        if (e.target.tagName !== 'BUTTON') {
+                        // Evitar clique duplo se foi clicado no botão
+                        if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
                             fileInput.click();
                         }
                     });
+                    
+                    // Adicionar evento específico para o botão
+                    const button = area.querySelector('button');
+                    if (button) {
+                        button.addEventListener('click', function(e) {
+                            e.stopPropagation(); // Evitar propagação para o evento da área
+                            fileInput.click();
+                        });
+                    }
                 }
             });
+            
+            // Marcar como inicializado
+            window.dragDropInitialized = true;
+            console.log('✅ Drag and drop configurado com sucesso');
         }
 
         function preventDefaults(e) {
@@ -2383,37 +2777,40 @@
 
         // Carregar dados iniciais
         document.addEventListener('DOMContentLoaded', function() {
-            // Definir período inicial como hoje
-            periodoAtualDashboard = 'hoje';
-            carregarEstatisticas('hoje'); // Carregar estatísticas de hoje por padrão
-            inicializarUsuario();
+            console.log('🚀 Iniciando sistema...');
             
-            // Inicializar uploads
+            // IMEDIATAMENTE: Verificar persistência e ativar aba correta
+            const abaSalva = localStorage.getItem('abaSistemaAtiva');
+            let abaInicial = abaSalva || 'dashboard';
+            
+            console.log('� Aba inicial determinada:', abaInicial);
+            
+            // Ativar a aba IMEDIATAMENTE - SEM DELAYS
+            ativarAbaSemDelay(abaInicial);
+            
+            // Continuar com inicializações que não afetam a UI
+            periodoAtualDashboard = 'hoje';
+            carregarEstatisticas('hoje');
+            inicializarUsuario();
             setupDragAndDrop();
             
-            // Limpar localStorage se necessário (para debug)
-            // localStorage.removeItem('abaSistemaAtiva'); // Descomente se precisar resetar
-            
-            // Carregar também as conciliações para evitar problemas
+            // Carregamentos com delay apenas para dados
             setTimeout(() => {
                 carregarConciliacoes(1);
-            }, 1000); // Aguardar 1 segundo para garantir que a página carregou
-        });
-
-        // Manipulação de abas
-        document.addEventListener('DOMContentLoaded', function() {
-            // SEMPRE INICIAR COM DASHBOARD - ignorar localStorage
-            console.log('🏠 Iniciando sistema - carregando Dashboard por padrão');
+            }, 1000);
             
-            // Remover qualquer aba salva para forçar Dashboard
-            localStorage.removeItem('abaSistemaAtiva');
+            if (abaSalva) {
+                console.log('✅ Aba restaurada:', abaSalva);
+            } else {
+                console.log('✅ Dashboard - primeira visita');
+            }
             
-            // Limpar qualquer estado anterior primeiro
+            // Carregar dados das conciliações (com delay para não interferir na inicialização)
             setTimeout(() => {
-                ativarAba('dashboard');
-                console.log('✅ Dashboard ativado como tela inicial');
-            }, 100);
+                carregarConciliacoes(1);
+            }, 1000);
             
+            // Configurar event listeners para cliques nas abas
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -2421,22 +2818,15 @@
                     e.stopPropagation();
                     const target = this.getAttribute('href').substring(1);
                     
-                    console.log('🖱️ Clique na aba:', target); // Debug
+                    console.log('🖱️ Clique na aba:', target);
                     
-                    // Salvar aba atual no localStorage (mas não no carregamento inicial)
-                    localStorage.setItem('abaSistemaAtiva', target);
-                    
-                    // Pequeno delay para garantir que o DOM está pronto
-                    setTimeout(() => {
-                        ativarAba(target);
-                    }, 50);
+                    // Para cliques, usar a função normal (pode ter delay se necessário)
+                    ativarAba(target);
                 });
             });
 
             // Função adicional para garantir isolamento das abas
             function garantirIsolamentoAbas() {
-                console.log('🔒 Garantindo isolamento das abas...');
-                
                 document.querySelectorAll('.tab-pane').forEach(tab => {
                     if (!tab.classList.contains('active')) {
                         tab.style.display = 'none';
@@ -2448,13 +2838,47 @@
                 });
             }
 
-            // Executar isolamento a cada 2 segundos (apenas para garantir)
+            // Executar isolamento regularmente para garantir estabilidade
             setInterval(garantirIsolamentoAbas, 2000);
         });
+
+        // Função IMEDIATA para ativar aba sem delays (para carregamento inicial)
+        function ativarAbaSemDelay(target) {
+            console.log('⚡ Ativação IMEDIATA da aba:', target);
+            
+            // Salvar no localStorage
+            localStorage.setItem('abaSistemaAtiva', target);
+            
+            // Remover todas as classes ativas IMEDIATAMENTE
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(t => {
+                t.classList.remove('show', 'active');
+                t.style.display = 'none';
+            });
+            
+            // Ativar link e aba correspondentes IMEDIATAMENTE
+            const linkAtivo = document.querySelector(`[href="#${target}"]`);
+            const abaAtiva = document.getElementById(target);
+            
+            if (linkAtivo) {
+                linkAtivo.classList.add('active');
+            }
+            
+            if (abaAtiva) {
+                abaAtiva.classList.add('show', 'active');
+                abaAtiva.style.display = 'block';
+            }
+            
+            console.log('✅ Aba ativada instantaneamente:', target);
+        }
 
         // Função para ativar uma aba específica
         function ativarAba(target) {
             console.log('🎯 Ativando aba:', target); // Debug
+            
+            // Salvar aba ativa no localStorage para persistência
+            localStorage.setItem('abaSistemaAtiva', target);
+            console.log('💾 Aba salva no localStorage:', target);
             
             // Remover classes ativas de todos os links e abas
             document.querySelectorAll('.nav-link').forEach(l => {
@@ -2523,7 +2947,7 @@
                 carregarEstatisticas();
             } else if (target === 'importacao') {
                 console.log('📤 Carregando importação...');
-                setupDragAndDrop();
+                // setupDragAndDrop já foi inicializado no DOMContentLoaded
             }
         }
 
