@@ -550,6 +550,412 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
+
+        /* Garantir largura completa para todas as tabs */
+        .tab-pane {
+            width: 100%;
+            max-width: none;
+        }
+
+        .tab-pane .card,
+        .tab-pane .row {
+            width: 100%;
+            max-width: none;
+        }
+
+        /* Ajustes específicos para as tabs */
+        #tab-usuarios .card,
+        #tab-permissoes .card,
+        #tab-logs .card {
+            margin-bottom: 0;
+        }
+
+        /* Melhorar espaçamento das permissões */
+        #tab-permissoes .card {
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        #tab-permissoes .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Otimização para layout mais largo */
+        .sidebar {
+            min-width: 200px;
+        }
+
+        main.col-md-10 {
+            width: 83.33333333% !important;
+            flex: 0 0 auto;
+        }
+
+        .main-content {
+            width: 100%;
+            max-width: none;
+        }
+
+        /* Melhorar espaçamento da tabela no layout mais largo */
+        #tabela-usuarios {
+            width: 100%;
+            table-layout: auto;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        /* Alinhamento perfeito entre Painel de Administração e Gerenciamento de Usuários */
+        .tab-content {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* Garantir que todas as tabs tenham exatamente o mesmo alinhamento do Painel */
+        #tab-usuarios,
+        #tab-permissoes,
+        #tab-logs {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        #tab-usuarios .row,
+        #tab-permissoes .row,
+        #tab-logs .row {
+            margin: 0 !important;
+        }
+
+        #tab-usuarios .col,
+        #tab-permissoes .col,
+        #tab-logs .col {
+            padding: 0 !important;
+        }
+
+        /* Garantir mesmo alinhamento lateral para TODAS as seções */
+        .page-header,
+        .tab-pane {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+            margin-left: -3px !important;
+            margin-right: -3px !important;
+        }
+
+        .tab-content {
+            padding: 5px 8px !important;
+            margin: 0 -5px !important;
+            overflow: visible !important;
+        }
+
+        /* Padronizar largura de todos os cards */
+        .page-header .card-dashboard,
+        #tab-usuarios .card,
+        #tab-permissoes .card,
+        #tab-logs .card {
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        /* Remover qualquer padding extra que possa causar desalinhamento */
+        .main-content {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        /* Garantir que o container principal tenha largura consistente */
+        main.col-md-10 {
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+        }
+
+        /* Estilos específicos para a seção de Logs */
+        .table-container-logs {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container-logs::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-container-logs::-webkit-scrollbar-track {
+            background: var(--light-color);
+            border-radius: 4px;
+        }
+
+        .table-container-logs::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .table-container-logs::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--secondary-color), var(--accent-color));
+        }
+
+        /* Corrigir altura da seção de logs para evitar esticamento */
+        #tab-logs .card-body {
+            max-height: none;
+            overflow: visible;
+        }
+
+        /* Garantir que as estatísticas tenham tamanho consistente */
+        #tab-logs .row.mt-4 .card {
+            min-height: 100px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease;
+        }
+
+        #tab-logs .row.mt-4 .card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Melhorar responsividade da tabela de logs */
+        @media (max-width: 768px) {
+            .table-container-logs {
+                max-height: 300px;
+            }
+            
+            #tab-logs .row.mt-4 .col-lg-3 {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Corrigir avatar na coluna usuário dos logs */
+        #tabela-logs .avatar {
+            width: 30px !important;
+            height: 30px !important;
+            min-width: 30px !important;
+            min-height: 30px !important;
+            flex-shrink: 0;
+            font-size: 0.8rem !important;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Melhorar layout da coluna usuário */
+        #tabela-logs td:nth-child(2) {
+            white-space: nowrap;
+        }
+
+        #tabela-logs td:nth-child(2) .d-flex {
+            align-items: center;
+            gap: 8px;
+        }
+
+        #tabela-logs td:nth-child(2) span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100px;
+        }
+
+        /* Corrigir sombra cortada do Painel de Administração */
+        .page-header {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+            margin-left: -3px !important;
+            margin-right: -3px !important;
+        }
+
+        .page-header .card-dashboard {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        /* Garantir que o container principal tenha espaço para sombras */
+        main.col-md-10 {
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+            overflow: visible !important;
+        }
+
+        /* Ajustar container das tabs para ter espaço para sombras */
+        .tab-content {
+            overflow: visible !important;
+            padding: 5px 8px !important;
+            margin: 0 -5px !important;
+        }
+
+        /* Reduzir tamanho da box do cabeçalho */
+        .page-header {
+            padding: 15px 8px !important;
+            margin-bottom: 15px !important;
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem !important;
+            margin-bottom: 5px !important;
+        }
+
+        .page-header p {
+            font-size: 0.9rem !important;
+        }
+
+        .card-dashboard {
+            border-radius: 12px !important;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+            border: none !important;
+            position: relative !important;
+            z-index: 1 !important;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .card-dashboard:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35) !important;
+        }
+
+        /* Estilos para boxes clicáveis */
+        .clickable-stat {
+            user-select: none;
+            transition: all 0.3s ease !important;
+        }
+
+        .clickable-stat:hover {
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4) !important;
+        }
+
+        .clickable-stat:active {
+            transform: translateY(-1px) scale(0.98) !important;
+        }
+
+        .clickable-stat.active {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3), 0 6px 20px rgba(37, 99, 235, 0.35) !important;
+            transform: translateY(-2px) !important;
+        }
+
+        .clickable-stat::after {
+            content: '👆';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .clickable-stat:hover::after {
+            opacity: 1;
+        }
+
+        /* Posicionamento das boxes centralizadas */
+        .page-header .d-flex.justify-content-center {
+            max-width: 480px; /* Largura fixa para as 3 boxes */
+        }
+
+        .page-header .d-flex.gap-2 {
+            flex-wrap: nowrap;
+            justify-content: center;
+        }
+
+        /* Prevenir overflow horizontal na página */
+        body, html {
+            overflow-x: hidden !important;
+        }
+
+        .container-fluid {
+            overflow-x: hidden !important;
+        }
+
+        .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 1400px) {
+            .page-header .d-flex.gap-2 {
+                gap: 0.5rem !important;
+            }
+            
+            .card-dashboard {
+                max-width: 130px !important;
+                padding: 0.5rem !important;
+            }
+
+            .sidebar-logo {
+                width: 32px !important;
+                height: 32px !important;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .page-header .d-flex.justify-content-center {
+                max-width: 400px;
+                margin-right: 150px !important;
+            }
+            
+            .page-header .d-flex.gap-2 {
+                gap: 0.25rem !important;
+            }
+            
+            .card-dashboard {
+                max-width: 110px !important;
+                padding: 0.4rem !important;
+            }
+            
+            .sidebar-logo {
+                width: 28px !important;
+                height: 28px !important;
+            }
+
+            .card-dashboard small {
+                font-size: 0.6rem !important;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .page-header .d-flex.align-items-center.flex-grow-1 {
+                flex-direction: column;
+                align-items: center !important;
+                gap: 20px;
+            }
+            
+            .page-header .d-flex.justify-content-center {
+                max-width: 100%;
+                justify-content: center;
+            }
+
+            .card-dashboard {
+                max-width: 100px !important;
+                padding: 0.3rem !important;
+            }
+
+            .card-dashboard h6 {
+                font-size: 0.9rem !important;
+            }
+
+            .card-dashboard small {
+                font-size: 0.55rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header .d-flex.gap-2 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+
+            .card-dashboard {
+                max-width: 100% !important;
+                padding: 0.5rem !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -593,7 +999,7 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <nav class="col-md-2 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <div class="sidebar-header">
                         <div class="sidebar-logo">
@@ -627,55 +1033,63 @@
             </nav>
 
             <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
                 <div class="main-content">
                     <div class="page-header">
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h1 class="h2 fw-bold mb-2">
-                                    <i class="fas fa-users-cog icon-gradient me-3"></i>Painel de Administração
-                                </h1>
-                                <p class="text-muted mb-0">Gerencie usuários e permissões do sistema</p>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="card-dashboard me-3" style="padding: 1rem;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="sidebar-logo me-3" style="width: 50px; height: 50px;">
-                                            <i class="fas fa-users text-white"></i>
+                            <div class="d-flex align-items-center flex-grow-1 justify-content-between">
+                                <div class="me-4">
+                                    <h1 class="h2 fw-bold mb-2">
+                                        <i class="fas fa-users-cog icon-gradient me-3"></i>Painel de Administração
+                                    </h1>
+                                    <p class="text-muted mb-0">Gerencie usuários e permissões do sistema</p>
+                                </div>
+                                <div class="d-flex justify-content-center flex-grow-1" style="margin-right: 200px;">
+                                    <div class="d-flex gap-2">
+                                        <div class="card-dashboard clickable-stat" data-filter="ativos" style="padding: 0.6rem; max-width: 140px; cursor: pointer;" onclick="filtrarPorStatus('ativos')">
+                                            <div class="d-flex align-items-center">
+                                                <div class="sidebar-logo me-2" style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--accent-color), #059669);">
+                                                    <i class="fas fa-users text-white" style="font-size: 0.9rem;"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="h6 mb-0" id="total-usuarios">-</div>
+                                                    <small class="text-white opacity-75" style="font-size: 0.7rem;">Usuários Ativos</small>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div class="h4 mb-0" id="total-usuarios">-</div>
-                                            <small class="text-muted">Usuários Ativos</small>
+                                        
+                                        <!-- Box Usuários Inativos -->
+                                        <div class="card-dashboard clickable-stat" data-filter="inativos" style="padding: 0.6rem; max-width: 140px; cursor: pointer;" onclick="filtrarPorStatus('inativos')">
+                                            <div class="d-flex align-items-center">
+                                                <div class="sidebar-logo me-2" style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--accent-color), #059669);">
+                                                    <i class="fas fa-user-slash text-white" style="font-size: 0.9rem;"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="h6 mb-0 text-white" id="total-inativos">-</div>
+                                                    <small class="text-white opacity-75" style="font-size: 0.7rem;">Usuários Inativos</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Box Total de Usuários -->
+                                        <div class="card-dashboard clickable-stat" data-filter="todos" style="padding: 0.6rem; max-width: 140px; cursor: pointer;" onclick="filtrarPorStatus('todos')">
+                                            <div class="d-flex align-items-center">
+                                                <div class="sidebar-logo me-2" style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--accent-color), #059669);">
+                                                    <i class="fas fa-users-cog text-white" style="font-size: 0.9rem;"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="h6 mb-0 text-white" id="total-todos">-</div>
+                                                    <small class="text-white opacity-75" style="font-size: 0.7rem;">Total Criados</small>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div style="width: 50px;"></div> <!-- Espaço reservado reduzido -->
                             </div>
                         </div>
                     </div>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#usuarios" data-tab="usuarios">
-                                <i class="fas fa-users me-2"></i>Usuários
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#permissoes" data-tab="permissoes">
-                                <i class="fas fa-shield-alt me-3"></i>
-                                <span>Permissões</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#logs" data-tab="logs">
-                                <i class="fas fa-history me-3"></i>
-                                <span>Logs de Auditoria</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
 
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="main-content">
                     <div class="tab-content">
                         <!-- Tab: Usuários -->
                         <div id="tab-usuarios" class="tab-pane fade show active" role="tabpanel">
@@ -737,51 +1151,65 @@
                 <!-- Tab: Permissões -->
                 <div id="tab-permissoes" class="tab-pane fade" role="tabpanel">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col">
                             <div class="card">
                                 <div class="card-header">
-                                    <h6 class="mb-0">👑 Administrador</h6>
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-user-shield me-2"></i>
+                                        Gerenciamento de Permissões
+                                    </h5>
                                 </div>
                                 <div class="card-body">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><i class="fas fa-check text-success me-2"></i>Acesso total ao sistema</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Gerenciar usuários</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Ver todos os dados</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Modificar qualquer registro</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Logs de auditoria</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0">🔍 Auditor</h6>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><i class="fas fa-check text-success me-2"></i>Acesso de leitura total</li>
-                                        <li><i class="fas fa-times text-danger me-2"></i>Não pode modificar dados</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Ver todos os relatórios</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Exportar dados</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Controle de qualidade</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0">👤 Usuário</h6>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><i class="fas fa-check text-success me-2"></i>Apenas próprios dados</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Criar conciliações</li>
-                                        <li><i class="fas fa-check text-success me-2"></i>Relatórios pessoais</li>
-                                        <li><i class="fas fa-times text-danger me-2"></i>Não vê outros usuários</li>
-                                        <li><i class="fas fa-times text-danger me-2"></i>Sem acesso administrativo</li>
-                                    </ul>
+                                    <div class="row">
+                                        <div class="col-lg-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-header">
+                                                    <h6 class="mb-0">👑 Administrador</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <ul class="list-unstyled mb-0">
+                                                        <li><i class="fas fa-check text-success me-2"></i>Acesso total ao sistema</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Gerenciar usuários</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Ver todos os dados</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Modificar qualquer registro</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Logs de auditoria</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-header">
+                                                    <h6 class="mb-0">🔍 Auditor</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <ul class="list-unstyled mb-0">
+                                                        <li><i class="fas fa-check text-success me-2"></i>Acesso de leitura total</li>
+                                                        <li><i class="fas fa-times text-danger me-2"></i>Não pode modificar dados</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Ver todos os relatórios</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Exportar dados</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Controle de qualidade</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-header">
+                                                    <h6 class="mb-0">👤 Usuário</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <ul class="list-unstyled mb-0">
+                                                        <li><i class="fas fa-check text-success me-2"></i>Apenas próprios dados</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Criar conciliações</li>
+                                                        <li><i class="fas fa-check text-success me-2"></i>Relatórios pessoais</li>
+                                                        <li><i class="fas fa-times text-danger me-2"></i>Não vê outros usuários</li>
+                                                        <li><i class="fas fa-times text-danger me-2"></i>Sem acesso administrativo</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -790,90 +1218,93 @@
 
                 <!-- Tab: Logs -->
                 <div id="tab-logs" class="tab-pane fade" role="tabpanel">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-history me-2"></i>
-                                Logs de Auditoria
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between mb-3">
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-primary" onclick="carregarLogs()">
-                                        <i class="fas fa-sync-alt me-2"></i>Atualizar
-                                    </button>
-                                    <button class="btn btn-outline-secondary" onclick="exportarLogs()">
-                                        <i class="fas fa-download me-2"></i>Exportar
-                                    </button>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-history me-2"></i>
+                                        Logs de Auditoria
+                                    </h5>
                                 </div>
-                                <div class="d-flex gap-2">
-                                    <select class="form-select" id="filtro-acao" onchange="filtrarLogs()">
-                                        <option value="">Todas as ações</option>
-                                        <option value="login">Login</option>
-                                        <option value="logout">Logout</option>
-                                        <option value="create">Criar</option>
-                                        <option value="update">Atualizar</option>
-                                        <option value="delete">Excluir</option>
-                                    </select>
-                                    <input type="date" class="form-control" id="data-filtro" onchange="filtrarLogs()">
-                                </div>
-                            </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-primary" onclick="carregarLogs()">
+                                                <i class="fas fa-sync-alt me-2"></i>Atualizar
+                                            </button>
+                                            <button class="btn btn-outline-secondary" onclick="exportarLogs()">
+                                                <i class="fas fa-download me-2"></i>Exportar
+                                            </button>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <select class="form-select" id="filtro-acao" onchange="filtrarLogs()">
+                                                <option value="">Todas as ações</option>
+                                                <option value="login">Login</option>
+                                                <option value="logout">Logout</option>
+                                                <option value="create">Criar</option>
+                                                <option value="update">Atualizar</option>
+                                                <option value="delete">Excluir</option>
+                                            </select>
+                                            <input type="date" class="form-control" id="data-filtro" onchange="filtrarLogs()">
+                                        </div>
+                                    </div>
 
-                            <div class="loading" id="loading-logs" style="display: none;">
-                                <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
-                                <p class="mt-2">Carregando logs...</p>
-                            </div>
+                                    <div class="loading" id="loading-logs" style="display: none;">
+                                        <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                                        <p class="mt-2">Carregando logs...</p>
+                                    </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-hover" id="tabela-logs">
-                                    <thead>
-                                        <tr>
-                                            <th>Data/Hora</th>
-                                            <th>Usuário</th>
-                                            <th>Ação</th>
-                                            <th>Tabela</th>
-                                            <th>Registro ID</th>
-                                            <th>IP Address</th>
-                                            <th class="text-center">Detalhes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="lista-logs">
-                                        <!-- Logs serão carregados aqui -->
-                                    </tbody>
-                                </table>
-                            </div>
+                                    <!-- Container com scroll horizontal para a tabela -->
+                                    <div class="table-container-logs" style="max-height: 400px; overflow-y: auto; overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
+                                        <table class="table table-hover mb-0" id="tabela-logs" style="min-width: 800px;">
+                                            <thead class="table-light sticky-top">
+                                                <tr>
+                                                    <th style="min-width: 140px;">Data/Hora</th>
+                                                    <th style="min-width: 120px;">Usuário</th>
+                                                    <th style="min-width: 100px;">Ação</th>
+                                                    <th style="min-width: 100px;">Tabela</th>
+                                                    <th style="min-width: 100px;">Registro ID</th>
+                                                    <th style="min-width: 120px;">IP Address</th>
+                                                    <th style="min-width: 100px;" class="text-center">Detalhes</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="lista-logs">
+                                                <!-- Logs serão carregados aqui -->
+                                            </tbody>
+                                        </table>
+                                    </div>
 
                             <!-- Estatísticas dos Logs -->
-                            <div class="row mt-4">
-                                <div class="col-md-3">
-                                    <div class="card bg-primary text-white">
-                                        <div class="card-body text-center">
-                                            <h3 id="total-logs">0</h3>
+                            <div class="row mt-4 g-3">
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card bg-primary text-white h-100">
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <h3 id="total-logs" class="mb-1">0</h3>
                                             <small>Total de Logs</small>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-success text-white">
-                                        <div class="card-body text-center">
-                                            <h3 id="logs-hoje">0</h3>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card bg-success text-white h-100">
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <h3 id="logs-hoje" class="mb-1">0</h3>
                                             <small>Logs Hoje</small>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-info text-white">
-                                        <div class="card-body text-center">
-                                            <h3 id="usuarios-ativos">0</h3>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card bg-info text-white h-100">
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <h3 id="usuarios-ativos" class="mb-1">0</h3>
                                             <small>Usuários Ativos</small>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-warning text-white">
-                                        <div class="card-body text-center">
-                                            <h3 id="acoes-criticas">0</h3>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card bg-warning text-white h-100">
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <h3 id="acoes-criticas" class="mb-1">0</h3>
                                             <small>Ações Críticas</small>
                                         </div>
                                     </div>
@@ -881,7 +1312,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -1279,7 +1710,15 @@
                 if (data.usuarios) {
                     usuarios = data.usuarios;
                     renderizarUsuarios(usuarios);
-                    document.getElementById('total-usuarios').textContent = usuarios.filter(u => u.ativo).length;
+                    
+                    // Atualizar estatísticas das boxes
+                    const usuariosAtivos = usuarios.filter(u => u.ativo).length;
+                    const usuariosInativos = usuarios.filter(u => !u.ativo).length;
+                    const totalUsuarios = usuarios.length;
+                    
+                    document.getElementById('total-usuarios').textContent = usuariosAtivos;
+                    document.getElementById('total-inativos').textContent = usuariosInativos;
+                    document.getElementById('total-todos').textContent = totalUsuarios;
                 } else {
                     throw new Error(data.error || 'Erro ao carregar usuários');
                 }
@@ -1346,9 +1785,101 @@
         }
 
         function filtrarUsuarios() {
+            // Remove filtro ativo das boxes ao usar filtro por perfil
+            document.querySelectorAll('.clickable-stat').forEach(box => {
+                box.classList.remove('active');
+            });
+            
             const filtro = document.getElementById('filtro-perfil').value;
             const usuariosFiltrados = filtro ? usuarios.filter(u => u.perfil === filtro) : usuarios;
             renderizarUsuarios(usuariosFiltrados);
+            
+            // Remove feedback anterior se existir
+            const feedback = document.getElementById('filtro-feedback');
+            if (feedback) {
+                feedback.remove();
+            }
+        }
+
+        // Função para filtrar por status quando clicar nas boxes
+        function filtrarPorStatus(tipo) {
+            let usuariosFiltrados;
+            
+            // Remove classe active de todas as boxes
+            document.querySelectorAll('.clickable-stat').forEach(box => {
+                box.classList.remove('active');
+            });
+            
+            // Adiciona classe active na box clicada
+            document.querySelector(`[data-filter="${tipo}"]`).classList.add('active');
+            
+            // Reseta o filtro de perfil
+            document.getElementById('filtro-perfil').value = '';
+            
+            // Filtra baseado no tipo
+            switch(tipo) {
+                case 'ativos':
+                    usuariosFiltrados = usuarios.filter(u => u.ativo === true);
+                    break;
+                case 'inativos':
+                    usuariosFiltrados = usuarios.filter(u => u.ativo === false);
+                    break;
+                case 'todos':
+                default:
+                    usuariosFiltrados = usuarios;
+                    break;
+            }
+            
+            renderizarUsuarios(usuariosFiltrados);
+            
+            // Mostrar feedback visual
+            mostrarFeedbackFiltro(tipo, usuariosFiltrados.length);
+        }
+
+        // Função para mostrar feedback do filtro
+        function mostrarFeedbackFiltro(tipo, quantidade) {
+            const mensagens = {
+                'ativos': `Exibindo ${quantidade} usuário(s) ativo(s)`,
+                'inativos': `Exibindo ${quantidade} usuário(s) inativo(s)`,
+                'todos': `Exibindo todos os ${quantidade} usuário(s)`
+            };
+            
+            // Criar elemento de feedback se não existir
+            let feedback = document.getElementById('filtro-feedback');
+            if (!feedback) {
+                feedback = document.createElement('div');
+                feedback.id = 'filtro-feedback';
+                feedback.className = 'alert alert-info alert-dismissible fade show mt-2';
+                feedback.style.cssText = 'font-size: 0.9rem; padding: 0.5rem 1rem; margin-bottom: 1rem;';
+                
+                const tabelaContainer = document.querySelector('#tab-usuarios .card-body');
+                tabelaContainer.insertBefore(feedback, tabelaContainer.querySelector('.table-responsive'));
+            }
+            
+            feedback.innerHTML = `
+                <i class="fas fa-filter me-2"></i>${mensagens[tipo]}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="limparFiltroStatus()"></button>
+            `;
+            
+            // Remove o feedback após 5 segundos
+            setTimeout(() => {
+                if (feedback && feedback.parentNode) {
+                    feedback.remove();
+                }
+            }, 5000);
+        }
+
+        // Função para limpar filtro de status
+        function limparFiltroStatus() {
+            document.querySelectorAll('.clickable-stat').forEach(box => {
+                box.classList.remove('active');
+            });
+            renderizarUsuarios(usuarios);
+            
+            const feedback = document.getElementById('filtro-feedback');
+            if (feedback) {
+                feedback.remove();
+            }
         }
 
         function editarUsuario(id) {
@@ -1689,11 +2220,11 @@
                     </td>
                     <td>
                         <div class="d-flex align-items-center">
-                            <div class="avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
-                                 style="width: 30px; height: 30px; font-size: 0.8rem;">
+                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                 style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; font-size: 0.8rem; flex-shrink: 0;">
                                 ${log.usuario.charAt(0).toUpperCase()}
                             </div>
-                            <span>${log.usuario}</span>
+                            <span class="text-truncate" style="max-width: 80px;" title="${log.usuario}">${log.usuario}</span>
                         </div>
                     </td>
                     <td>

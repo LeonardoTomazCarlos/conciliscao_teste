@@ -1,0 +1,17 @@
+Data,Descrição,Valor,Tipo
+2024-08-20,Faturamento cliente ABC,5000.00,credito
+2024-08-20,Pagamento fornecedor 123,-2500.00,debito
+2024-08-21,Recebimento transferência,8000.00,credito
+2024-08-21,Folha pagamento agosto,-12000.00,debito
+2024-08-22,Receita vendas produtos,3500.00,credito
+2024-08-22,DARF impostos agosto,-1800.00,debito
+2024-08-23,Cobrança fatura cliente,2200.00,credito
+2024-08-23,Conta energia elétrica,-380.00,debito
+2024-08-24,Vendas balcão agosto,4500.00,credito
+2024-08-24,Conta telefone fixo,-150.00,debito
+2024-08-25,PIX recebido cliente,1500.00,credito
+2024-08-25,Aluguel escritório,-2200.00,debito
+2024-08-26,Prestação serviços,6500.00,credito
+2024-08-26,Combustível veículos,-300.00,debito
+2024-08-27,Receita diferente valor,888.88,credito
+2024-08-30,Lançamento apenas contábil,-333.33,debito

@@ -1,0 +1,9 @@
+data,descricao,valor,tipo,numero_documento
+2025-09-03,Pagamento Cliente A,1500.00,credito,INV-1001
+2025-09-03,Pagamento Cliente B,500.00,credito,INV-1002
+2025-09-02,Compra Fornecedor X,-200.00,debito,NT-2001
+2025-09-02,Compra Fornecedor Y,-300.50,debito,NT-2002
+2025-09-01,Recebimento Serviço Z,750.00,credito,SRV-3001
+2025-08-31,Estorno Cliente A,-1500.00,debito,EST-4001
+2025-08-30,Taxas Bancárias,-12.50,debito,TAX-5001
+2025-09-03,Pagamento Parcela,250.00,credito,INV-1003

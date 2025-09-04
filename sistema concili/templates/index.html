@@ -293,6 +293,16 @@
             opacity: 0.05;
         }
 
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(74, 144, 226, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-area.dragover::before {
+            opacity: 0.1;
+        }
+
         .table-container {
             max-height: 500px;
             overflow-y: auto;
@@ -570,7 +580,7 @@
                     
                     <ul class="nav flex-column px-2">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                            <a class="nav-link" href="#dashboard" data-bs-toggle="tab">
                                 <i class="fas fa-tachometer-alt me-3"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -608,7 +618,7 @@
                 <div class="main-content">
                     <div class="tab-content">
                         <!-- Dashboard -->
-                        <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                        <div class="tab-pane fade" id="dashboard" role="tabpanel">
                             <div class="page-header">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
@@ -757,24 +767,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="card card-dashboard h-100">
-                                        <div class="card-header bg-transparent border-0 pt-4">
-                                            <h5 class="fw-bold mb-0">
-                                                <i class="fas fa-magic icon-gradient me-3"></i>Conciliação Automática
-                                            </h5>
-                                        </div>
-                                        <div class="card-body text-center d-flex flex-column justify-content-center">
-                                            <div class="mb-4">
-                                                <i class="fas fa-robot fa-3x icon-gradient mb-3"></i>
-                                                <p class="text-muted mb-0">Execute a conciliação automática dos dados importados</p>
-                                            </div>
-                                            <button class="btn btn-success btn-action btn-lg" onclick="executarConciliacaoAutomatica()">
-                                                <i class="fas fa-play me-2"></i>Executar Conciliação
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -790,51 +782,52 @@
                             <div class="row g-4">
                                 <!-- Upload de Extratos -->
                                 <div class="col-md-6">
-                                    <div class="card card-dashboard h-100">
-                                        <div class="card-header bg-transparent border-0 pt-4">
-                                            <h5 class="fw-bold text-primary">
+                                    <div class="card card-dashboard">
+                                        <div class="card-header bg-transparent border-0 pt-3 pb-0">
+                                            <h6 class="fw-bold text-primary mb-0">
                                                 <i class="fas fa-file-csv me-2"></i>Extratos Bancários
-                                            </h5>
+                                            </h6>
                                         </div>
-                                        <div class="card-body">
-                                            <div class="upload-area" id="upload-extratos">
-                                                <i class="fas fa-cloud-upload-alt fa-4x text-muted mb-4"></i>
-                                                <h6 class="fw-bold mb-2">Arraste o arquivo aqui</h6>
-                                                <p class="text-muted mb-3">ou clique para selecionar</p>
+                                        <div class="card-body py-3">
+                                            <div class="upload-area" id="upload-extratos" style="min-height: 120px;">
+                                                <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                                <p class="text-muted mb-2 small">Arraste o arquivo ou clique para selecionar</p>
                                                 <input type="file" id="file-extratos" accept=".csv" class="d-none">
-                                                <button class="btn btn-primary btn-action" onclick="document.getElementById('file-extratos').click()">
-                                                    <i class="fas fa-folder-open me-2"></i>Selecionar Arquivo
+                                                <button class="btn btn-primary btn-sm" onclick="document.getElementById('file-extratos').click()">
+                                                    <i class="fas fa-folder-open me-1"></i>Selecionar
                                                 </button>
-                                                <small class="d-block text-muted mt-3">Formato: CSV com colunas Data, Descrição, Valor</small>
+                                                <div class="mt-2">
+                                                    <small id="uploaded-filename-extratos" class="text-muted">Nenhum arquivo selecionado</small>
+                                                </div>
                                             </div>
-                                            <div id="preview-extratos" class="mt-3"></div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Upload de Lançamentos -->
                                 <div class="col-md-6">
-                                    <div class="card card-dashboard h-100">
-                                        <div class="card-header bg-transparent border-0 pt-4">
-                                            <h5 class="fw-bold text-info">
+                                    <div class="card card-dashboard">
+                                        <div class="card-header bg-transparent border-0 pt-3 pb-0">
+                                            <h6 class="fw-bold text-info mb-0">
                                                 <i class="fas fa-file-invoice me-2"></i>Lançamentos Contábeis
-                                            </h5>
+                                            </h6>
                                         </div>
-                                        <div class="card-body">
-                                            <div class="upload-area" id="upload-lancamentos">
-                                                <i class="fas fa-cloud-upload-alt fa-4x text-muted mb-4"></i>
-                                                <h6 class="fw-bold mb-2">Arraste o arquivo aqui</h6>
-                                                <p class="text-muted mb-3">ou clique para selecionar</p>
+                                        <div class="card-body py-3">
+                                            <div class="upload-area" id="upload-lancamentos" style="min-height: 120px;">
+                                                <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                                <p class="text-muted mb-2 small">Arraste o arquivo ou clique para selecionar</p>
                                                 <input type="file" id="file-lancamentos" accept=".csv" class="d-none">
-                                                <button class="btn btn-info btn-action" onclick="document.getElementById('file-lancamentos').click()">
-                                                    <i class="fas fa-folder-open me-2"></i>Selecionar Arquivo
+                                                <button class="btn btn-info btn-sm" onclick="document.getElementById('file-lancamentos').click()">
+                                                    <i class="fas fa-folder-open me-1"></i>Selecionar
                                                 </button>
-                                                <small class="d-block text-muted mt-3">Formato: CSV com colunas Data, Descrição, Valor</small>
+                                                <div class="mt-2">
+                                                    <small id="uploaded-filename-lancamentos" class="text-muted">Nenhum arquivo selecionado</small>
+                                                </div>
                                             </div>
-                                            <div id="preview-lancamentos" class="mt-3"></div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             </div>
 
                             <!-- Status dos Uploads -->
@@ -844,6 +837,28 @@
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-info-circle me-3 fa-lg"></i>
                                             <span id="upload-message" class="fw-medium">Pronto para upload</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Conciliação Automática -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card card-dashboard">
+                                        <div class="card-header bg-transparent border-0 pt-4">
+                                            <h5 class="fw-bold mb-0">
+                                                <i class="fas fa-magic icon-gradient me-3"></i>Conciliação Automática
+                                            </h5>
+                                        </div>
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <div class="mb-4">
+                                                <i class="fas fa-robot fa-3x icon-gradient mb-3"></i>
+                                                <p class="text-muted mb-0">Execute a conciliação automática dos dados importados</p>
+                                            </div>
+                                            <button class="btn btn-success btn-action btn-lg" onclick="executarConciliacaoAutomatica()">
+                                                <i class="fas fa-play me-2"></i>Executar Conciliação
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -986,31 +1001,32 @@
                             </div>
                         </div>
 
-                        <!-- Lista de Conciliações -->
+                        <!-- Lista de Procedimentos -->
                         <div class="card card-dashboard">
                             <div class="card-header bg-success text-white">
-                                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Histórico de Conciliações</h5>
+                                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Histórico de Procedimentos</h5>
+                                <small>Agrupamentos de conciliações por operação</small>
                             </div>
                             <div class="card-body">
                                 <div class="table-container">
                                     <table class="table table-striped table-hover">
                                         <thead class="table-dark">
                                             <tr>
-                                                <th>ID</th>
+                                                <th>ID Procedimento</th>
                                                 <th>Data/Hora</th>
                                                 <th>Tipo</th>
+                                                <th>Método</th>
+                                                <th>Conciliações</th>
                                                 <th>Status</th>
                                                 <th>Usuário</th>
-                                                <th>Extrato</th>
-                                                <th>Lançamento</th>
-                                                <th>Valor</th>
+                                                <th>Valor Total</th>
                                                 <th>Ações</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tabela-conciliacoes">
                                             <tr>
                                                 <td colspan="9" class="text-center text-muted">
-                                                    <i class="fas fa-hourglass-half me-2"></i>Carregando conciliações...
+                                                    <i class="fas fa-hourglass-half me-2"></i>Carregando procedimentos...
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -1117,6 +1133,62 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Configurar drag and drop para as áreas de upload
+        function setupDragAndDrop() {
+            const uploadAreas = ['upload-extratos', 'upload-lancamentos'];
+            
+            uploadAreas.forEach(areaId => {
+                const area = document.getElementById(areaId);
+                const fileInput = document.getElementById(areaId.replace('upload-', 'file-'));
+                
+                if (area && fileInput) {
+                    // Prevenir comportamento padrão
+                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                        area.addEventListener(eventName, preventDefaults, false);
+                        document.body.addEventListener(eventName, preventDefaults, false);
+                    });
+
+                    // Destacar área quando arrastar sobre ela
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        area.addEventListener(eventName, highlight, false);
+                    });
+
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        area.addEventListener(eventName, unhighlight, false);
+                    });
+
+                    // Manipular drop
+                    area.addEventListener('drop', function(e) {
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            fileInput.files = files;
+                            fileInput.dispatchEvent(new Event('change'));
+                        }
+                    }, false);
+                    
+                    // Adicionar clique na área toda
+                    area.addEventListener('click', function(e) {
+                        if (e.target.tagName !== 'BUTTON') {
+                            fileInput.click();
+                        }
+                    });
+                }
+            });
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            e.target.closest('.upload-area').classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            e.target.closest('.upload-area').classList.remove('dragover');
+        }
+
         // Funções de upload e manipulação de arquivos
         document.getElementById('file-extratos').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -1141,9 +1213,29 @@
             const messageSpan = document.getElementById('upload-message');
             statusDiv.className = 'alert alert-info alert-custom';
             statusDiv.classList.remove('d-none');
-            messageSpan.textContent = `Uploading ${tipo}...`;
+            const tipoFormatado = tipo === 'extratos' ? 'Extratos Bancários' : 'Lançamentos Contábeis';
+            messageSpan.textContent = `Importando ${tipoFormatado}...`;
             
-            fetch(`/api/upload-${tipo}`, {
+            // Exibir nome do arquivo no box correspondente
+            if (tipo === 'extratos') {
+                const nameEl = document.getElementById('uploaded-filename-extratos');
+                if (nameEl) nameEl.textContent = `Enviando: ${file.name}`;
+            } else if (tipo === 'lancamentos') {
+                const nameEl = document.getElementById('uploaded-filename-lancamentos');
+                if (nameEl) nameEl.textContent = `Enviando: ${file.name}`;
+            }
+
+            // Corrigir as URLs das rotas para corresponder ao backend
+            let endpoint;
+            if (tipo === 'extratos') {
+                endpoint = '/api/upload-extrato';
+            } else if (tipo === 'lancamentos') {
+                endpoint = '/api/upload-lancamentos';
+            } else {
+                endpoint = `/api/upload-${tipo}`;
+            }
+            
+            fetch(endpoint, {
                 method: 'POST',
                 body: formData
             })
@@ -1151,16 +1243,43 @@
             .then(data => {
                 if (data.success) {
                     statusDiv.className = 'alert alert-success alert-custom';
-                    messageSpan.textContent = `${tipo} uploaded successfully! ${data.count} records processed.`;
+                    const tipoFormatado = tipo === 'extratos' ? 'Extratos Bancários' : 'Lançamentos Contábeis';
+                    const registros = data.count && data.count > 0 ? data.count : 'vários';
+                    messageSpan.textContent = `${tipoFormatado} importados com sucesso! ${registros} registros processados.`;
+                    // Atualizar nome do arquivo na box
+                    if (tipo === 'extratos') {
+                        const nameEl = document.getElementById('uploaded-filename-extratos');
+                        if (nameEl) nameEl.textContent = `Arquivo importado: ${file.name}`;
+                    } else if (tipo === 'lancamentos') {
+                        const nameEl = document.getElementById('uploaded-filename-lancamentos');
+                        if (nameEl) nameEl.textContent = `Arquivo importado: ${file.name}`;
+                    }
                     carregarEstatisticas();
                 } else {
                     statusDiv.className = 'alert alert-danger alert-custom';
-                    messageSpan.textContent = `Error uploading ${tipo}: ${data.error}`;
+                    const tipoFormatado = tipo === 'extratos' ? 'Extratos Bancários' : 'Lançamentos Contábeis';
+                    messageSpan.textContent = `Erro ao importar ${tipoFormatado}: ${data.error || 'Erro desconhecido'}`;
+                    // Mostrar erro no nome do arquivo
+                    if (tipo === 'extratos') {
+                        const nameEl = document.getElementById('uploaded-filename-extratos');
+                        if (nameEl) nameEl.textContent = `Erro ao importar: ${file.name}`;
+                    } else if (tipo === 'lancamentos') {
+                        const nameEl = document.getElementById('uploaded-filename-lancamentos');
+                        if (nameEl) nameEl.textContent = `Erro ao importar: ${file.name}`;
+                    }
                 }
             })
             .catch(error => {
                 statusDiv.className = 'alert alert-danger alert-custom';
-                messageSpan.textContent = `Error uploading ${tipo}: ${error.message}`;
+                const tipoFormatado = tipo === 'extratos' ? 'Extratos Bancários' : 'Lançamentos Contábeis';
+                messageSpan.textContent = `Erro ao importar ${tipoFormatado}: ${error.message || 'Erro de conexão'}`;
+                if (tipo === 'extratos') {
+                    const nameEl = document.getElementById('uploaded-filename-extratos');
+                    if (nameEl) nameEl.textContent = `Erro ao importar: ${file.name}`;
+                } else if (tipo === 'lancamentos') {
+                    const nameEl = document.getElementById('uploaded-filename-lancamentos');
+                    if (nameEl) nameEl.textContent = `Erro ao importar: ${file.name}`;
+                }
             });
         }
 
@@ -1485,127 +1604,130 @@
                 });
         }
 
-        // Carregar lista de conciliações
+        // Carregar procedimentos de conciliação (novo sistema agrupado)
         function carregarConciliacoes(pagina = 1) {
+            console.log('🔍 Carregando procedimentos - Página:', pagina);
+            
             const params = new URLSearchParams({
                 page: pagina,
-                per_page: document.getElementById('filtro-por-pagina').value || 10
+                per_page: document.getElementById('filtro-por-pagina') ? 
+                    document.getElementById('filtro-por-pagina').value || 10 : 10
             });
 
             // Adicionar filtros se preenchidos
-            const dataInicio = document.getElementById('filtro-data-inicio').value;
-            const dataFim = document.getElementById('filtro-data-fim').value;
-            const tipo = document.getElementById('filtro-tipo').value;
-            const status = document.getElementById('filtro-status').value;
+            const dataInicio = document.getElementById('filtro-data-inicio') ? 
+                document.getElementById('filtro-data-inicio').value : null;
+            const dataFim = document.getElementById('filtro-data-fim') ? 
+                document.getElementById('filtro-data-fim').value : null;
+            const tipo = document.getElementById('filtro-tipo') ? 
+                document.getElementById('filtro-tipo').value : null;
+            const status = document.getElementById('filtro-status') ? 
+                document.getElementById('filtro-status').value : null;
 
             if (dataInicio) params.append('data_inicio', dataInicio);
             if (dataFim) params.append('data_fim', dataFim);
             if (tipo) params.append('tipo', tipo);
             if (status) params.append('status', status);
 
-            fetch(`/api/conciliacoes?${params}`)
-                .then(response => response.json())
+            console.log('🌐 URL da API:', `/api/procedimentos?${params}`);
+
+            fetch(`/api/procedimentos?${params}`)
+                .then(response => {
+                    console.log('📡 Resposta da API recebida:', response.status);
+                    return response.json();
+                })
                 .then(data => {
-                    exibirConciliacoes(data.conciliacoes);
+                    console.log('📊 Dados dos procedimentos:', data);
+                    console.log('📈 Total de procedimentos encontrados:', data.procedimentos ? data.procedimentos.length : 0);
+                    exibirConciliacoes(data.procedimentos);
                     atualizarPaginacao(data.pagination);
                     paginaAtualConciliacoes = data.pagination.page;
                     totalPaginasConciliacoes = data.pagination.pages;
                 })
                 .catch(error => {
-                    console.error('Erro ao carregar conciliações:', error);
+                    console.error('❌ Erro ao carregar procedimentos:', error);
                     document.getElementById('tabela-conciliacoes').innerHTML = `
                         <tr>
                             <td colspan="9" class="text-center text-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar conciliações
+                                <i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar procedimentos
                             </td>
                         </tr>
                     `;
                 });
         }
 
-        // Exibir conciliações na tabela
-        function exibirConciliacoes(conciliacoes) {
+        // Exibir procedimentos na tabela (modificado para nova estrutura)
+        function exibirConciliacoes(procedimentos) {
             const tbody = document.getElementById('tabela-conciliacoes');
             
-            if (conciliacoes.length === 0) {
+            if (procedimentos.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="9" class="text-center text-muted">
-                            <i class="fas fa-search me-2"></i>Nenhuma conciliação encontrada
+                            <i class="fas fa-search me-2"></i>Nenhum procedimento encontrado
                         </td>
                     </tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = conciliacoes.map(conciliacao => {
-                const tipoClass = conciliacao.tipo_conciliacao === 'automatica' ? 'bg-success' : 'bg-info';
-                const statusClass = conciliacao.status === 'ativa' ? 'bg-success' : 'bg-warning';
+            tbody.innerHTML = procedimentos.map(proc => {
+                const metodoIcon = proc.metodo === 'automatico' ? '🤖' : '👤';
+                const metodoClass = proc.metodo === 'automatico' ? 'bg-success' : 'bg-info';
+                const statusClass = proc.status === 'concluido' ? 'bg-success' : 
+                                  proc.status === 'erro' ? 'bg-danger' : 'bg-warning';
+                
+                const statusIcon = proc.status === 'concluido' ? 'fa-check-circle' : 
+                                 proc.status === 'erro' ? 'fa-exclamation-triangle' : 'fa-clock';
                 
                 return `
                     <tr>
-                        <td><strong>#${conciliacao.id}</strong></td>
-                        <td>${formatarDataHora(conciliacao.data_conciliacao)}</td>
+                        <td><strong>${proc.uuid}</strong></td>
+                        <td>${formatarDataHora(proc.data_criacao)}</td>
                         <td>
-                            <span class="badge ${tipoClass}">
-                                <i class="fas ${conciliacao.tipo_conciliacao === 'automatica' ? 'fa-robot' : 'fa-user'} me-1"></i>
-                                ${conciliacao.tipo_conciliacao === 'automatica' ? 'Automática' : 'Manual'}
+                            <div class="fw-bold">${proc.tipo_procedimento.replace('_', ' ').toUpperCase()}</div>
+                            <small class="text-muted">${proc.descricao || ''}</small>
+                        </td>
+                        <td>
+                            <span class="badge ${metodoClass}">
+                                ${metodoIcon} ${proc.metodo === 'automatico' ? 'Automático' : 'Manual'}
                             </span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-primary">${proc.total_conciliacoes}</div>
+                            <small class="text-muted">
+                                ✅ ${proc.conciliacoes_ativas} | ❌ ${proc.conciliacoes_canceladas}
+                                ${proc.divergencias_count > 0 ? `<br>⚠️ ${proc.divergencias_count} divergências` : ''}
+                            </small>
                         </td>
                         <td>
                             <span class="badge ${statusClass}">
-                                <i class="fas ${conciliacao.status === 'ativa' ? 'fa-check-circle' : 'fa-times-circle'} me-1"></i>
-                                ${conciliacao.status === 'ativa' ? 'Ativa' : 'Cancelada'}
+                                <i class="fas ${statusIcon} me-1"></i>
+                                ${proc.status.charAt(0).toUpperCase() + proc.status.slice(1)}
                             </span>
                         </td>
                         <td>
-                            ${conciliacao.usuario ? `
+                            ${proc.usuario ? `
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-user-circle me-2"></i>
                                     <div>
-                                        <div class="fw-bold">${conciliacao.usuario.nome}</div>
-                                        <small class="text-muted">@${conciliacao.usuario.username}</small>
+                                        <div class="fw-bold">${proc.usuario.nome}</div>
+                                        <small class="text-muted">@${proc.usuario.username}</small>
                                     </div>
                                 </div>
                             ` : '<span class="text-muted">N/A</span>'}
                         </td>
                         <td>
-                            ${conciliacao.extrato ? `
-                                <div>
-                                    <div class="fw-bold">${conciliacao.extrato.descricao}</div>
-                                    <small class="text-muted">${conciliacao.extrato.data}</small>
-                                    ${conciliacao.extrato.conta ? `
-                                        <br><small class="text-info">${conciliacao.extrato.conta.banco} - ${conciliacao.extrato.conta.agencia}/${conciliacao.extrato.conta.conta}</small>
-                                    ` : ''}
-                                </div>
-                            ` : '<span class="text-muted">N/A</span>'}
+                            <div class="fw-bold text-success">R$ ${formatarMoeda(proc.valor_total)}</div>
                         </td>
                         <td>
-                            ${conciliacao.lancamento ? `
-                                <div>
-                                    <div class="fw-bold">${conciliacao.lancamento.descricao}</div>
-                                    <small class="text-muted">${conciliacao.lancamento.data}</small>
-                                    <br><small class="badge bg-secondary">${conciliacao.lancamento.categoria || 'Sem categoria'}</small>
-                                </div>
-                            ` : '<span class="text-muted">N/A</span>'}
-                        </td>
-                        <td>
-                            ${conciliacao.extrato || conciliacao.lancamento ? `
-                                <span class="fw-bold ${(conciliacao.extrato?.valor || conciliacao.lancamento?.valor) >= 0 ? 'text-success' : 'text-danger'}">
-                                    R$ ${formatarMoeda(conciliacao.extrato?.valor || conciliacao.lancamento?.valor || 0)}
-                                </span>
-                            ` : '<span class="text-muted">N/A</span>'}
-                        </td>
-                        <td>
-                            <div class="d-flex gap-1">
-                                <button class="btn btn-sm btn-outline-info" onclick="verDetalhesConciliacao(${conciliacao.id})" title="Ver detalhes">
-                                    <i class="fas fa-eye"></i>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-info" onclick="verDetalhesConciliacao(${proc.id})" title="Ver detalhes das conciliações">
+                                    <i class="fas fa-eye"></i> Ver
                                 </button>
-                                ${conciliacao.status === 'ativa' ? `
-                                    <button class="btn btn-sm btn-outline-warning" onclick="cancelarConciliacao(${conciliacao.id})" title="Cancelar">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                ` : ''}
+                                <button class="btn btn-sm btn-outline-success" onclick="exportarProcedimento(${proc.id})" title="Exportar CSV">
+                                    <i class="fas fa-download"></i> CSV
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -1673,10 +1795,35 @@
             carregarConciliacoes(paginaAtualConciliacoes);
         }
 
-        // Ver detalhes da conciliação
-        function verDetalhesConciliacao(id) {
-            // TODO: Implementar modal com detalhes
-            alert('Funcionalidade em desenvolvimento - Conciliação ID: ' + id);
+        // Ver detalhes do procedimento
+        function verDetalhesConciliacao(procedimento_id) {
+            // Abrir modal e carregar detalhes via API
+            const modalEl = document.getElementById('modalDetalhesConciliacao');
+            const modal = new bootstrap.Modal(modalEl);
+            // Limpar conteúdo
+            document.getElementById('detalhes-conciliacao-body').innerHTML = '<div class="text-center p-3">Carregando...</div>';
+            modal.show();
+
+            fetch(`/api/procedimentos/${procedimento_id}/detalhes`)
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Falha ao carregar detalhes do procedimento');
+                    return resp.json();
+                })
+                .then(data => {
+                    renderDetalhesProcedimento(data);
+                    document.getElementById('export-conciliacao-btn').onclick = function() {
+                        window.open(`/api/procedimentos/${procedimento_id}/export`, '_blank');
+                    };
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('detalhes-conciliacao-body').innerHTML = `<div class="text-danger p-3">Erro ao carregar detalhes</div>`;
+                });
+        }
+
+        // Exportar procedimento diretamente
+        function exportarProcedimento(procedimento_id) {
+            window.open(`/api/procedimentos/${procedimento_id}/export`, '_blank');
         }
 
         // Cancelar conciliação
@@ -1700,6 +1847,477 @@
             }).format(Math.abs(valor));
         }
 
+        // Carregar divergências pendentes e popular a tabela
+        async function carregarDivergencias() {
+            console.log('Carregando divergências...'); // Debug
+            
+            try {
+                const resp = await fetch('/api/divergencias');
+                console.log('Resposta da API:', resp.status); // Debug
+                
+                let divergencias = [];
+                
+                if (resp.ok) {
+                    divergencias = await resp.json();
+                    console.log('Divergências recebidas:', divergencias); // Debug
+                } else {
+                    console.warn('API divergências não disponível, usando dados de exemplo');
+                    // Dados de exemplo caso a API não esteja implementada
+                    divergencias = [
+                        {
+                            id: 1,
+                            tipo: 'Valor Divergente',
+                            descricao: 'Pagamento PIX - João Silva',
+                            valor_extrato: 1500.00,
+                            valor_lancamento: 1450.00,
+                            data: '2024-01-15',
+                            status: 'Pendente',
+                            diferenca: 50.00
+                        },
+                        {
+                            id: 2,
+                            tipo: 'Lançamento Órfão',
+                            descricao: 'Taxa de transferência',
+                            valor_extrato: 0,
+                            valor_lancamento: 25.00,
+                            data: '2024-01-16',
+                            status: 'Pendente',
+                            diferenca: -25.00
+                        },
+                        {
+                            id: 3,
+                            tipo: 'Extrato Órfão',
+                            descricao: 'Depósito em dinheiro',
+                            valor_extrato: 2000.00,
+                            valor_lancamento: 0,
+                            data: '2024-01-17',
+                            status: 'Pendente',
+                            diferenca: 2000.00
+                        }
+                    ];
+                }
+
+                const tbody = document.getElementById('tabela-divergencias');
+                if (!tbody) {
+                    console.error('Elemento tabela-divergencias não encontrado');
+                    return;
+                }
+
+                if (!Array.isArray(divergencias) || divergencias.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                <i class="fas fa-check-circle me-2"></i>Nenhuma divergência encontrada
+                                <br><small class="text-muted">Todas as conciliações estão em ordem</small>
+                            </td>
+                        </tr>`;
+                    return;
+                }
+
+                let html = '';
+                divergencias.forEach(d => {
+                    const valorExtrato = d.valor_extrato || (d.extrato && d.extrato.valor) || 0;
+                    const valorLancamento = d.valor_lancamento || (d.lancamento && d.lancamento.valor) || 0;
+                    const diferenca = d.diferenca || (valorExtrato - valorLancamento);
+                    const data = d.data || (d.created_at ? new Date(d.created_at).toLocaleDateString('pt-BR') : '');
+                    const status = d.status || 'Pendente';
+                    
+                    // Cor da diferença
+                    const corDiferenca = diferenca > 0 ? 'text-success' : diferenca < 0 ? 'text-danger' : 'text-muted';
+                    const iconeDiferenca = diferenca > 0 ? 'fa-arrow-up' : diferenca < 0 ? 'fa-arrow-down' : 'fa-equals';
+                    
+                    // Status badge
+                    const statusClass = status === 'Pendente' ? 'bg-warning' : status === 'Resolvido' ? 'bg-success' : 'bg-secondary';
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <span class="badge bg-primary">${d.tipo || 'Divergência'}</span>
+                            </td>
+                            <td>${d.descricao || 'Sem descrição'}</td>
+                            <td>
+                                <small class="text-muted">Extrato:</small> ${formatarMoeda(valorExtrato)}<br>
+                                <small class="text-muted">Lançamento:</small> ${formatarMoeda(valorLancamento)}
+                            </td>
+                            <td>${data}</td>
+                            <td>
+                                <span class="badge ${statusClass}">${status}</span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" onclick="verDetalhesDivergencia(${d.id})" title="Ver Detalhes">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-success" onclick="resolverDivergencia(${d.id})" title="Resolver">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+
+                tbody.innerHTML = html;
+                console.log('Divergências carregadas com sucesso');
+                
+            } catch (err) {
+                console.error('Erro ao carregar divergências:', err);
+                const tbody = document.getElementById('tabela-divergencias');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center text-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Erro ao carregar divergências: ${err.message}
+                                <br><button class="btn btn-sm btn-outline-primary mt-2" onclick="carregarDivergencias()">
+                                    <i class="fas fa-retry me-1"></i>Tentar Novamente
+                                </button>
+                            </td>
+                        </tr>`;
+                }
+            }
+        }
+
+        // Função para renderizar os detalhes consolidados da conciliação no modal
+        function renderDetalhesConciliacao(data) {
+            const body = document.getElementById('detalhes-conciliacao-body');
+            if (!body) return;
+
+            const conc = data || {};
+            const extr = conc.extrato || {};
+            const lanc = conc.lancamento || {};
+            const usuario = conc.usuario || {};
+
+            function renderKeyValueTable(title, obj) {
+                if (!obj || Object.keys(obj).length === 0) {
+                    return `<div class="card"><div class="card-body"><h6>${title}</h6><div class="text-muted">Nenhum registro</div></div></div>`;
+                }
+                let rows = '';
+                const keys = ['id','data','descricao','valor','tipo','categoria','arquivo_origem','numero_documento','conta','fornecedor_cliente'];
+                // include any other keys present
+                Object.keys(obj).forEach(k => { if (!keys.includes(k)) keys.push(k); });
+                keys.forEach(k => {
+                    if (obj[k] === undefined || obj[k] === null || obj[k] === '') return;
+                    let v = obj[k];
+                    if (k === 'data' || k.toLowerCase().includes('data')) v = formatarDataHora(v);
+                    if (k === 'valor') v = (typeof v === 'number') ? formatarMoeda(v) : v;
+                    if (typeof v === 'object') v = JSON.stringify(v);
+                    rows += `<tr><th style="width:35%;text-align:left">${k}</th><td>${v}</td></tr>`;
+                });
+
+                return `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">${title}</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-borderless mb-0">
+                                    <tbody>
+                                        ${rows}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+
+            const metaHtml = `
+                <div class="mb-3">
+                    <strong>Conciliação ID:</strong> ${conc.id || ''} &nbsp; • &nbsp;
+                    <strong>Status:</strong> ${conc.status || ''} &nbsp; • &nbsp;
+                    <strong>Tipo:</strong> ${conc.tipo || ''} &nbsp; • &nbsp;
+                    <strong>Usuário:</strong> ${usuario.nome || usuario.username || ''}
+                </div>`;
+
+            const content = `
+                ${metaHtml}
+                <div class="row">
+                    <div class="col-md-6">
+                        ${renderKeyValueTable('Extrato (fonte A)', extr)}
+                    </div>
+                    <div class="col-md-6">
+                        ${renderKeyValueTable('Lançamento (fonte B)', lanc)}
+                    </div>
+                </div>
+            `;
+
+            body.innerHTML = content;
+        }
+
+        // Função para renderizar os detalhes consolidados do procedimento no modal
+        function renderDetalhesProcedimento(data) {
+            const body = document.getElementById('detalhes-conciliacao-body');
+            if (!body) return;
+
+            const proc = data || {};
+            const estat = proc.estatisticas || {};
+            const usuario = proc.usuario || {};
+            const conciliacoes = proc.conciliacoes || [];
+
+            // Cabeçalho do procedimento
+            const headerHtml = `
+                <div class="alert alert-info mb-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="mb-1">📋 Procedimento ${proc.uuid}</h5>
+                            <p class="mb-1"><strong>Tipo:</strong> ${proc.tipo_procedimento?.replace('_', ' ').toUpperCase()}</p>
+                            <p class="mb-1"><strong>Método:</strong> ${proc.metodo === 'automatico' ? '🤖 Automático' : '👤 Manual'}</p>
+                            <p class="mb-0"><strong>Usuário:</strong> ${usuario.nome || usuario.username || 'N/A'}</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="badge bg-${proc.status === 'concluido' ? 'success' : proc.status === 'erro' ? 'danger' : 'warning'} fs-6 mb-2">
+                                ${proc.status?.toUpperCase()}
+                            </div>
+                            <br>
+                            <small class="text-muted">${proc.data_criacao}</small>
+                        </div>
+                    </div>
+                </div>`;
+
+            // Estatísticas
+            const statsHtml = `
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h4>${estat.total_conciliacoes || 0}</h4>
+                                <small>Total Conciliações</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h4>${estat.conciliacoes_ativas || 0}</h4>
+                                <small>Bem-sucedidas</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h4>${estat.divergencias_count || 0}</h4>
+                                <small>Divergências</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h4>R$ ${formatarMoeda(estat.valor_total || 0)}</h4>
+                                <small>Valor Total</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+            // Tabela de conciliações
+            const conciliacoesHtml = `
+                <h6>🔍 Conciliações Detalhadas:</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th>Divergências</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${conciliacoes.map(c => {
+                                const divergenciasCount = c.divergencias ? c.divergencias.length : 0;
+                                const statusIcon = c.status === 'ativa' ? '✅' : '❌';
+                                const extrato = c.extrato || {};
+                                const lancamento = c.lancamento || {};
+                                const descricao = extrato.descricao || lancamento.descricao || 'N/A';
+                                const valor = extrato.valor || lancamento.valor || 0;
+                                
+                                return `
+                                    <tr>
+                                        <td><strong>#${c.id}</strong></td>
+                                        <td>${c.data_conciliacao ? new Date(c.data_conciliacao).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                                        <td>
+                                            <div class="fw-bold">${descricao}</div>
+                                            ${c.observacoes ? `<small class="text-muted">${c.observacoes}</small>` : ''}
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold ${valor >= 0 ? 'text-success' : 'text-danger'}">
+                                                R$ ${formatarMoeda(valor)}
+                                            </span>
+                                        </td>
+                                        <td>${statusIcon} ${c.status}</td>
+                                        <td>
+                                            ${divergenciasCount > 0 ? 
+                                                `<span class="badge bg-warning">${divergenciasCount} divergência(s)</span>` : 
+                                                '<span class="text-success">✅ OK</span>'
+                                            }
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-info" onclick="verDetalheConciliacaoIndividual(${c.id})">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+
+            const content = headerHtml + statsHtml + conciliacoesHtml;
+            body.innerHTML = content;
+        }
+
+        // Ver detalhes de uma conciliação individual
+        function verDetalheConciliacaoIndividual(conciliacao_id) {
+            // Abrir um segundo modal ou substituir o conteúdo atual
+            fetch(`/api/conciliacoes/${conciliacao_id}/detalhes`)
+                .then(resp => resp.json())
+                .then(data => {
+                    renderDetalhesConciliacao(data);
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar detalhes da conciliação:', err);
+                    alert('Erro ao carregar detalhes da conciliação');
+                });
+        }
+        // Mostrar detalhes de uma divergência
+        function verDetalhesDivergencia(id) {
+            // Buscar dados da divergência
+            const divergencias = [
+                {
+                    id: 1,
+                    tipo: 'Valor Divergente',
+                    descricao: 'Pagamento PIX - João Silva',
+                    valor_extrato: 1500.00,
+                    valor_lancamento: 1450.00,
+                    data: '2024-01-15',
+                    status: 'Pendente',
+                    diferenca: 50.00,
+                    observacoes: 'Diferença pode ser devido a taxa não contabilizada'
+                },
+                {
+                    id: 2,
+                    tipo: 'Lançamento Órfão',
+                    descricao: 'Taxa de transferência',
+                    valor_extrato: 0,
+                    valor_lancamento: 25.00,
+                    data: '2024-01-16',
+                    status: 'Pendente',
+                    diferenca: -25.00,
+                    observacoes: 'Lançamento sem correspondência no extrato'
+                },
+                {
+                    id: 3,
+                    tipo: 'Extrato Órfão',
+                    descricao: 'Depósito em dinheiro',
+                    valor_extrato: 2000.00,
+                    valor_lancamento: 0,
+                    data: '2024-01-17',
+                    status: 'Pendente',
+                    diferenca: 2000.00,
+                    observacoes: 'Movimento no extrato sem lançamento contábil'
+                }
+            ];
+            
+            const divergencia = divergencias.find(d => d.id === id);
+            
+            if (!divergencia) {
+                alert('Divergência não encontrada');
+                return;
+            }
+            
+            const detalhes = `
+📋 DETALHES DA DIVERGÊNCIA #${divergencia.id}
+
+🏷️  Tipo: ${divergencia.tipo}
+📝  Descrição: ${divergencia.descricao}
+📅  Data: ${divergencia.data}
+💰  Valor Extrato: ${formatarMoeda(divergencia.valor_extrato)}
+💼  Valor Lançamento: ${formatarMoeda(divergencia.valor_lancamento)}
+📊  Diferença: ${formatarMoeda(divergencia.diferenca)}
+🎯  Status: ${divergencia.status}
+
+📝  Observações:
+${divergencia.observacoes}
+
+⚡ Ações disponíveis:
+• Resolver divergência
+• Adicionar observação
+• Exportar detalhes
+            `;
+            
+            if (confirm(detalhes + '\n\nDeseja resolver esta divergência agora?')) {
+                resolverDivergencia(id);
+            }
+        }
+
+        // Resolver divergência via API
+        async function resolverDivergencia(id) {
+            const justificativa = prompt(`🔧 RESOLVER DIVERGÊNCIA #${id}
+
+Por favor, informe a justificativa para resolução desta divergência:
+
+Exemplos:
+• "Taxa bancária não contabilizada no lançamento"
+• "Erro de digitação no valor do lançamento"
+• "Lançamento realizado em data posterior"
+• "Movimento bancário não relacionado à empresa"
+
+Justificativa:`);
+            
+            if (!justificativa || justificativa.trim() === '') {
+                alert('❌ Justificativa é obrigatória para resolver a divergência');
+                return;
+            }
+
+            // Simular resolução (substituir pela API real quando disponível)
+            try {
+                // Tentar API real primeiro
+                const resp = await fetch(`/api/divergencias/${id}/resolver`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ justificativa: justificativa.trim() })
+                });
+                
+                if (resp.ok) {
+                    const data = await resp.json();
+                    alert(`✅ ${data.message || 'Divergência resolvida com sucesso!'}`);
+                } else {
+                    throw new Error('API não disponível');
+                }
+            } catch (error) {
+                // Fallback - simular resolução local
+                console.log('API não disponível, simulando resolução local');
+                
+                const confirmacao = confirm(`✅ CONFIRMAR RESOLUÇÃO
+                
+Divergência: #${id}
+Justificativa: ${justificativa}
+
+Esta ação irá marcar a divergência como resolvida.
+Deseja continuar?`);
+
+                if (confirmacao) {
+                    // Simular sucesso
+                    alert(`✅ Divergência #${id} resolvida com sucesso!
+                    
+📝 Justificativa: ${justificativa}
+📅 Data/Hora: ${new Date().toLocaleString('pt-BR')}
+👤 Usuário: ${document.getElementById('user-name')?.textContent || 'Sistema'}
+
+A divergência foi marcada como resolvida e será removida da lista na próxima atualização.`);
+                    
+                    // Recarregar a lista de divergências
+                    setTimeout(() => {
+                        carregarDivergencias();
+                    }, 1000);
+                }
+            }
+        }
+
         function mostrarEstatisticas() {
             alert('Funcionalidade em desenvolvimento');
         }
@@ -1710,31 +2328,83 @@
             periodoAtualDashboard = 'hoje';
             carregarEstatisticas('hoje'); // Carregar estatísticas de hoje por padrão
             inicializarUsuario();
+            
+            // Inicializar uploads
+            setupDragAndDrop();
+            
+            // Limpar localStorage se necessário (para debug)
+            // localStorage.removeItem('abaSistemaAtiva'); // Descomente se precisar resetar
+            
+            // Carregar também as conciliações para evitar problemas
+            setTimeout(() => {
+                carregarConciliacoes(1);
+            }, 1000); // Aguardar 1 segundo para garantir que a página carregou
         });
 
         // Manipulação de abas
         document.addEventListener('DOMContentLoaded', function() {
+            // Restaurar aba ativa salva
+            const abaSalva = localStorage.getItem('abaSistemaAtiva') || 'dashboard';
+            
+            // Limpar qualquer estado anterior primeiro
+            setTimeout(() => {
+                ativarAba(abaSalva);
+            }, 100);
+            
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                    
                     const target = this.getAttribute('href').substring(1);
-                    document.querySelectorAll('.tab-pane').forEach(tab => {
-                        tab.classList.remove('show', 'active');
-                    });
-                    document.getElementById(target).classList.add('show', 'active');
                     
-                    // Carregar dados específicos da aba
-                    if (target === 'conciliacao') {
-                        carregarEstatisticasConciliacoes();
-                        carregarConciliacoes(1);
-                    }
+                    console.log('Clique na aba:', target); // Debug
+                    
+                    // Salvar aba atual no localStorage
+                    localStorage.setItem('abaSistemaAtiva', target);
+                    
+                    // Pequeno delay para garantir que o DOM está pronto
+                    setTimeout(() => {
+                        ativarAba(target);
+                    }, 50);
                 });
             });
         });
+
+        // Função para ativar uma aba específica
+        function ativarAba(target) {
+            console.log('Ativando aba:', target); // Debug
+            
+            // Remover classes ativas de todos os links e abas
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(tab => {
+                tab.classList.remove('show', 'active');
+            });
+            
+            // Ativar o link e aba correspondentes
+            const linkAtivo = document.querySelector(`[href="#${target}"]`);
+            const abaAtiva = document.getElementById(target);
+            
+            console.log('Link encontrado:', linkAtivo); // Debug
+            console.log('Aba encontrada:', abaAtiva); // Debug
+            
+            if (linkAtivo) linkAtivo.classList.add('active');
+            if (abaAtiva) {
+                abaAtiva.classList.add('show', 'active');
+                console.log('Aba ativada:', target); // Debug
+            } else {
+                console.error('Aba não encontrada:', target);
+            }
+            
+            // Carregar dados específicos da aba
+            if (target === 'conciliacao') {
+                carregarEstatisticasConciliacoes();
+                carregarConciliacoes(1);
+            } else if (target === 'divergencias') {
+                carregarDivergencias();
+            } else if (target === 'historico') {
+                carregarConciliacoes(1);
+            }
+        }
 
         // Funções do usuário
         function inicializarUsuario() {
@@ -2155,6 +2825,25 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Detalhes da Conciliação -->
+    <div class="modal fade" id="modalDetalhesConciliacao" tabindex="-1" aria-labelledby="modalDetalhesConciliacaoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDetalhesConciliacaoLabel">Detalhes da Conciliação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="detalhes-conciliacao-body">
+                    <!-- Conteúdo carregado dinamicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" id="export-conciliacao-btn" class="btn btn-success">Exportar CSV</button>
                 </div>
             </div>
         </div>

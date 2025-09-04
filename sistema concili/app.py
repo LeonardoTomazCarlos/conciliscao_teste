@@ -7,16 +7,28 @@ import csv
 import os
 import re
 import hashlib
+import uuid
 from datetime import datetime, timedelta
 import json
 from werkzeug.utils import secure_filename
 from openpyxl import load_workbook
 import requests
 import xml.etree.ElementTree as ET
-from io import BytesIO
+from io import BytesIO, StringIO
 import PyPDF2
 import logging
 from functools import wraps
+
+# Decorator personalizado para APIs que retorna JSON em caso de erro de autenticação
+def api_login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return jsonify({'error': 'Usuário não autenticado'}), 401
+        if not current_user.ativo:
+            return jsonify({'error': 'Usuário inativo'}), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sua_chave_secreta_aqui'
@@ -66,7 +78,8 @@ def verificar_usuario_ativo():
     # Se o usuário está logado, verificar se ainda está ativo
     if current_user.is_authenticated:
         # Recarregar o usuário do banco para pegar o status atual
-        usuario_atual = Usuario.query.get(current_user.id)
+        # Use db.session.get para evitar o aviso de API legada do SQLAlchemy
+        usuario_atual = db.session.get(Usuario, current_user.id)
         if not usuario_atual or not usuario_atual.ativo:
             logout_user()
             flash('Sua conta foi desativada. Entre em contato com o administrador.', 'error')
@@ -177,11 +190,30 @@ class LancamentoContabil(db.Model):
     
     usuario = db.relationship('Usuario', backref='lancamentos_contabeis')
 
+class ProcedimentoConciliacao(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(36), unique=True, nullable=False)
+    tipo_procedimento = db.Column(db.String(50), nullable=False)  # upload_automatico, manual, importacao, migracao
+    metodo = db.Column(db.String(20), default='automatico')  # automatico, manual
+    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
+    status = db.Column(db.String(20), default='em_andamento')  # em_andamento, concluido, erro, parcial
+    descricao = db.Column(db.Text)
+    total_conciliacoes = db.Column(db.Integer, default=0)
+    valor_total = db.Column(db.Numeric(15,2), default=0.00)
+    observacoes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    usuario = db.relationship('Usuario', backref='procedimentos_conciliacao')
+    conciliacoes = db.relationship('Conciliacao', backref='procedimento', lazy='dynamic')
+
 class Conciliacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     extrato_id = db.Column(db.Integer, db.ForeignKey('extrato_bancario.id'))
     lancamento_id = db.Column(db.Integer, db.ForeignKey('lancamento_contabil.id'))
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
+    procedimento_id = db.Column(db.Integer, db.ForeignKey('procedimento_conciliacao.id'))
     data_conciliacao = db.Column(db.DateTime, default=datetime.utcnow)
     observacoes = db.Column(db.Text)
     tipo_conciliacao = db.Column(db.String(20), default='manual')  # manual, automatica
@@ -289,6 +321,73 @@ def log_auditoria(acao, tabela=None, registro_id=None, dados_anteriores=None, da
         db.session.commit()
     except Exception as e:
         logging.error(f"Erro ao registrar log de auditoria: {e}")
+
+def criar_procedimento_conciliacao(tipo_procedimento, metodo='automatico', descricao=None):
+    """Criar novo procedimento de conciliação"""
+    try:
+        procedimento_uuid = str(uuid.uuid4())[:8].upper()  # UUID curto para exibição
+        procedimento_uuid = f"PROC-{datetime.now().strftime('%Y%m%d%H%M%S')}-{procedimento_uuid}"
+        
+        procedimento = ProcedimentoConciliacao(
+            uuid=procedimento_uuid,
+            tipo_procedimento=tipo_procedimento,
+            metodo=metodo,
+            data_criacao=datetime.utcnow(),
+            usuario_id=current_user.id,
+            status='em_andamento',
+            descricao=descricao
+        )
+        
+        db.session.add(procedimento)
+        db.session.commit()
+        
+        logging.info(f"Procedimento criado: {procedimento_uuid} - {tipo_procedimento} por usuário {current_user.username}")
+        log_auditoria('criar_procedimento', 'procedimento_conciliacao', procedimento.id, None, {
+            'uuid': procedimento_uuid,
+            'tipo': tipo_procedimento,
+            'metodo': metodo
+        })
+        
+        return procedimento
+        
+    except Exception as e:
+        logging.error(f"Erro ao criar procedimento: {e}")
+        db.session.rollback()
+        return None
+
+def finalizar_procedimento(procedimento_id, status='concluido'):
+    """Finalizar procedimento e atualizar estatísticas"""
+    try:
+        procedimento = ProcedimentoConciliacao.query.get(procedimento_id)
+        if not procedimento:
+            return False
+        
+        # Atualizar contadores
+        total_conciliacoes = procedimento.conciliacoes.count()
+        valor_total = db.session.query(db.func.sum(ExtratoBancario.valor)).join(
+            Conciliacao
+        ).filter(Conciliacao.procedimento_id == procedimento_id).scalar() or 0
+        
+        procedimento.status = status
+        procedimento.total_conciliacoes = total_conciliacoes
+        procedimento.valor_total = valor_total
+        procedimento.updated_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        logging.info(f"Procedimento finalizado: {procedimento.uuid} - {total_conciliacoes} conciliações")
+        log_auditoria('finalizar_procedimento', 'procedimento_conciliacao', procedimento.id, None, {
+            'status': status,
+            'total_conciliacoes': total_conciliacoes,
+            'valor_total': float(valor_total)
+        })
+        
+        return True
+        
+    except Exception as e:
+        logging.error(f"Erro ao finalizar procedimento {procedimento_id}: {e}")
+        db.session.rollback()
+        return False
 
 def admin_required(f):
     """Decorator para verificar se o usuário é admin"""
@@ -554,29 +653,49 @@ def process_csv_file(filepath):
     """Processa arquivo CSV"""
     registros = []
     try:
-        with open(filepath, 'r', encoding='utf-8') as file:
+        # Tentar várias codificações comuns para evitar falhas por encoding
+        encodings_to_try = ['utf-8', 'latin-1', 'cp1252']
+        file_obj = None
+        last_error = None
+        for enc in encodings_to_try:
+            try:
+                file_obj = open(filepath, 'r', encoding=enc)
+                break
+            except Exception as e:
+                last_error = e
+
+        if not file_obj:
+            logging.error(f"Falha ao abrir CSV '{filepath}': {last_error}")
+            return registros
+
+        with file_obj as file:
             reader = csv.reader(file)
-            headers = next(reader)  # Primeira linha são os cabeçalhos
+            try:
+                headers = next(reader)  # Primeira linha são os cabeçalhos
+            except StopIteration:
+                logging.error(f"CSV vazio: {filepath}")
+                return registros
+
             colunas = detect_columns(headers)
-            
-            for row in reader:
+            failed_rows = 0
+            for i, row in enumerate(reader, start=2):
                 if len(row) < 3:
+                    failed_rows += 1
                     continue
-                
                 try:
                     data = parse_date(row[colunas[0][1]])
                     descricao = str(row[colunas[1][1]])
                     valor = parse_value(row[colunas[2][1]])
-                    
+
                     # Determinar tipo baseado no valor ou coluna
                     if len(colunas) > 3 and colunas[3][1] is not None:
                         tipo = str(row[colunas[3][1]]).lower()
                     else:
                         tipo = 'credito' if valor > 0 else 'debito'
-                    
+
                     if tipo not in ['credito', 'debito']:
                         tipo = 'credito' if valor > 0 else 'debito'
-                    
+
                     registros.append({
                         'data': data,
                         'descricao': descricao,
@@ -584,9 +703,13 @@ def process_csv_file(filepath):
                         'tipo': tipo
                     })
                 except Exception as e:
-                    continue
+                    failed_rows += 1
+                    logging.debug(f"Erro ao processar linha {i} do CSV '{filepath}': {e}")
+
+            if failed_rows > 0:
+                logging.info(f"Processamento CSV '{filepath}' concluído com {failed_rows} linhas ignoradas devido a erros.")
     except Exception as e:
-        print(f"Erro ao processar CSV: {e}")
+        logging.error(f"Erro ao processar CSV '{filepath}': {e}")
     
     return registros
 
@@ -706,10 +829,12 @@ def conciliacao_automatica():
                 
                 if not conciliacao_existente:
                     # Criar conciliação automática
+                    # Atribuir ao usuário autenticado quando disponível; caso contrário manter usuário sistema (id=1)
+                    usuario_responsavel = current_user.id if (hasattr(current_user, 'is_authenticated') and current_user.is_authenticated) else 1
                     conciliacao = Conciliacao(
                         extrato_id=extrato.id,
                         lancamento_id=lancamento.id,
-                        usuario_id=1,  # Sistema
+                        usuario_id=usuario_responsavel,
                         tipo_conciliacao='automatica',
                         observacoes='Conciliação automática por valor, data e tipo'
                     )
@@ -916,7 +1041,7 @@ def logout():
 # === ROTAS DE ADMINISTRAÇÃO ===
 
 @app.route('/api/contas-bancarias', methods=['GET'])
-@login_required
+@api_login_required
 def get_contas_bancarias():
     contas = ContaBancaria.query.filter_by(ativa=True).all()
     return jsonify([{
@@ -929,7 +1054,7 @@ def get_contas_bancarias():
     } for c in contas])
 
 @app.route('/api/contas-bancarias', methods=['POST'])
-@login_required
+@api_login_required
 @admin_required
 def criar_conta_bancaria():
     data = request.get_json()
@@ -949,7 +1074,7 @@ def criar_conta_bancaria():
     return jsonify({'success': True, 'message': 'Conta bancária criada com sucesso'})
 
 @app.route('/api/regras-conciliacao', methods=['GET'])
-@login_required
+@api_login_required
 def get_regras_conciliacao():
     regras = RegraConciliacao.query.filter_by(ativa=True).order_by(RegraConciliacao.prioridade.desc()).all()
     return jsonify([{
@@ -967,7 +1092,7 @@ def get_regras_conciliacao():
     } for r in regras])
 
 @app.route('/api/regras-conciliacao', methods=['POST'])
-@login_required
+@api_login_required
 @admin_required
 def criar_regra_conciliacao():
     data = request.get_json()
@@ -992,7 +1117,7 @@ def criar_regra_conciliacao():
     return jsonify({'success': True, 'message': 'Regra criada com sucesso'})
 
 @app.route('/api/conciliacao-automatica', methods=['POST'])
-@login_required
+@api_login_required
 def executar_conciliacao_automatica():
     try:
         # Detectar transações recorrentes
@@ -1016,7 +1141,7 @@ def executar_conciliacao_automatica():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/conciliacoes', methods=['GET'])
-@login_required
+@api_login_required
 @requires_permission('read')
 def get_conciliacoes():
     try:
@@ -1033,11 +1158,24 @@ def get_conciliacoes():
         query = Conciliacao.query
         query = filter_by_user_access(query, Conciliacao)
         
+        # Log para debug
+        logging.info(f"Carregando conciliações para usuário: {current_user.username} (ID: {current_user.id}), Perfil: {current_user.perfil}")
+        
         # Aplicar filtros
         if data_inicio:
-            query = query.filter(Conciliacao.data_conciliacao >= datetime.strptime(data_inicio, '%Y-%m-%d'))
+            try:
+                dt_start = datetime.strptime(data_inicio, '%Y-%m-%d')
+                dt_start = dt_start.replace(hour=0, minute=0, second=0, microsecond=0)
+                query = query.filter(Conciliacao.data_conciliacao >= dt_start)
+            except Exception as e:
+                logging.debug(f"Formato inválido em data_inicio: {data_inicio} - {e}")
         if data_fim:
-            query = query.filter(Conciliacao.data_conciliacao <= datetime.strptime(data_fim, '%Y-%m-%d'))
+            try:
+                dt_end = datetime.strptime(data_fim, '%Y-%m-%d')
+                dt_end = dt_end.replace(hour=23, minute=59, second=59, microsecond=999999)
+                query = query.filter(Conciliacao.data_conciliacao <= dt_end)
+            except Exception as e:
+                logging.debug(f"Formato inválido em data_fim: {data_fim} - {e}")
         if tipo:
             query = query.filter(Conciliacao.tipo_conciliacao == tipo)
         if status:
@@ -1056,6 +1194,9 @@ def get_conciliacoes():
             per_page=per_page, 
             error_out=False
         )
+        
+        # Log para debug
+        logging.info(f"Conciliações encontradas: {conciliacoes.total} (Página {page}, {per_page} por página)")
         
         # Formatear resposta
         resultado = {
@@ -1107,8 +1248,150 @@ def get_conciliacoes():
         logging.error(f"Erro ao buscar conciliações: {e}")
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/api/conciliacoes/<int:conciliacao_id>/detalhes', methods=['GET'])
+@api_login_required
+@requires_permission('read')
+def get_conciliacao_detalhes(conciliacao_id):
+    try:
+        # aplicar controle de acesso
+        query = filter_by_user_access(Conciliacao.query, Conciliacao)
+        c = query.filter(Conciliacao.id == conciliacao_id).first()
+        if not c:
+            return jsonify({'error': 'Conciliação não encontrada'}), 404
+
+        detalhes = {
+            'id': c.id,
+            'data_conciliacao': c.data_conciliacao.strftime('%Y-%m-%d %H:%M:%S') if c.data_conciliacao else None,
+            'tipo_conciliacao': c.tipo_conciliacao,
+            'status': c.status,
+            'observacoes': c.observacoes,
+            'usuario': {
+                'id': c.usuario.id,
+                'nome': c.usuario.nome_completo,
+                'username': c.usuario.username
+            } if c.usuario else None,
+            'extrato': None,
+            'lancamento': None
+        }
+
+        if c.extrato:
+            e = c.extrato
+            detalhes['extrato'] = {
+                'id': e.id,
+                'data': e.data.strftime('%Y-%m-%d') if e.data else None,
+                'descricao': e.descricao,
+                'valor': e.valor,
+                'tipo': e.tipo,
+                'categoria': e.categoria,
+                'arquivo_origem': e.arquivo_origem,
+                'numero_documento': e.numero_documento,
+                'conta': {
+                    'banco': e.conta.banco if e.conta else None,
+                    'agencia': e.conta.agencia if e.conta else None,
+                    'conta': e.conta.conta if e.conta else None
+                }
+            }
+
+        if c.lancamento:
+            l = c.lancamento
+            detalhes['lancamento'] = {
+                'id': l.id,
+                'data': l.data.strftime('%Y-%m-%d') if l.data else None,
+                'descricao': l.descricao,
+                'valor': l.valor,
+                'tipo': l.tipo,
+                'categoria': l.categoria,
+                'arquivo_origem': l.arquivo_origem,
+                'numero_documento': l.numero_documento,
+                'fornecedor_cliente': l.fornecedor_cliente
+            }
+
+        return jsonify(detalhes)
+    except Exception as e:
+        logging.error(f"Erro ao carregar detalhes da conciliação {conciliacao_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/conciliacoes/<int:conciliacao_id>/export', methods=['GET'])
+@api_login_required
+@requires_permission('read')
+def export_conciliacao(conciliacao_id):
+    try:
+        query = filter_by_user_access(Conciliacao.query, Conciliacao)
+        c = query.filter(Conciliacao.id == conciliacao_id).first()
+        if not c:
+            return jsonify({'error': 'Conciliação não encontrada'}), 404
+
+        # Construir CSV em memória
+        output = StringIO()
+        writer = csv.writer(output, delimiter=';')
+
+        # Metadados da conciliação
+        writer.writerow(['conciliacao_id', 'data_conciliacao', 'usuario', 'tipo_conciliacao', 'status', 'observacoes'])
+        writer.writerow([
+            c.id,
+            c.data_conciliacao.strftime('%Y-%m-%d %H:%M:%S') if c.data_conciliacao else '',
+            c.usuario.nome_completo if c.usuario else '',
+            c.tipo_conciliacao,
+            c.status,
+            c.observacoes or ''
+        ])
+        writer.writerow([])
+
+        # Extrato
+        writer.writerow(['extrato_id','extrato_data','extrato_descricao','extrato_valor','extrato_tipo','extrato_categoria','extrato_conta_banco','extrato_conta_agencia','extrato_conta_numero','extrato_arquivo_origem','extrato_numero_documento'])
+        if c.extrato:
+            e = c.extrato
+            writer.writerow([
+                e.id,
+                e.data.strftime('%Y-%m-%d') if e.data else '',
+                e.descricao,
+                e.valor,
+                e.tipo,
+                e.categoria,
+                e.conta.banco if e.conta else '',
+                e.conta.agencia if e.conta else '',
+                e.conta.conta if e.conta else '',
+                e.arquivo_origem or '',
+                e.numero_documento or ''
+            ])
+        else:
+            writer.writerow(['N/A'] * 11)
+
+        writer.writerow([])
+
+        # Lançamento
+        writer.writerow(['lancamento_id','lancamento_data','lancamento_descricao','lancamento_valor','lancamento_tipo','lancamento_categoria','lancamento_arquivo_origem','lancamento_numero_documento','lancamento_fornecedor_cliente'])
+        if c.lancamento:
+            l = c.lancamento
+            writer.writerow([
+                l.id,
+                l.data.strftime('%Y-%m-%d') if l.data else '',
+                l.descricao,
+                l.valor,
+                l.tipo,
+                l.categoria or '',
+                l.arquivo_origem or '',
+                l.numero_documento or '',
+                l.fornecedor_cliente or ''
+            ])
+        else:
+            writer.writerow(['N/A'] * 9)
+
+        csv_str = output.getvalue()
+        mem = BytesIO()
+        mem.write(csv_str.encode('utf-8-sig'))
+        mem.seek(0)
+
+        filename = f'conciliacao_{conciliacao_id}.csv'
+        return send_file(mem, mimetype='text/csv', as_attachment=True, download_name=filename)
+    except Exception as e:
+        logging.error(f"Erro ao exportar conciliação {conciliacao_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/conciliacoes/estatisticas', methods=['GET'])
-@login_required
+@api_login_required
 def get_estatisticas_conciliacoes():
     try:
         # Estatísticas gerais
@@ -1163,7 +1446,7 @@ def get_estatisticas_conciliacoes():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/divergencias', methods=['GET'])
-@login_required
+@api_login_required
 def get_divergencias():
     divergencias = Divergencia.query.filter_by(status='pendente').order_by(Divergencia.created_at.desc()).all()
     return jsonify([{
@@ -1187,7 +1470,7 @@ def get_divergencias():
     } for d in divergencias])
 
 @app.route('/api/divergencias/<int:divergencia_id>/resolver', methods=['POST'])
-@login_required
+@api_login_required
 def resolver_divergencia(divergencia_id):
     data = request.get_json()
     divergencia = Divergencia.query.get(divergencia_id)
@@ -1205,8 +1488,321 @@ def resolver_divergencia(divergencia_id):
     log_auditoria('resolver_divergencia', 'divergencia', divergencia.id, None, data)
     return jsonify({'success': True, 'message': 'Divergência resolvida com sucesso'})
 
+# ====== ROTAS PARA PROCEDIMENTOS ======
+
+@app.route('/api/procedimentos', methods=['GET'])
+@api_login_required
+@requires_permission('read')
+def get_procedimentos():
+    """Listar procedimentos de conciliação agrupados"""
+    try:
+        # Parâmetros de filtro
+        data_inicio = request.args.get('data_inicio')
+        data_fim = request.args.get('data_fim')
+        tipo = request.args.get('tipo')
+        status = request.args.get('status')
+        usuario_id = request.args.get('usuario_id')
+        metodo = request.args.get('metodo')
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        
+        # Construir query base com controle de acesso
+        query = ProcedimentoConciliacao.query
+        
+        # Controle de acesso por perfil
+        if current_user.perfil == 'usuario':
+            query = query.filter(ProcedimentoConciliacao.usuario_id == current_user.id)
+        
+        # Aplicar filtros
+        if data_inicio:
+            try:
+                dt_start = datetime.strptime(data_inicio, '%Y-%m-%d')
+                dt_start = dt_start.replace(hour=0, minute=0, second=0, microsecond=0)
+                query = query.filter(ProcedimentoConciliacao.data_criacao >= dt_start)
+            except Exception as e:
+                logging.debug(f"Formato inválido em data_inicio: {data_inicio} - {e}")
+        
+        if data_fim:
+            try:
+                dt_end = datetime.strptime(data_fim, '%Y-%m-%d')
+                dt_end = dt_end.replace(hour=23, minute=59, second=59, microsecond=999999)
+                query = query.filter(ProcedimentoConciliacao.data_criacao <= dt_end)
+            except Exception as e:
+                logging.debug(f"Formato inválido em data_fim: {data_fim} - {e}")
+        
+        if tipo:
+            query = query.filter(ProcedimentoConciliacao.tipo_procedimento == tipo)
+        
+        if status:
+            query = query.filter(ProcedimentoConciliacao.status == status)
+        
+        if metodo:
+            query = query.filter(ProcedimentoConciliacao.metodo == metodo)
+        
+        # Apenas admin/auditor podem filtrar por outro usuário
+        if usuario_id and current_user.perfil in ['admin', 'auditor']:
+            query = query.filter(ProcedimentoConciliacao.usuario_id == usuario_id)
+        
+        # Ordenar por data mais recente
+        query = query.order_by(ProcedimentoConciliacao.data_criacao.desc())
+        
+        # Paginação
+        procedimentos = query.paginate(
+            page=page, 
+            per_page=per_page,
+            error_out=False
+        )
+        
+        # Montar resultado
+        items = []
+        for proc in procedimentos.items:
+            # Calcular estatísticas das conciliações do procedimento
+            conciliacoes_query = proc.conciliacoes
+            total_conciliacoes = conciliacoes_query.count()
+            conciliacoes_ativas = conciliacoes_query.filter(Conciliacao.status == 'ativa').count()
+            valor_total = db.session.query(db.func.sum(ExtratoBancario.valor)).join(Conciliacao).filter(Conciliacao.procedimento_id == proc.id).scalar() or 0
+            
+            # Detectar divergências
+            divergencias_count = db.session.query(Divergencia).join(
+                Conciliacao, 
+                db.or_(
+                    Divergencia.extrato_id == Conciliacao.extrato_id,
+                    Divergencia.lancamento_id == Conciliacao.lancamento_id
+                )
+            ).filter(
+                Conciliacao.procedimento_id == proc.id,
+                Divergencia.status == 'pendente'
+            ).count()
+            
+            items.append({
+                'id': proc.id,
+                'uuid': proc.uuid,
+                'tipo_procedimento': proc.tipo_procedimento,
+                'metodo': proc.metodo,
+                'data_criacao': proc.data_criacao.strftime('%Y-%m-%d %H:%M:%S'),
+                'status': proc.status,
+                'descricao': proc.descricao,
+                'total_conciliacoes': total_conciliacoes,
+                'conciliacoes_ativas': conciliacoes_ativas,
+                'conciliacoes_canceladas': total_conciliacoes - conciliacoes_ativas,
+                'valor_total': float(valor_total),
+                'divergencias_count': divergencias_count,
+                'observacoes': proc.observacoes,
+                'usuario': {
+                    'id': proc.usuario.id,
+                    'nome': proc.usuario.nome_completo,
+                    'username': proc.usuario.username
+                } if proc.usuario else None
+            })
+        
+        return jsonify({
+            'procedimentos': items,
+            'pagination': {
+                'page': procedimentos.page,
+                'pages': procedimentos.pages,
+                'per_page': procedimentos.per_page,
+                'total': procedimentos.total,
+                'has_next': procedimentos.has_next,
+                'has_prev': procedimentos.has_prev
+            }
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar procedimentos: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/procedimentos/<int:procedimento_id>/detalhes', methods=['GET'])
+@api_login_required
+@requires_permission('read')
+def get_procedimento_detalhes(procedimento_id):
+    """Obter detalhes completos de um procedimento e suas conciliações"""
+    try:
+        # Buscar procedimento com controle de acesso
+        query = ProcedimentoConciliacao.query
+        if current_user.perfil == 'usuario':
+            query = query.filter(ProcedimentoConciliacao.usuario_id == current_user.id)
+        
+        proc = query.filter(ProcedimentoConciliacao.id == procedimento_id).first()
+        if not proc:
+            return jsonify({'error': 'Procedimento não encontrado'}), 404
+        
+        # Buscar todas as conciliações do procedimento
+        conciliacoes = proc.conciliacoes.order_by(Conciliacao.data_conciliacao.desc()).all()
+        
+        conciliacoes_list = []
+        for c in conciliacoes:
+            # Verificar se há divergências para esta conciliação
+            divergencias = db.session.query(Divergencia).filter(
+                db.or_(
+                    Divergencia.extrato_id == c.extrato_id,
+                    Divergencia.lancamento_id == c.lancamento_id
+                )
+            ).all()
+            
+            conciliacoes_list.append({
+                'id': c.id,
+                'data_conciliacao': c.data_conciliacao.strftime('%Y-%m-%d %H:%M:%S') if c.data_conciliacao else None,
+                'tipo_conciliacao': c.tipo_conciliacao,
+                'status': c.status,
+                'observacoes': c.observacoes,
+                'extrato': {
+                    'id': c.extrato.id,
+                    'data': c.extrato.data.strftime('%Y-%m-%d') if c.extrato and c.extrato.data else None,
+                    'descricao': c.extrato.descricao if c.extrato else None,
+                    'valor': float(c.extrato.valor) if c.extrato and c.extrato.valor else 0,
+                    'tipo': c.extrato.tipo if c.extrato else None,
+                    'categoria': c.extrato.categoria if c.extrato else None,
+                    'numero_documento': c.extrato.numero_documento if c.extrato else None,
+                    'arquivo_origem': c.extrato.arquivo_origem if c.extrato else None
+                } if c.extrato else None,
+                'lancamento': {
+                    'id': c.lancamento.id,
+                    'data': c.lancamento.data.strftime('%Y-%m-%d') if c.lancamento and c.lancamento.data else None,
+                    'descricao': c.lancamento.descricao if c.lancamento else None,
+                    'valor': float(c.lancamento.valor) if c.lancamento and c.lancamento.valor else 0,
+                    'tipo': c.lancamento.tipo if c.lancamento else None,
+                    'categoria': c.lancamento.categoria if c.lancamento else None,
+                    'numero_documento': c.lancamento.numero_documento if c.lancamento else None,
+                    'fornecedor_cliente': c.lancamento.fornecedor_cliente if c.lancamento else None,
+                    'arquivo_origem': c.lancamento.arquivo_origem if c.lancamento else None
+                } if c.lancamento else None,
+                'divergencias': [{
+                    'id': d.id,
+                    'tipo': d.tipo,
+                    'descricao': d.descricao,
+                    'status': d.status
+                } for d in divergencias]
+            })
+        
+        # Estatísticas do procedimento
+        total_conciliacoes = len(conciliacoes)
+        conciliacoes_ativas = sum(1 for c in conciliacoes if c.status == 'ativa')
+        valor_total = sum(float(c.extrato.valor) for c in conciliacoes if c.extrato and c.extrato.valor)
+        divergencias_total = sum(len(c['divergencias']) for c in conciliacoes_list)
+        
+        return jsonify({
+            'id': proc.id,
+            'uuid': proc.uuid,
+            'tipo_procedimento': proc.tipo_procedimento,
+            'metodo': proc.metodo,
+            'data_criacao': proc.data_criacao.strftime('%Y-%m-%d %H:%M:%S'),
+            'status': proc.status,
+            'descricao': proc.descricao,
+            'observacoes': proc.observacoes,
+            'usuario': {
+                'id': proc.usuario.id,
+                'nome': proc.usuario.nome_completo,
+                'username': proc.usuario.username
+            } if proc.usuario else None,
+            'estatisticas': {
+                'total_conciliacoes': total_conciliacoes,
+                'conciliacoes_ativas': conciliacoes_ativas,
+                'conciliacoes_canceladas': total_conciliacoes - conciliacoes_ativas,
+                'valor_total': valor_total,
+                'divergencias_count': divergencias_total
+            },
+            'conciliacoes': conciliacoes_list
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar detalhes do procedimento {procedimento_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/procedimentos/<int:procedimento_id>/export', methods=['GET'])
+@api_login_required
+@requires_permission('read')
+def export_procedimento(procedimento_id):
+    """Exportar todas as conciliações de um procedimento em CSV"""
+    try:
+        # Buscar procedimento com controle de acesso
+        query = ProcedimentoConciliacao.query
+        if current_user.perfil == 'usuario':
+            query = query.filter(ProcedimentoConciliacao.usuario_id == current_user.id)
+        
+        proc = query.filter(ProcedimentoConciliacao.id == procedimento_id).first()
+        if not proc:
+            return jsonify({'error': 'Procedimento não encontrado'}), 404
+        
+        # Buscar todas as conciliações do procedimento
+        conciliacoes = proc.conciliacoes.order_by(Conciliacao.data_conciliacao.desc()).all()
+        
+        # Construir CSV em memória
+        output = StringIO()
+        writer = csv.writer(output, delimiter=';')
+        
+        # Cabeçalho do procedimento
+        writer.writerow(['PROCEDIMENTO DE CONCILIAÇÃO'])
+        writer.writerow(['ID Procedimento', proc.uuid])
+        writer.writerow(['Tipo', proc.tipo_procedimento])
+        writer.writerow(['Método', proc.metodo])
+        writer.writerow(['Data Criação', proc.data_criacao.strftime('%Y-%m-%d %H:%M:%S')])
+        writer.writerow(['Status', proc.status])
+        writer.writerow(['Usuário', proc.usuario.nome_completo if proc.usuario else ''])
+        writer.writerow(['Descrição', proc.descricao or ''])
+        writer.writerow(['Total Conciliações', len(conciliacoes)])
+        writer.writerow([])
+        
+        # Cabeçalho das conciliações
+        writer.writerow([
+            'Conciliação ID',
+            'Data Conciliação',
+            'Tipo',
+            'Status',
+            'Extrato ID',
+            'Extrato Data',
+            'Extrato Descrição',
+            'Extrato Valor',
+            'Extrato Tipo',
+            'Extrato Documento',
+            'Lançamento ID',
+            'Lançamento Data',
+            'Lançamento Descrição',
+            'Lançamento Valor',
+            'Lançamento Tipo',
+            'Lançamento Documento',
+            'Lançamento Cliente/Fornecedor',
+            'Observações'
+        ])
+        
+        # Dados das conciliações
+        for c in conciliacoes:
+            writer.writerow([
+                c.id,
+                c.data_conciliacao.strftime('%Y-%m-%d %H:%M:%S') if c.data_conciliacao else '',
+                c.tipo_conciliacao,
+                c.status,
+                c.extrato.id if c.extrato else '',
+                c.extrato.data.strftime('%Y-%m-%d') if c.extrato and c.extrato.data else '',
+                c.extrato.descricao if c.extrato else '',
+                c.extrato.valor if c.extrato else '',
+                c.extrato.tipo if c.extrato else '',
+                c.extrato.numero_documento if c.extrato else '',
+                c.lancamento.id if c.lancamento else '',
+                c.lancamento.data.strftime('%Y-%m-%d') if c.lancamento and c.lancamento.data else '',
+                c.lancamento.descricao if c.lancamento else '',
+                c.lancamento.valor if c.lancamento else '',
+                c.lancamento.tipo if c.lancamento else '',
+                c.lancamento.numero_documento if c.lancamento else '',
+                c.lancamento.fornecedor_cliente if c.lancamento else '',
+                c.observacoes or ''
+            ])
+        
+        csv_str = output.getvalue()
+        mem = BytesIO()
+        mem.write(csv_str.encode('utf-8-sig'))
+        mem.seek(0)
+        
+        filename = f'procedimento_{proc.uuid}.csv'
+        return send_file(mem, mimetype='text/csv', as_attachment=True, download_name=filename)
+        
+    except Exception as e:
+        logging.error(f"Erro ao exportar procedimento {procedimento_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# ====== FIM ROTAS PROCEDIMENTOS ======
+
 @app.route('/api/auditoria', methods=['GET'])
-@login_required
+@api_login_required
 @admin_required
 def get_auditoria():
     page = request.args.get('page', 1, type=int)
@@ -1244,7 +1840,7 @@ def get_auditoria():
     } for l in logs])
 
 @app.route('/api/relatorios/consolidado', methods=['GET'])
-@login_required
+@api_login_required
 def relatorio_consolidado():
     data_inicio = request.args.get('data_inicio')
     data_fim = request.args.get('data_fim')
@@ -1307,7 +1903,7 @@ def relatorio_consolidado():
     })
 
 @app.route('/api/upload-extrato', methods=['POST'])
-@login_required
+@api_login_required
 def upload_extrato():
     try:
         if 'file' not in request.files:
@@ -1320,6 +1916,16 @@ def upload_extrato():
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
+        
+        # Criar procedimento para este upload
+        procedimento = criar_procedimento_conciliacao(
+            tipo_procedimento='upload_extrato',
+            metodo='automatico',
+            descricao=f'Upload de extrato bancário: {filename}'
+        )
+        
+        if not procedimento:
+            return jsonify({'error': 'Erro ao criar procedimento'}), 500
         
         # Determinar formato do arquivo
         formato = 'CSV'
@@ -1379,6 +1985,9 @@ def upload_extrato():
         
         db.session.commit()
         
+        # Finalizar procedimento
+        finalizar_procedimento(procedimento.id, 'concluido')
+        
         # Registrar na auditoria
         log_auditoria(
             'upload_extrato',
@@ -1386,6 +1995,7 @@ def upload_extrato():
             None,
             None,
             {
+                'procedimento_uuid': procedimento.uuid,
                 'arquivo': filename,
                 'formato': formato,
                 'registros_importados': registros_importados,
@@ -1397,7 +2007,8 @@ def upload_extrato():
             'success': True,
             'message': f'{registros_importados} registros importados com sucesso. {duplicatas_detectadas} duplicatas detectadas.',
             'registros': registros_importados,
-            'duplicatas': duplicatas_detectadas
+            'duplicatas': duplicatas_detectadas,
+            'procedimento_uuid': procedimento.uuid
         })
     
     except Exception as e:
@@ -1405,7 +2016,7 @@ def upload_extrato():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/upload-lancamentos', methods=['POST'])
-@login_required
+@api_login_required
 def upload_lancamentos():
     try:
         if 'file' not in request.files:
@@ -1418,6 +2029,16 @@ def upload_lancamentos():
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
+        
+        # Criar procedimento para este upload
+        procedimento = criar_procedimento_conciliacao(
+            tipo_procedimento='upload_lancamentos',
+            metodo='automatico',
+            descricao=f'Upload de lançamentos contábeis: {filename}'
+        )
+        
+        if not procedimento:
+            return jsonify({'error': 'Erro ao criar procedimento'}), 500
         
         # Processar arquivo
         registros = []
@@ -1462,6 +2083,9 @@ def upload_lancamentos():
         
         db.session.commit()
         
+        # Finalizar procedimento
+        finalizar_procedimento(procedimento.id, 'concluido')
+        
         # Registrar na auditoria
         log_auditoria(
             'upload_lancamentos',
@@ -1469,6 +2093,7 @@ def upload_lancamentos():
             None,
             None,
             {
+                'procedimento_uuid': procedimento.uuid,
                 'arquivo': filename,
                 'registros_importados': registros_importados,
                 'duplicatas_detectadas': duplicatas_detectadas
@@ -1479,7 +2104,8 @@ def upload_lancamentos():
             'success': True,
             'message': f'{registros_importados} lançamentos importados com sucesso. {duplicatas_detectadas} duplicatas detectadas.',
             'registros': registros_importados,
-            'duplicatas': duplicatas_detectadas
+            'duplicatas': duplicatas_detectadas,
+            'procedimento_uuid': procedimento.uuid
         })
     
     except Exception as e:
@@ -1487,7 +2113,7 @@ def upload_lancamentos():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/extratos')
-@login_required
+@api_login_required
 def get_extratos():
     try:
         extratos = ExtratoBancario.query.order_by(ExtratoBancario.data.desc()).all()
@@ -1508,7 +2134,7 @@ def get_extratos():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/lancamentos')
-@login_required
+@api_login_required
 def get_lancamentos():
     try:
         lancamentos = LancamentoContabil.query.order_by(LancamentoContabil.data.desc()).all()
@@ -1530,7 +2156,7 @@ def get_lancamentos():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/conciliar', methods=['POST'])
-@login_required
+@api_login_required
 def conciliar():
     try:
         data = request.get_json()
@@ -1547,15 +2173,38 @@ def conciliar():
         if conciliacao_existente:
             return jsonify({'error': 'Conciliação já existe'}), 400
         
+        # Buscar ou criar procedimento manual ativo para o usuário
+        procedimento_ativo = ProcedimentoConciliacao.query.filter_by(
+            usuario_id=current_user.id,
+            tipo_procedimento='conciliacao_manual',
+            status='em_andamento'
+        ).filter(
+            ProcedimentoConciliacao.data_criacao >= (datetime.utcnow() - timedelta(hours=2))
+        ).first()
+        
+        if not procedimento_ativo:
+            procedimento_ativo = criar_procedimento_conciliacao(
+                tipo_procedimento='conciliacao_manual',
+                metodo='manual',
+                descricao='Conciliação manual de registros'
+            )
+            
+        if not procedimento_ativo:
+            return jsonify({'error': 'Erro ao criar procedimento'}), 500
+        
         # Criar nova conciliação
         conciliacao = Conciliacao(
             extrato_id=extrato_id,
             lancamento_id=lancamento_id,
             usuario_id=current_user.id,
+            procedimento_id=procedimento_ativo.id,
             observacoes=observacoes,
             tipo_conciliacao='manual'
         )
         db.session.add(conciliacao)
+        
+        # Log para debug
+        logging.info(f"Nova conciliação criada - Usuario: {current_user.username} (ID: {current_user.id}), Extrato: {extrato_id}, Lançamento: {lancamento_id}, Procedimento: {procedimento_ativo.uuid}")
         
         # Marcar como conciliado
         extrato = ExtratoBancario.query.get(extrato_id)
@@ -1575,20 +2224,25 @@ def conciliar():
             conciliacao.id,
             None,
             {
+                'procedimento_uuid': procedimento_ativo.uuid,
                 'extrato_id': extrato_id,
                 'lancamento_id': lancamento_id,
                 'observacoes': observacoes
             }
         )
         
-        return jsonify({'success': True, 'message': 'Conciliação realizada com sucesso'})
+        return jsonify({
+            'success': True, 
+            'message': 'Conciliação realizada com sucesso',
+            'procedimento_uuid': procedimento_ativo.uuid
+        })
     
     except Exception as e:
         logging.error(f"Erro na conciliação: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/desconciliar/<int:conciliacao_id>', methods=['DELETE'])
-@login_required
+@api_login_required
 def desconciliar(conciliacao_id):
     try:
         conciliacao = Conciliacao.query.get(conciliacao_id)
@@ -1624,7 +2278,7 @@ def desconciliar(conciliacao_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/estatisticas')
-@login_required
+@api_login_required
 def get_estatisticas():
     try:
         # Parâmetros de filtro de período
@@ -1768,7 +2422,7 @@ def get_usuario():
         })
 
 @app.route('/api/limpar-dados', methods=['DELETE'])
-@login_required
+@api_login_required
 @admin_required
 def limpar_dados():
     try:
@@ -1794,7 +2448,7 @@ def limpar_dados():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/criar-dados-exemplo', methods=['POST'])
-@login_required
+@api_login_required
 def criar_dados_exemplo():
     try:
         from random import uniform, choice, randint
@@ -1907,7 +2561,7 @@ def criar_dados_exemplo():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/limpar-todos-dados', methods=['POST'])
-@login_required
+@api_login_required
 def limpar_todos_dados():
     try:
         # Deletar todos os dados em ordem (respeitando foreign keys)
@@ -1935,7 +2589,7 @@ def limpar_todos_dados():
 # === ROTAS DE ADMINISTRAÇÃO ===
 
 @app.route('/api/admin/usuarios', methods=['GET'])
-@login_required
+@api_login_required
 @admin_required
 def get_admin_usuarios():
     """Listar todos os usuários"""
@@ -1965,7 +2619,7 @@ def get_admin_usuarios():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/admin/usuarios/<int:usuario_id>/perfil', methods=['PUT'])
-@login_required
+@api_login_required
 @admin_required
 def alterar_perfil_usuario(usuario_id):
     """Alterar perfil/permissões de um usuário"""
@@ -2007,7 +2661,7 @@ def alterar_perfil_usuario(usuario_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/admin/usuarios/<int:usuario_id>/status', methods=['PUT'])
-@login_required
+@api_login_required
 @admin_required
 def alterar_status_usuario(usuario_id):
     """Ativar/desativar um usuário"""
@@ -2046,7 +2700,7 @@ def alterar_status_usuario(usuario_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/admin/usuarios/<int:usuario_id>/resetar-senha', methods=['POST'])
-@login_required
+@api_login_required
 @admin_required
 def resetar_senha_usuario(usuario_id):
     """Resetar senha de um usuário"""
@@ -2083,7 +2737,7 @@ def resetar_senha_usuario(usuario_id):
 # === ROTAS DO PERFIL DO USUÁRIO ===
 
 @app.route('/api/usuario/perfil', methods=['GET'])
-@login_required
+@api_login_required
 def get_perfil_usuario():
     """Obter dados do perfil do usuário atual"""
     try:
@@ -2119,7 +2773,7 @@ def get_perfil_usuario():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/usuario/perfil', methods=['PUT'])
-@login_required
+@api_login_required
 def atualizar_perfil_usuario():
     """Atualizar dados do perfil do usuário atual"""
     try:
@@ -2161,7 +2815,7 @@ def atualizar_perfil_usuario():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/usuario/alterar-senha', methods=['POST'])
-@login_required
+@api_login_required
 def alterar_senha_usuario():
     """Alterar senha do usuário atual"""
     try:
