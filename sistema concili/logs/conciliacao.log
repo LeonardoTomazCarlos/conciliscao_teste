@@ -392,3 +392,114 @@
 2025-09-03 22:45:47,933 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:45:47] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
 2025-09-03 22:45:47,958 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:45:47] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
 2025-09-03 22:45:48,217 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:45:48] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-03 22:47:33,515 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:47:33] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-03 22:47:33,522 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:47:33] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-03 22:50:07,828 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.5:5000
+2025-09-03 22:50:07,829 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-03 22:50:07,830 - werkzeug - INFO -  * Restarting with stat
+2025-09-03 22:50:08,733 - werkzeug - WARNING -  * Debugger is active!
+2025-09-03 22:50:08,735 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-03 22:50:20,831 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:20] "GET /login HTTP/1.1" 200 -
+2025-09-03 22:50:23,325 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:23] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-03 22:50:23,379 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:23] "GET / HTTP/1.1" 200 -
+2025-09-03 22:50:23,789 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:23] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-03 22:50:23,806 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:23] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-03 22:50:24,516 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:24] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-03 22:50:25,901 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:25] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-03 22:50:26,137 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:26] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-03 22:50:26,324 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:26] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-03 22:50:26,489 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:26] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-03 22:50:31,687 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:50:31] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-03 22:56:48,216 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:56:48] "GET / HTTP/1.1" 200 -
+2025-09-03 22:56:49,218 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:56:49] "GET / HTTP/1.1" 200 -
+2025-09-03 22:56:50,434 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:56:50] "GET / HTTP/1.1" 200 -
+2025-09-03 22:57:27,716 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:27] "GET / HTTP/1.1" 200 -
+2025-09-03 22:57:34,006 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:34] "GET /login HTTP/1.1" 200 -
+2025-09-03 22:57:36,443 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:36] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-03 22:57:36,452 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:36] "GET / HTTP/1.1" 200 -
+2025-09-03 22:57:49,708 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:49] "[32mGET / HTTP/1.1[0m" 302 -
+2025-09-03 22:57:50,046 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:50] "GET /register HTTP/1.1" 200 -
+2025-09-03 22:57:50,487 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:50] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-09-03 22:57:54,889 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:54] "GET /login HTTP/1.1" 200 -
+2025-09-03 22:57:59,989 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:57:59] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-03 22:58:00,300 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 22:58:00] "GET / HTTP/1.1" 200 -
+2025-09-03 23:03:39,232 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.5:5000
+2025-09-03 23:03:39,232 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-03 23:03:39,233 - werkzeug - INFO -  * Restarting with stat
+2025-09-03 23:03:40,193 - werkzeug - WARNING -  * Debugger is active!
+2025-09-03 23:03:40,194 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-03 23:03:53,562 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 23:03:53] "GET / HTTP/1.1" 200 -
+2025-09-03 23:03:54,498 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 23:03:54] "GET / HTTP/1.1" 200 -
+2025-09-03 23:06:11,978 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 23:06:11] "[32mGET /?id=16721fd9-d368-4995-89ff-7dc141245fff&vscodeBrowserReqId=1756951571660 HTTP/1.1[0m" 302 -
+2025-09-03 23:06:12,251 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 23:06:12] "GET /register HTTP/1.1" 200 -
+2025-09-03 23:06:34,973 - werkzeug - INFO - 127.0.0.1 - - [03/Sep/2025 23:06:34] "GET / HTTP/1.1" 200 -
+2025-09-04 10:40:41,893 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-09-04 10:40:41,893 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-04 10:40:41,895 - werkzeug - INFO -  * Restarting with stat
+2025-09-04 10:40:43,084 - werkzeug - WARNING -  * Debugger is active!
+2025-09-04 10:40:43,088 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-04 10:45:20,847 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:45:20] "GET /login HTTP/1.1" 200 -
+2025-09-04 10:45:32,288 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:45:32] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-04 10:45:32,325 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:45:32] "GET / HTTP/1.1" 200 -
+2025-09-04 10:50:13,965 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:50:13] "GET / HTTP/1.1" 200 -
+2025-09-04 10:50:15,028 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:50:15] "GET / HTTP/1.1" 200 -
+2025-09-04 10:50:20,292 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:50:20] "GET / HTTP/1.1" 200 -
+2025-09-04 10:50:21,091 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:50:21] "GET / HTTP/1.1" 200 -
+2025-09-04 10:50:24,544 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:50:24] "GET / HTTP/1.1" 200 -
+2025-09-04 10:50:52,807 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-09-04 10:50:52,808 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-04 10:50:52,812 - werkzeug - INFO -  * Restarting with stat
+2025-09-04 10:50:53,699 - werkzeug - WARNING -  * Debugger is active!
+2025-09-04 10:50:53,701 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-04 10:57:32,297 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:57:32] "GET / HTTP/1.1" 200 -
+2025-09-04 10:57:33,335 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 10:57:33] "GET / HTTP/1.1" 200 -
+2025-09-04 11:03:11,758 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 11:03:11] "GET / HTTP/1.1" 200 -
+2025-09-04 11:13:12,636 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-09-04 11:13:12,637 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-04 11:13:12,638 - werkzeug - INFO -  * Restarting with stat
+2025-09-04 11:13:13,525 - werkzeug - WARNING -  * Debugger is active!
+2025-09-04 11:13:13,527 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-04 11:13:21,818 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 11:13:21] "GET / HTTP/1.1" 200 -
+2025-09-04 11:16:35,362 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-09-04 11:16:35,363 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-04 11:16:35,364 - werkzeug - INFO -  * Restarting with stat
+2025-09-04 11:16:36,284 - werkzeug - WARNING -  * Debugger is active!
+2025-09-04 11:16:36,285 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-04 11:16:41,850 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 11:16:41] "GET / HTTP/1.1" 200 -
+2025-09-04 11:19:56,908 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 11:19:56] "GET / HTTP/1.1" 200 -
+2025-09-04 11:20:58,860 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-04 11:20:59,042 - werkzeug - INFO -  * Restarting with stat
+2025-09-04 11:21:02,127 - werkzeug - WARNING -  * Debugger is active!
+2025-09-04 11:21:02,129 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-04 11:21:03,169 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-04 11:21:03,339 - werkzeug - INFO -  * Restarting with stat
+2025-09-04 11:21:04,256 - werkzeug - WARNING -  * Debugger is active!
+2025-09-04 11:21:04,258 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-04 11:21:50,443 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-09-04 11:21:50,443 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-04 11:21:50,445 - werkzeug - INFO -  * Restarting with stat
+2025-09-04 11:21:51,478 - werkzeug - WARNING -  * Debugger is active!
+2025-09-04 11:21:51,479 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-04 11:21:58,852 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 11:21:58] "GET / HTTP/1.1" 200 -
+2025-09-04 11:22:05,114 - werkzeug - INFO - 127.0.0.1 - - [04/Sep/2025 11:22:05] "GET / HTTP/1.1" 200 -

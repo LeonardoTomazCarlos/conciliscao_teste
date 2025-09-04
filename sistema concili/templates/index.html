@@ -178,6 +178,54 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        /* Correção para abas */
+        .tab-pane {
+            display: none !important;
+            opacity: 0;
+            visibility: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tab-pane.active {
+            display: block !important;
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+        
+        /* Garantir isolamento das abas */
+        #dashboard, #importacao, #conciliacao, #divergencias, #relatorios {
+            display: none !important;
+        }
+        
+        #dashboard.active, #importacao.active, #conciliacao.active, 
+        #divergencias.active, #relatorios.active {
+            display: block !important;
+        }
+        
+        .tab-pane.show.active {
+            display: block !important;
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+
+        /* Garantir que não há sobreposição */
+        .tab-content {
+            position: relative;
+            min-height: auto;
+        }
+
+        .tab-content > .tab-pane {
+            position: relative;
+            width: 100%;
+        }
+
+        .tab-content > .tab-pane.active {
+            position: relative;
+        }
+
         .card-stat h5 {
             font-size: 0.9rem;
             font-weight: 600;
@@ -828,7 +876,6 @@
                                     </div>
                                 </div>
                             </div>
-                            </div>
 
                             <!-- Status dos Uploads -->
                             <div class="row mt-4">
@@ -864,10 +911,16 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                     <!-- Conciliação -->
                     <div class="tab-pane fade" id="conciliacao" role="tabpanel">
-                        <h2 class="mb-4"><i class="fas fa-link text-success me-2"></i>Conciliação Bancária</h2>
+                        <div class="page-header">
+                            <h2 class="fw-bold mb-2">
+                                <i class="fas fa-link text-success me-3"></i>Conciliação Bancária
+                            </h2>
+                            <p class="text-muted mb-0">Execute a conciliação automática entre extratos bancários e lançamentos contábeis</p>
+                        </div>
                         
                         <div class="alert alert-info alert-custom">
                             <i class="fas fa-info-circle me-2"></i>
@@ -1048,33 +1101,166 @@
 
                     <!-- Divergências -->
                     <div class="tab-pane fade" id="divergencias" role="tabpanel">
-                        <h2 class="mb-4"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Divergências</h2>
-                        
-                        <div class="card card-dashboard">
-                            <div class="card-header bg-warning text-dark">
-                                <h5><i class="fas fa-search me-2"></i>Divergências Encontradas</h5>
+                        <div class="page-header">
+                            <h2 class="fw-bold mb-2">
+                                <i class="fas fa-exclamation-triangle text-warning me-3"></i>Análise de Divergências
+                            </h2>
+                            <p class="text-muted mb-0">Identifique e gerencie divergências encontradas nas conciliações bancárias</p>
+                        </div>
+
+                        <!-- Estatísticas de Divergências -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card card-dashboard stat-card bg-gradient-warning">
+                                    <div class="card-body text-center text-white">
+                                        <div class="d-flex align-items-center justify-content-center mb-3">
+                                            <i class="fas fa-exclamation-triangle fa-3x"></i>
+                                        </div>
+                                        <h3 class="fw-bold mb-1" id="divergencias-pendentes">0</h3>
+                                        <p class="card-text mb-0 text-uppercase fw-medium">Pendentes</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card card-dashboard stat-card bg-gradient-success">
+                                    <div class="card-body text-center text-white">
+                                        <div class="d-flex align-items-center justify-content-center mb-3">
+                                            <i class="fas fa-check-circle fa-3x"></i>
+                                        </div>
+                                        <h3 class="fw-bold mb-1" id="divergencias-resolvidas">0</h3>
+                                        <p class="card-text mb-0 text-uppercase fw-medium">Resolvidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card card-dashboard stat-card bg-gradient-danger">
+                                    <div class="card-body text-center text-white">
+                                        <div class="d-flex align-items-center justify-content-center mb-3">
+                                            <i class="fas fa-dollar-sign fa-3x"></i>
+                                        </div>
+                                        <h3 class="fw-bold mb-1" id="valor-divergencias">R$ 0,00</h3>
+                                        <p class="card-text mb-0 text-uppercase fw-medium">Valor Total</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card card-dashboard stat-card bg-gradient-info">
+                                    <div class="card-body text-center text-white">
+                                        <div class="d-flex align-items-center justify-content-center mb-3">
+                                            <i class="fas fa-percent fa-3x"></i>
+                                        </div>
+                                        <h3 class="fw-bold mb-1" id="percentual-divergencias">0%</h3>
+                                        <p class="card-text mb-0 text-uppercase fw-medium">Taxa de Divergência</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtros de Divergências -->
+                        <div class="card card-dashboard mb-4">
+                            <div class="card-header bg-transparent border-0">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="fas fa-filter text-primary me-2"></i>Filtros de Pesquisa
+                                </h5>
                             </div>
                             <div class="card-body">
-                                <div class="table-container">
-                                    <table class="table table-striped table-hover">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-medium">Tipo de Divergência</label>
+                                        <select class="form-select" id="filtro-tipo-divergencia">
+                                            <option value="">Todos os tipos</option>
+                                            <option value="extrato_orfao">Extrato Órfão</option>
+                                            <option value="lancamento_orfao">Lançamento Órfão</option>
+                                            <option value="diferenca_valor">Diferença de Valor</option>
+                                            <option value="data_divergente">Data Divergente</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-medium">Status</label>
+                                        <select class="form-select" id="filtro-status-divergencia">
+                                            <option value="">Todos os status</option>
+                                            <option value="pendente">Pendente</option>
+                                            <option value="analisando">Em Análise</option>
+                                            <option value="resolvido">Resolvido</option>
+                                            <option value="ignorado">Ignorado</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-medium">Data Inicial</label>
+                                        <input type="date" class="form-control" id="filtro-data-inicial-div">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-medium">Data Final</label>
+                                        <input type="date" class="form-control" id="filtro-data-final-div">
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <button class="btn btn-primary" onclick="aplicarFiltrosDivergencias()">
+                                            <i class="fas fa-search me-2"></i>Buscar Divergências
+                                        </button>
+                                        <button class="btn btn-outline-secondary ms-2" onclick="limparFiltrosDivergencias()">
+                                            <i class="fas fa-broom me-2"></i>Limpar Filtros
+                                        </button>
+                                        <button class="btn btn-outline-success ms-2" onclick="exportarDivergenciasCSV()">
+                                            <i class="fas fa-file-csv me-2"></i>Exportar CSV
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabela de Divergências -->
+                        <div class="card card-dashboard">
+                            <div class="card-header bg-transparent border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-bold mb-0">
+                                        <i class="fas fa-list text-warning me-2"></i>Lista de Divergências
+                                    </h5>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="atualizarListaDivergencias()">
+                                        <i class="fas fa-sync-alt me-1"></i>Atualizar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
                                         <thead class="table-dark">
                                             <tr>
+                                                <th>ID</th>
                                                 <th>Tipo</th>
                                                 <th>Descrição</th>
-                                                <th>Valor</th>
+                                                <th>Valor Extrato</th>
+                                                <th>Valor Lançamento</th>
+                                                <th>Diferença</th>
                                                 <th>Data</th>
                                                 <th>Status</th>
                                                 <th>Ações</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tabela-divergencias">
+                                        <tbody id="tabela-divergencias-nova">
                                             <tr>
-                                                <td colspan="6" class="text-center text-muted">
-                                                    <i class="fas fa-search me-2"></i>Nenhuma divergência encontrada
+                                                <td colspan="9" class="text-center py-5">
+                                                    <div class="text-muted">
+                                                        <i class="fas fa-hourglass-half fa-2x mb-3 d-block"></i>
+                                                        <span>Carregando divergências...</span>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
+                                </div>
+
+                                <!-- Paginação -->
+                                <div class="d-flex justify-content-between align-items-center mt-4">
+                                    <div class="text-muted">
+                                        <small>Mostrando <span id="div-inicio">0</span> a <span id="div-fim">0</span> de <span id="div-total">0</span> divergências</small>
+                                    </div>
+                                    <nav>
+                                        <ul class="pagination pagination-sm mb-0" id="paginacao-divergencias">
+                                            <!-- Paginação será inserida via JavaScript -->
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
                         </div>
@@ -1082,42 +1268,59 @@
 
                     <!-- Relatórios -->
                     <div class="tab-pane fade" id="relatorios" role="tabpanel">
-                        <h2 class="mb-4"><i class="fas fa-chart-bar text-info me-2"></i>Relatórios</h2>
+                        <div class="page-header">
+                            <h2 class="fw-bold mb-2">
+                                <i class="fas fa-chart-bar text-info me-3"></i>Relatórios
+                            </h2>
+                            <p class="text-muted mb-0">Gere relatórios detalhados e exporte dados do sistema de conciliação</p>
+                        </div>
                         
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <div class="card card-dashboard">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
-                                        <h5>Relatório de Conciliação</h5>
-                                        <p class="text-muted">Gerar relatório completo da conciliação</p>
-                                        <button class="btn btn-danger btn-action" onclick="gerarRelatorioPDF()">
-                                            <i class="fas fa-download me-2"></i>Gerar PDF
-                                        </button>
+                        <div class="row g-4">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="card card-dashboard h-100">
+                                    <div class="card-body text-center d-flex flex-column">
+                                        <div class="mb-4">
+                                            <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                                            <h5 class="fw-bold">Relatório de Conciliação</h5>
+                                            <p class="text-muted">Gerar relatório completo da conciliação</p>
+                                        </div>
+                                        <div class="mt-auto">
+                                            <button class="btn btn-danger btn-action w-100" onclick="gerarRelatorioPDF()">
+                                                <i class="fas fa-download me-2"></i>Gerar PDF
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card card-dashboard">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-file-excel fa-3x text-success mb-3"></i>
-                                        <h5>Exportar Divergências</h5>
-                                        <p class="text-muted">Exportar lista de divergências para Excel</p>
-                                        <button class="btn btn-success btn-action" onclick="exportarDivergencias()">
-                                            <i class="fas fa-download me-2"></i>Exportar Excel
-                                        </button>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="card card-dashboard h-100">
+                                    <div class="card-body text-center d-flex flex-column">
+                                        <div class="mb-4">
+                                            <i class="fas fa-file-excel fa-3x text-success mb-3"></i>
+                                            <h5 class="fw-bold">Exportar Divergências</h5>
+                                            <p class="text-muted">Exportar lista de divergências para Excel</p>
+                                        </div>
+                                        <div class="mt-auto">
+                                            <button class="btn btn-success btn-action w-100" onclick="exportarDivergencias()">
+                                                <i class="fas fa-download me-2"></i>Exportar Excel
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card card-dashboard">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
-                                        <h5>Análise Estatística</h5>
-                                        <p class="text-muted">Visualizar estatísticas detalhadas</p>
-                                        <button class="btn btn-primary btn-action" onclick="mostrarEstatisticas()">
-                                            <i class="fas fa-chart-bar me-2"></i>Ver Estatísticas
-                                        </button>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="card card-dashboard h-100">
+                                    <div class="card-body text-center d-flex flex-column">
+                                        <div class="mb-4">
+                                            <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                                            <h5 class="fw-bold">Análise Estatística</h5>
+                                            <p class="text-muted">Visualizar estatísticas detalhadas</p>
+                                        </div>
+                                        <div class="mt-auto">
+                                            <button class="btn btn-primary btn-action w-100" onclick="mostrarEstatisticas()">
+                                                <i class="fas fa-chart-bar me-2"></i>Ver Estatísticas
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1847,107 +2050,224 @@
             }).format(Math.abs(valor));
         }
 
-        // Carregar divergências pendentes e popular a tabela
+        // Carregar divergências - NOVA IMPLEMENTAÇÃO
         async function carregarDivergencias() {
-            console.log('Carregando divergências...'); // Debug
+            console.log('🔍 Carregando divergências da aba nova...');
             
             try {
-                const resp = await fetch('/api/divergencias');
-                console.log('Resposta da API:', resp.status); // Debug
-                
+                // Buscar dados da API de conciliação
+                const resp = await fetch('/api/conciliacao');
                 let divergencias = [];
                 
                 if (resp.ok) {
-                    divergencias = await resp.json();
-                    console.log('Divergências recebidas:', divergencias); // Debug
+                    const dados = await resp.json();
+                    console.log('📊 Dados recebidos:', dados);
+                    
+                    // Processar extratos órfãos
+                    if (dados.extratos_orfaos && dados.extratos_orfaos.length > 0) {
+                        dados.extratos_orfaos.forEach((item, index) => {
+                            divergencias.push({
+                                id: `EXT_${index + 1}`,
+                                tipo: 'extrato_orfao',
+                                descricao: item.descricao || 'Extrato sem correspondência',
+                                valor_extrato: parseFloat(item.valor || 0),
+                                valor_lancamento: 0,
+                                diferenca: parseFloat(item.valor || 0),
+                                data: item.data || new Date().toISOString().split('T')[0],
+                                status: 'pendente'
+                            });
+                        });
+                    }
+                    
+                    // Processar lançamentos órfãos
+                    if (dados.lancamentos_orfaos && dados.lancamentos_orfaos.length > 0) {
+                        dados.lancamentos_orfaos.forEach((item, index) => {
+                            divergencias.push({
+                                id: `LAN_${index + 1}`,
+                                tipo: 'lancamento_orfao',
+                                descricao: item.descricao || 'Lançamento sem correspondência',
+                                valor_extrato: 0,
+                                valor_lancamento: parseFloat(item.valor || 0),
+                                diferenca: -parseFloat(item.valor || 0),
+                                data: item.data || new Date().toISOString().split('T')[0],
+                                status: 'pendente'
+                            });
+                        });
+                    }
+                    
+                    console.log(`✅ Processadas ${divergencias.length} divergências`);
                 } else {
-                    console.warn('API divergências não disponível, usando dados de exemplo');
-                    // Dados de exemplo caso a API não esteja implementada
+                    console.warn('⚠️ API não disponível, usando dados de exemplo');
+                    // Dados de exemplo para demonstração
                     divergencias = [
                         {
-                            id: 1,
-                            tipo: 'Valor Divergente',
-                            descricao: 'Pagamento PIX - João Silva',
-                            valor_extrato: 1500.00,
-                            valor_lancamento: 1450.00,
-                            data: '2024-01-15',
-                            status: 'Pendente',
-                            diferenca: 50.00
-                        },
-                        {
-                            id: 2,
-                            tipo: 'Lançamento Órfão',
-                            descricao: 'Taxa de transferência',
-                            valor_extrato: 0,
-                            valor_lancamento: 25.00,
-                            data: '2024-01-16',
-                            status: 'Pendente',
-                            diferenca: -25.00
-                        },
-                        {
-                            id: 3,
-                            tipo: 'Extrato Órfão',
-                            descricao: 'Depósito em dinheiro',
-                            valor_extrato: 2000.00,
+                            id: 'DIV_001',
+                            tipo: 'extrato_orfao',
+                            descricao: 'Transferência PIX recebida',
+                            valor_extrato: 2500.00,
                             valor_lancamento: 0,
-                            data: '2024-01-17',
-                            status: 'Pendente',
-                            diferenca: 2000.00
+                            diferenca: 2500.00,
+                            data: '2024-09-03',
+                            status: 'pendente'
+                        },
+                        {
+                            id: 'DIV_002',
+                            tipo: 'lancamento_orfao',
+                            descricao: 'Taxa de manutenção',
+                            valor_extrato: 0,
+                            valor_lancamento: 45.00,
+                            diferenca: -45.00,
+                            data: '2024-09-03',
+                            status: 'pendente'
+                        },
+                        {
+                            id: 'DIV_003',
+                            tipo: 'diferenca_valor',
+                            descricao: 'Pagamento fornecedor XYZ',
+                            valor_extrato: 1800.00,
+                            valor_lancamento: 1750.00,
+                            diferenca: 50.00,
+                            data: '2024-09-02',
+                            status: 'analisando'
                         }
                     ];
                 }
+                
+                // Atualizar estatísticas
+                atualizarEstatisticasDivergenciasNova(divergencias);
+                
+                // Renderizar tabela
+                renderizarTabelaDivergenciasNova(divergencias);
+                
+            } catch (err) {
+                console.error('❌ Erro ao carregar divergências:', err);
+                mostrarErroDivergencias(err.message);
+            }
+        }
 
-                const tbody = document.getElementById('tabela-divergencias');
-                if (!tbody) {
-                    console.error('Elemento tabela-divergencias não encontrado');
-                    return;
-                }
+        // Atualizar estatísticas - NOVA
+        function atualizarEstatisticasDivergenciasNova(divergencias) {
+            const pendentes = divergencias.filter(d => d.status === 'pendente').length;
+            const resolvidas = divergencias.filter(d => d.status === 'resolvido').length;
+            const valorTotal = divergencias.reduce((sum, d) => sum + Math.abs(d.diferenca || 0), 0);
+            const total = divergencias.length;
+            const percentual = total > 0 ? ((pendentes / total) * 100).toFixed(1) : 0;
+            
+            document.getElementById('divergencias-pendentes').textContent = pendentes;
+            document.getElementById('divergencias-resolvidas').textContent = resolvidas;
+            document.getElementById('valor-divergencias').textContent = formatarMoeda(valorTotal);
+            document.getElementById('percentual-divergencias').textContent = `${percentual}%`;
+        }
 
-                if (!Array.isArray(divergencias) || divergencias.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">
-                                <i class="fas fa-check-circle me-2"></i>Nenhuma divergência encontrada
-                                <br><small class="text-muted">Todas as conciliações estão em ordem</small>
-                            </td>
-                        </tr>`;
-                    return;
-                }
-
-                let html = '';
-                divergencias.forEach(d => {
-                    const valorExtrato = d.valor_extrato || (d.extrato && d.extrato.valor) || 0;
-                    const valorLancamento = d.valor_lancamento || (d.lancamento && d.lancamento.valor) || 0;
-                    const diferenca = d.diferenca || (valorExtrato - valorLancamento);
-                    const data = d.data || (d.created_at ? new Date(d.created_at).toLocaleDateString('pt-BR') : '');
-                    const status = d.status || 'Pendente';
-                    
-                    // Cor da diferença
-                    const corDiferenca = diferenca > 0 ? 'text-success' : diferenca < 0 ? 'text-danger' : 'text-muted';
-                    const iconeDiferenca = diferenca > 0 ? 'fa-arrow-up' : diferenca < 0 ? 'fa-arrow-down' : 'fa-equals';
-                    
-                    // Status badge
-                    const statusClass = status === 'Pendente' ? 'bg-warning' : status === 'Resolvido' ? 'bg-success' : 'bg-secondary';
-                    
-                    html += `
-                        <tr>
-                            <td>
-                                <span class="badge bg-primary">${d.tipo || 'Divergência'}</span>
-                            </td>
-                            <td>${d.descricao || 'Sem descrição'}</td>
-                            <td>
-                                <small class="text-muted">Extrato:</small> ${formatarMoeda(valorExtrato)}<br>
-                                <small class="text-muted">Lançamento:</small> ${formatarMoeda(valorLancamento)}
-                            </td>
-                            <td>${data}</td>
-                            <td>
-                                <span class="badge ${statusClass}">${status}</span>
-                            </td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" onclick="verDetalhesDivergencia(${d.id})" title="Ver Detalhes">
-                                        <i class="fas fa-eye"></i>
+        // Renderizar tabela - NOVA
+        function renderizarTabelaDivergenciasNova(divergencias) {
+            const tbody = document.getElementById('tabela-divergencias-nova');
+            
+            if (!divergencias || divergencias.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-5">
+                            <div class="text-success">
+                                <i class="fas fa-check-circle fa-3x mb-3 d-block"></i>
+                                <h5>Nenhuma divergência encontrada!</h5>
+                                <p class="text-muted">Todas as conciliações estão em perfeita ordem.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            divergencias.forEach(d => {
+                const tipoInfo = obterInfoTipo(d.tipo);
+                const statusInfo = obterInfoStatus(d.status);
+                
+                html += `
+                    <tr>
+                        <td><strong>${d.id}</strong></td>
+                        <td>
+                            <span class="badge ${tipoInfo.classe}">${tipoInfo.nome}</span>
+                        </td>
+                        <td class="text-truncate" style="max-width: 200px;" title="${d.descricao}">
+                            ${d.descricao}
+                        </td>
+                        <td class="text-end">
+                            ${d.valor_extrato > 0 ? formatarMoeda(d.valor_extrato) : '<span class="text-muted">-</span>'}
+                        </td>
+                        <td class="text-end">
+                            ${d.valor_lancamento > 0 ? formatarMoeda(d.valor_lancamento) : '<span class="text-muted">-</span>'}
+                        </td>
+                        <td class="text-end">
+                            <span class="${d.diferenca > 0 ? 'text-success' : d.diferenca < 0 ? 'text-danger' : 'text-muted'}">
+                                <i class="fas fa-${d.diferenca > 0 ? 'arrow-up' : d.diferenca < 0 ? 'arrow-down' : 'equals'} me-1"></i>
+                                ${formatarMoeda(Math.abs(d.diferenca))}
+                            </span>
+                        </td>
+                        <td>${new Date(d.data).toLocaleDateString('pt-BR')}</td>
+                        <td>
+                            <span class="badge ${statusInfo.classe}">${statusInfo.nome}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-info" onclick="verDetalhesDivergenciaNova('${d.id}')" title="Ver Detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                ${d.status === 'pendente' ? `
+                                    <button class="btn btn-outline-success" onclick="resolverDivergenciaNova('${d.id}')" title="Resolver">
+                                        <i class="fas fa-check"></i>
                                     </button>
+                                ` : ''}
+                                <button class="btn btn-outline-secondary" onclick="ignorarDivergenciaNova('${d.id}')" title="Ignorar">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // Funções auxiliares
+        function obterInfoTipo(tipo) {
+            const tipos = {
+                'extrato_orfao': { nome: 'Extrato Órfão', classe: 'bg-danger' },
+                'lancamento_orfao': { nome: 'Lançamento Órfão', classe: 'bg-warning text-dark' },
+                'diferenca_valor': { nome: 'Diferença Valor', classe: 'bg-info' },
+                'data_divergente': { nome: 'Data Divergente', classe: 'bg-secondary' }
+            };
+            return tipos[tipo] || { nome: tipo, classe: 'bg-dark' };
+        }
+
+        function obterInfoStatus(status) {
+            const statusMap = {
+                'pendente': { nome: 'Pendente', classe: 'bg-warning text-dark' },
+                'analisando': { nome: 'Em Análise', classe: 'bg-primary' },
+                'resolvido': { nome: 'Resolvido', classe: 'bg-success' },
+                'ignorado': { nome: 'Ignorado', classe: 'bg-secondary' }
+            };
+            return statusMap[status] || { nome: status, classe: 'bg-dark' };
+        }
+
+        function mostrarErroDivergencias(mensagem) {
+            const tbody = document.getElementById('tabela-divergencias-nova');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="text-center py-5">
+                        <div class="text-danger">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-3 d-block"></i>
+                            <h5>Erro ao carregar divergências</h5>
+                            <p class="text-muted">${mensagem}</p>
+                            <button class="btn btn-outline-primary btn-sm" onclick="carregarDivergencias()">
+                                <i class="fas fa-redo me-1"></i>Tentar Novamente
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
                                     <button class="btn btn-outline-success" onclick="resolverDivergencia(${d.id})" title="Resolver">
                                         <i class="fas fa-check"></i>
                                     </button>
@@ -2355,9 +2675,10 @@ A divergência foi marcada como resolvida e será removida da lista na próxima 
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     const target = this.getAttribute('href').substring(1);
                     
-                    console.log('Clique na aba:', target); // Debug
+                    console.log('🖱️ Clique na aba:', target); // Debug
                     
                     // Salvar aba atual no localStorage
                     localStorage.setItem('abaSistemaAtiva', target);
@@ -2368,41 +2689,98 @@ A divergência foi marcada como resolvida e será removida da lista na próxima 
                     }, 50);
                 });
             });
+
+            // Função adicional para garantir isolamento das abas
+            function garantirIsolamentoAbas() {
+                console.log('🔒 Garantindo isolamento das abas...');
+                
+                document.querySelectorAll('.tab-pane').forEach(tab => {
+                    if (!tab.classList.contains('active')) {
+                        tab.style.display = 'none';
+                        tab.style.position = 'relative';
+                        tab.style.left = 'auto';
+                        tab.style.opacity = '0';
+                        tab.style.visibility = 'hidden';
+                    }
+                });
+            }
+
+            // Executar isolamento a cada 2 segundos (apenas para garantir)
+            setInterval(garantirIsolamentoAbas, 2000);
         });
 
         // Função para ativar uma aba específica
         function ativarAba(target) {
-            console.log('Ativando aba:', target); // Debug
+            console.log('🎯 Ativando aba:', target); // Debug
             
             // Remover classes ativas de todos os links e abas
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.classList.remove('active');
+                console.log('❌ Removendo active de link:', l.getAttribute('href'));
+            });
+            
             document.querySelectorAll('.tab-pane').forEach(tab => {
                 tab.classList.remove('show', 'active');
+                tab.style.display = 'none';
+                tab.style.opacity = '0';
+                tab.style.visibility = 'hidden';
+                tab.style.zIndex = '1';
+                console.log('❌ Ocultando aba:', tab.id);
             });
             
             // Ativar o link e aba correspondentes
             const linkAtivo = document.querySelector(`[href="#${target}"]`);
             const abaAtiva = document.getElementById(target);
             
-            console.log('Link encontrado:', linkAtivo); // Debug
-            console.log('Aba encontrada:', abaAtiva); // Debug
+            console.log('🔗 Link encontrado:', linkAtivo ? linkAtivo.getAttribute('href') : 'NENHUM');
+            console.log('📋 Aba encontrada:', abaAtiva ? abaAtiva.id : 'NENHUMA');
             
-            if (linkAtivo) linkAtivo.classList.add('active');
+            if (linkAtivo) {
+                linkAtivo.classList.add('active');
+                console.log('✅ Link ativado:', linkAtivo.getAttribute('href'));
+            }
+            
             if (abaAtiva) {
                 abaAtiva.classList.add('show', 'active');
-                console.log('Aba ativada:', target); // Debug
+                abaAtiva.style.display = 'block';
+                abaAtiva.style.opacity = '1';
+                abaAtiva.style.visibility = 'visible';
+                abaAtiva.style.zIndex = '10';
+                abaAtiva.style.position = 'relative';
+                console.log('✅ Aba ativada e exibida:', target);
+                
+                // Garantir que outras abas estão ocultas
+                document.querySelectorAll('.tab-pane').forEach(tab => {
+                    if (tab.id !== target) {
+                        tab.style.position = 'relative';
+                        tab.style.top = 'auto';
+                        tab.style.left = 'auto';
+                    }
+                });
+                
             } else {
-                console.error('Aba não encontrada:', target);
+                console.error('❌ Aba não encontrada:', target);
             }
             
             // Carregar dados específicos da aba
             if (target === 'conciliacao') {
+                console.log('📊 Carregando dados da conciliação...');
                 carregarEstatisticasConciliacoes();
                 carregarConciliacoes(1);
             } else if (target === 'divergencias') {
-                carregarDivergencias();
+                console.log('⚠️ Carregando dados das divergências...');
+                setTimeout(() => {
+                    carregarDivergencias();
+                }, 100);
             } else if (target === 'historico') {
+                console.log('📜 Carregando histórico...');
                 carregarConciliacoes(1);
+            } else if (target === 'dashboard') {
+                console.log('🏠 Carregando dashboard...');
+                carregarEstatisticas();
+            } else if (target === 'importacao') {
+                console.log('📤 Carregando importação...');
+                setupDragAndDrop();
             }
         }
 
@@ -2688,6 +3066,108 @@ A divergência foi marcada como resolvida e será removida da lista na próxima 
             document.getElementById('user-name').textContent = nome;
             document.getElementById('user-avatar').textContent = iniciais;
             document.querySelector('.user-role').textContent = role;
+        }
+
+        // ===============================
+        // FUNÇÕES AUXILIARES DIVERGÊNCIAS - NOVA IMPLEMENTAÇÃO
+        // ===============================
+
+        // Aplicar filtros nas divergências
+        function aplicarFiltrosDivergencias() {
+            const tipo = document.getElementById('filtro-tipo-divergencia').value;
+            const status = document.getElementById('filtro-status-divergencia').value;
+            const dataInicial = document.getElementById('filtro-data-inicial-div').value;
+            const dataFinal = document.getElementById('filtro-data-final-div').value;
+            
+            console.log('🔍 Aplicando filtros:', { tipo, status, dataInicial, dataFinal });
+            
+            // Por enquanto, apenas recarrega as divergências
+            // Em uma implementação futura, os filtros serão aplicados via API
+            carregarDivergencias();
+        }
+
+        // Limpar filtros das divergências
+        function limparFiltrosDivergencias() {
+            document.getElementById('filtro-tipo-divergencia').value = '';
+            document.getElementById('filtro-status-divergencia').value = '';
+            document.getElementById('filtro-data-inicial-div').value = '';
+            document.getElementById('filtro-data-final-div').value = '';
+            carregarDivergencias();
+        }
+
+        // Atualizar lista de divergências
+        function atualizarListaDivergencias() {
+            carregarDivergencias();
+        }
+
+        // Ver detalhes da divergência - NOVA
+        function verDetalhesDivergenciaNova(id) {
+            alert(`🔍 Visualizando detalhes da divergência ${id}\n\nFuncionalidade em desenvolvimento...`);
+        }
+
+        // Resolver divergência - NOVA
+        function resolverDivergenciaNova(id) {
+            if (confirm(`✅ Deseja marcar a divergência ${id} como resolvida?`)) {
+                alert(`✅ Divergência ${id} marcada como resolvida!\n\nEm breve será integrada com o backend.`);
+                setTimeout(() => {
+                    carregarDivergencias();
+                }, 1000);
+            }
+        }
+
+        // Ignorar divergência - NOVA
+        function ignorarDivergenciaNova(id) {
+            if (confirm(`🚫 Deseja ignorar a divergência ${id}?`)) {
+                alert(`🚫 Divergência ${id} ignorada!\n\nEm breve será integrada com o backend.`);
+                setTimeout(() => {
+                    carregarDivergencias();
+                }, 1000);
+            }
+        }
+
+        // Exportar divergências para CSV - ATUALIZADA
+        function exportarDivergenciasCSV() {
+            const tbody = document.getElementById('tabela-divergencias-nova');
+            const rows = tbody.querySelectorAll('tr');
+            
+            if (rows.length <= 1 || rows[0].cells.length < 8) {
+                alert('❌ Não há divergências para exportar');
+                return;
+            }
+            
+            let csv = 'ID,Tipo,Descrição,Valor Extrato,Valor Lançamento,Diferença,Data,Status\n';
+            
+            rows.forEach((row, index) => {
+                if (index === 0 || row.cells.length < 8) return; // Skip header or incomplete rows
+                
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 8) {
+                    const linha = [
+                        cells[0].textContent.trim(),
+                        cells[1].textContent.trim(),
+                        cells[2].textContent.trim().replace(/\n/g, ' '),
+                        cells[3].textContent.trim(),
+                        cells[4].textContent.trim(),
+                        cells[5].textContent.trim(),
+                        cells[6].textContent.trim(),
+                        cells[7].textContent.trim()
+                    ].map(cell => `"${cell}"`).join(',');
+                    csv += linha + '\n';
+                }
+            });
+            
+            // Criar e baixar arquivo
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `divergencias_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            console.log('📊 CSV de divergências exportado com sucesso!');
         }
     </script>
 
