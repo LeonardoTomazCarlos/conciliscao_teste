@@ -38,6 +38,7 @@ def clear_database():
         tables_to_clear = [
             'divergencia',
             'conciliacao', 
+            'procedimento_conciliacao',
             'extrato_bancario',
             'lancamento_contabil',
             'log_auditoria',

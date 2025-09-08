@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* IMPORTANTE: Esconder todas as abas por padrão para evitar "piscadas" */
+        /* IMPORTANTE: Esconder todas as abas por padrão */
         .tab-content .tab-pane {
             display: none !important;
             opacity: 0 !important;
@@ -643,31 +643,31 @@
                     
                     <ul class="nav flex-column px-2">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                            <a class="nav-link active" href="#dashboard" onclick="ativarAba('dashboard'); return false;">
                                 <i class="fas fa-tachometer-alt me-3"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#importacao" data-bs-toggle="tab">
+                            <a class="nav-link" href="#importacao" onclick="ativarAba('importacao'); return false;">
                                 <i class="fas fa-upload me-3"></i>
                                 <span>Importação</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#conciliacao" data-bs-toggle="tab">
+                            <a class="nav-link" href="#conciliacao" onclick="ativarAba('conciliacao'); return false;">
                                 <i class="fas fa-link me-3"></i>
                                 <span>Conciliação</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#divergencias" data-bs-toggle="tab">
+                            <a class="nav-link" href="#divergencias" onclick="ativarAba('divergencias'); return false;">
                                 <i class="fas fa-exclamation-triangle me-3"></i>
                                 <span>Divergências</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#relatorios" data-bs-toggle="tab">
+                            <a class="nav-link" href="#relatorios" onclick="ativarAba('relatorios'); return false;">
                                 <i class="fas fa-chart-bar me-3"></i>
                                 <span>Relatórios</span>
                             </a>
@@ -2492,40 +2492,9 @@
                     
                     console.log(`✅ Processadas ${divergencias.length} divergências`);
                 } else {
-                    console.warn('⚠️ API não disponível, usando dados de exemplo');
-                    // Dados de exemplo para demonstração
-                    divergencias = [
-                        {
-                            id: 'DIV_001',
-                            tipo: 'extrato_orfao',
-                            descricao: 'Transferência PIX recebida',
-                            valor_extrato: 2500.00,
-                            valor_lancamento: 0,
-                            diferenca: 2500.00,
-                            data: '2024-09-03',
-                            status: 'pendente'
-                        },
-                        {
-                            id: 'DIV_002',
-                            tipo: 'lancamento_orfao',
-                            descricao: 'Taxa de manutenção',
-                            valor_extrato: 0,
-                            valor_lancamento: 45.00,
-                            diferenca: -45.00,
-                            data: '2024-09-03',
-                            status: 'pendente'
-                        },
-                        {
-                            id: 'DIV_003',
-                            tipo: 'diferenca_valor',
-                            descricao: 'Pagamento fornecedor XYZ',
-                            valor_extrato: 1800.00,
-                            valor_lancamento: 1750.00,
-                            diferenca: 50.00,
-                            data: '2024-09-02',
-                            status: 'analisando'
-                        }
-                    ];
+                    console.warn('⚠️ API não disponível, nenhuma divergência encontrada');
+                    // Usar array vazio quando API não estiver disponível
+                    divergencias = [];
                 }
                 
                 // Atualizar estatísticas
@@ -2775,18 +2744,131 @@
             alert('Funcionalidade em desenvolvimento');
         }
 
-        // Carregar dados iniciais
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Iniciando sistema...');
+        // EXECUÇÃO IMEDIATA - antes mesmo do DOMContentLoaded
+        (function() {
+            console.log('⚡ Inicialização IMEDIATA do Dashboard...');
             
-            // IMEDIATAMENTE: Verificar persistência e ativar aba correta
-            const abaSalva = localStorage.getItem('abaSistemaAtiva');
-            let abaInicial = abaSalva || 'dashboard';
+            // Definir funções globalmente primeiro
+            window.ativarAba = function(target) {
+                console.log('🎯 Ativando aba:', target);
+                
+                // Salvar aba ativa no localStorage para persistência
+                localStorage.setItem('abaSistemaAtiva', target);
+                
+                // PRIMEIRA ETAPA: ESCONDER TODAS AS ABAS FORÇADAMENTE
+                document.querySelectorAll('.tab-pane').forEach(tab => {
+                    tab.classList.remove('show', 'active');
+                    tab.style.setProperty('display', 'none', 'important');
+                    tab.style.setProperty('opacity', '0', 'important');
+                    tab.style.setProperty('visibility', 'hidden', 'important');
+                    tab.style.setProperty('position', 'absolute', 'important');
+                    tab.style.setProperty('left', '-9999px', 'important');
+                    console.log('❌ Aba escondida completamente:', tab.id);
+                });
+                
+                // SEGUNDA ETAPA: Remover active de todos os links
+                document.querySelectorAll('.nav-link').forEach(l => {
+                    l.classList.remove('active');
+                });
+                
+                // TERCEIRA ETAPA: Ativar apenas a aba desejada
+                const linkAtivo = document.querySelector(`[href="#${target}"]`);
+                const abaAtiva = document.getElementById(target);
+                
+                if (linkAtivo) {
+                    linkAtivo.classList.add('active');
+                    console.log('✅ Link ativado:', target);
+                }
+                
+                if (abaAtiva) {
+                    abaAtiva.classList.add('show', 'active');
+                    abaAtiva.style.setProperty('display', 'block', 'important');
+                    abaAtiva.style.setProperty('opacity', '1', 'important');
+                    abaAtiva.style.setProperty('visibility', 'visible', 'important');
+                    abaAtiva.style.setProperty('position', 'relative', 'important');
+                    abaAtiva.style.setProperty('left', 'auto', 'important');
+                    abaAtiva.style.setProperty('z-index', '10', 'important');
+                    
+                    console.log('✅ Aba ÚNICA visível:', target);
+                    
+                    // Carregar dados específicos da aba se necessário
+                    if (target === 'conciliacao') {
+                        setTimeout(() => carregarConciliacoes(1), 100);
+                    } else if (target === 'divergencias') {
+                        setTimeout(() => carregarDivergencias(), 100);
+                    } else if (target === 'dashboard') {
+                        setTimeout(() => carregarEstatisticas('hoje'), 100);
+                    }
+                }
+                
+                console.log('✅ Navegação completa para:', target);
+            };
             
-            console.log('� Aba inicial determinada:', abaInicial);
+            // Função para ativação sem delay (para inicialização)
+            window.ativarAbaSemDelay = function(target) {
+                console.log('⚡ Ativação INSTANTÂNEA:', target);
+                
+                localStorage.setItem('abaSistemaAtiva', target);
+                
+                // ESCONDER TODAS as abas primeiro - FORÇADO
+                document.querySelectorAll('.tab-pane').forEach(t => {
+                    t.classList.remove('show', 'active');
+                    t.style.setProperty('display', 'none', 'important');
+                    t.style.setProperty('opacity', '0', 'important');
+                    t.style.setProperty('visibility', 'hidden', 'important');
+                    t.style.setProperty('position', 'absolute', 'important');
+                    t.style.setProperty('left', '-9999px', 'important');
+                });
+                
+                // Remover active de todos os links
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Ativar apenas a aba desejada
+                const linkAtivo = document.querySelector(`[href="#${target}"]`);
+                const abaAtiva = document.getElementById(target);
+                
+                if (linkAtivo) {
+                    linkAtivo.classList.add('active');
+                }
+                
+                if (abaAtiva) {
+                    abaAtiva.classList.add('show', 'active');
+                    abaAtiva.style.setProperty('display', 'block', 'important');
+                    abaAtiva.style.setProperty('opacity', '1', 'important');
+                    abaAtiva.style.setProperty('visibility', 'visible', 'important');
+                    abaAtiva.style.setProperty('position', 'relative', 'important');
+                    abaAtiva.style.setProperty('left', 'auto', 'important');
+                    abaAtiva.style.setProperty('z-index', '10', 'important');
+                }
+                
+                console.log('✅ Aba ÚNICA ativa instantaneamente:', target);
+            };
+            
+            // Executar assim que o DOM básico estiver disponível
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', inicializarSistemaImediato);
+            } else {
+                inicializarSistemaImediato();
+            }
+        })();
+
+        function inicializarSistemaImediato() {
+            console.log('🚀 Sistema iniciando instantaneamente...');
+            
+            // SEMPRE forçar Dashboard como inicial
+            let abaInicial = 'dashboard';
+            
+            console.log('🏠 Dashboard será sempre o inicial:', abaInicial);
             
             // Ativar a aba IMEDIATAMENTE - SEM DELAYS
             ativarAbaSemDelay(abaInicial);
+            
+            // Continuar inicialização normal
+            inicializarSistema();
+        }
+
+        // Carregar dados iniciais
+        function inicializarSistema() {
             
             // Continuar com inicializações que não afetam a UI
             periodoAtualDashboard = 'hoje';
@@ -2794,36 +2876,14 @@
             inicializarUsuario();
             setupDragAndDrop();
             
-            // Carregamentos com delay apenas para dados
+            console.log('✅ Dashboard ativo instantaneamente!');
+            
+            // Carregamentos em background (não interferem na UI)
             setTimeout(() => {
                 carregarConciliacoes(1);
-            }, 1000);
+            }, 500);
             
-            if (abaSalva) {
-                console.log('✅ Aba restaurada:', abaSalva);
-            } else {
-                console.log('✅ Dashboard - primeira visita');
-            }
-            
-            // Carregar dados das conciliações (com delay para não interferir na inicialização)
-            setTimeout(() => {
-                carregarConciliacoes(1);
-            }, 1000);
-            
-            // Configurar event listeners para cliques nas abas
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const target = this.getAttribute('href').substring(1);
-                    
-                    console.log('🖱️ Clique na aba:', target);
-                    
-                    // Para cliques, usar a função normal (pode ter delay se necessário)
-                    ativarAba(target);
-                });
-            });
+            console.log('✅ Navegação por onclick habilitada - event listeners removidos');
 
             // Função adicional para garantir isolamento das abas
             function garantirIsolamentoAbas() {
@@ -2838,118 +2898,11 @@
                 });
             }
 
-            // Executar isolamento regularmente para garantir estabilidade
-            setInterval(garantirIsolamentoAbas, 2000);
-        });
-
-        // Função IMEDIATA para ativar aba sem delays (para carregamento inicial)
-        function ativarAbaSemDelay(target) {
-            console.log('⚡ Ativação IMEDIATA da aba:', target);
-            
-            // Salvar no localStorage
-            localStorage.setItem('abaSistemaAtiva', target);
-            
-            // Remover todas as classes ativas IMEDIATAMENTE
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(t => {
-                t.classList.remove('show', 'active');
-                t.style.display = 'none';
-            });
-            
-            // Ativar link e aba correspondentes IMEDIATAMENTE
-            const linkAtivo = document.querySelector(`[href="#${target}"]`);
-            const abaAtiva = document.getElementById(target);
-            
-            if (linkAtivo) {
-                linkAtivo.classList.add('active');
-            }
-            
-            if (abaAtiva) {
-                abaAtiva.classList.add('show', 'active');
-                abaAtiva.style.display = 'block';
-            }
-            
-            console.log('✅ Aba ativada instantaneamente:', target);
+            // REMOVIDO: setInterval que estava causando conflito
+            // setInterval(garantirIsolamentoAbas, 2000);
         }
 
-        // Função para ativar uma aba específica
-        function ativarAba(target) {
-            console.log('🎯 Ativando aba:', target); // Debug
-            
-            // Salvar aba ativa no localStorage para persistência
-            localStorage.setItem('abaSistemaAtiva', target);
-            console.log('💾 Aba salva no localStorage:', target);
-            
-            // Remover classes ativas de todos os links e abas
-            document.querySelectorAll('.nav-link').forEach(l => {
-                l.classList.remove('active');
-                console.log('❌ Removendo active de link:', l.getAttribute('href'));
-            });
-            
-            document.querySelectorAll('.tab-pane').forEach(tab => {
-                tab.classList.remove('show', 'active');
-                tab.style.display = 'none';
-                tab.style.opacity = '0';
-                tab.style.visibility = 'hidden';
-                tab.style.zIndex = '1';
-                console.log('❌ Ocultando aba:', tab.id);
-            });
-            
-            // Ativar o link e aba correspondentes
-            const linkAtivo = document.querySelector(`[href="#${target}"]`);
-            const abaAtiva = document.getElementById(target);
-            
-            console.log('🔗 Link encontrado:', linkAtivo ? linkAtivo.getAttribute('href') : 'NENHUM');
-            console.log('📋 Aba encontrada:', abaAtiva ? abaAtiva.id : 'NENHUMA');
-            
-            if (linkAtivo) {
-                linkAtivo.classList.add('active');
-                console.log('✅ Link ativado:', linkAtivo.getAttribute('href'));
-            }
-            
-            if (abaAtiva) {
-                abaAtiva.classList.add('show', 'active');
-                abaAtiva.style.display = 'block';
-                abaAtiva.style.opacity = '1';
-                abaAtiva.style.visibility = 'visible';
-                abaAtiva.style.zIndex = '10';
-                abaAtiva.style.position = 'relative';
-                console.log('✅ Aba ativada e exibida:', target);
-                
-                // Garantir que outras abas estão ocultas
-                document.querySelectorAll('.tab-pane').forEach(tab => {
-                    if (tab.id !== target) {
-                        tab.style.position = 'relative';
-                        tab.style.top = 'auto';
-                        tab.style.left = 'auto';
-                    }
-                });
-                
-            } else {
-                console.error('❌ Aba não encontrada:', target);
-            }
-            
-            // Carregar dados específicos da aba
-            if (target === 'conciliacao') {
-                console.log('📊 Carregando dados da conciliação...');
-                carregarEstatisticasConciliacoes();
-                carregarConciliacoes(1);
-            } else if (target === 'divergencias') {
-                console.log('⚠️ Carregando dados das divergências...');
-                setTimeout(() => {
-                    carregarDivergencias();
-                }, 100);
-            } else if (target === 'historico') {
-                console.log('📜 Carregando histórico...');
-                carregarConciliacoes(1);
-            } else if (target === 'dashboard') {
-                console.log('🏠 Carregando dashboard...');
-                carregarEstatisticas();
-            } else if (target === 'importacao') {
-                console.log('📤 Carregando importação...');
-                // setupDragAndDrop já foi inicializado no DOMContentLoaded
-            }
-        }
+        // REMOVIDO: funções duplicadas - agora são globais via window.ativarAba e window.ativarAbaSemDelay
 
         // Funções do usuário
         function inicializarUsuario() {
