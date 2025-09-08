@@ -1036,16 +1036,19 @@
                                         <label for="filtro-tipo" class="form-label">Tipo</label>
                                         <select class="form-select" id="filtro-tipo">
                                             <option value="">Todos</option>
-                                            <option value="automatica">Automática</option>
+                                            <option value="automatico">Automático</option>
                                             <option value="manual">Manual</option>
+                                            <option value="parcial">Parcial</option>
                                         </select>
                                     </div>
                                     <div class="col-md-2 mb-3">
                                         <label for="filtro-status" class="form-label">Status</label>
                                         <select class="form-select" id="filtro-status">
                                             <option value="">Todos</option>
-                                            <option value="ativa">Ativa</option>
-                                            <option value="cancelada">Cancelada</option>
+                                            <option value="em_andamento">Em Andamento</option>
+                                            <option value="concluido">Concluído</option>
+                                            <option value="erro">Com Erro</option>
+                                            <option value="cancelado">Cancelado</option>
                                         </select>
                                     </div>
                                     <div class="col-md-2 mb-3">
@@ -1064,6 +1067,12 @@
                                     </button>
                                     <button class="btn btn-outline-secondary" onclick="limparFiltros()">
                                         <i class="fas fa-times me-2"></i>Limpar Filtros
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="testarFiltros()" title="Testar se os filtros estão funcionando">
+                                        <i class="fas fa-flask me-2"></i>Testar Filtros
+                                    </button>
+                                    <button class="btn btn-outline-success" onclick="criarDadosExemploFiltros()" title="Criar dados de exemplo">
+                                        <i class="fas fa-database me-2"></i>Dados Exemplo
                                     </button>
                                 </div>
                             </div>
@@ -2222,35 +2231,76 @@
             const status = document.getElementById('filtro-status') ? 
                 document.getElementById('filtro-status').value : null;
 
-            if (dataInicio) params.append('data_inicio', dataInicio);
-            if (dataFim) params.append('data_fim', dataFim);
-            if (tipo) params.append('tipo', tipo);
-            if (status) params.append('status', status);
+            if (dataInicio) {
+                params.append('data_inicio', dataInicio);
+                console.log('📅 Filtro data início:', dataInicio);
+            }
+            if (dataFim) {
+                params.append('data_fim', dataFim);
+                console.log('📅 Filtro data fim:', dataFim);
+            }
+            if (tipo) {
+                params.append('tipo', tipo);
+                console.log('🔄 Filtro tipo:', tipo);
+            }
+            if (status) {
+                params.append('status', status);
+                console.log('📊 Filtro status:', status);
+            }
 
-            console.log('🌐 URL da API:', `/api/procedimentos?${params}`);
+            const urlCompleta = `/api/procedimentos?${params}`;
+            console.log('🌐 URL da API:', urlCompleta);
 
-            fetch(`/api/procedimentos?${params}`)
+            // Mostrar indicador de carregamento
+            const tabela = document.getElementById('tabela-conciliacoes');
+            if (tabela) {
+                tabela.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            <i class="fas fa-spinner fa-spin me-2"></i>Carregando procedimentos...
+                        </td>
+                    </tr>
+                `;
+            }
+
+            fetch(urlCompleta)
                 .then(response => {
                     console.log('📡 Resposta da API recebida:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
                     return response.json();
                 })
                 .then(data => {
                     console.log('📊 Dados dos procedimentos:', data);
                     console.log('📈 Total de procedimentos encontrados:', data.procedimentos ? data.procedimentos.length : 0);
-                    exibirConciliacoes(data.procedimentos);
-                    atualizarPaginacao(data.pagination);
-                    paginaAtualConciliacoes = data.pagination.page;
-                    totalPaginasConciliacoes = data.pagination.pages;
+                    
+                    if (data.procedimentos) {
+                        exibirConciliacoes(data.procedimentos);
+                        if (data.pagination) {
+                            atualizarPaginacao(data.pagination);
+                            paginaAtualConciliacoes = data.pagination.page;
+                            totalPaginasConciliacoes = data.pagination.pages;
+                        }
+                    } else {
+                        console.warn('⚠️ Dados de procedimentos não encontrados na resposta');
+                        exibirConciliacoes([]);
+                    }
                 })
                 .catch(error => {
                     console.error('❌ Erro ao carregar procedimentos:', error);
-                    document.getElementById('tabela-conciliacoes').innerHTML = `
-                        <tr>
-                            <td colspan="9" class="text-center text-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar procedimentos
-                            </td>
-                        </tr>
-                    `;
+                    const tabela = document.getElementById('tabela-conciliacoes');
+                    if (tabela) {
+                        tabela.innerHTML = `
+                            <tr>
+                                <td colspan="9" class="text-center text-danger">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Erro ao carregar procedimentos: ${error.message}
+                                    <br><small>Verifique o console para mais detalhes</small>
+                                </td>
+                            </tr>
+                        `;
+                    }
                 });
         }
 
@@ -2374,16 +2424,73 @@
 
         // Aplicar filtros
         function aplicarFiltros() {
+            console.log('🔍 Aplicando filtros de conciliação...');
+            
+            // Obter valores dos filtros
+            const dataInicio = document.getElementById('filtro-data-inicio')?.value || '';
+            const dataFim = document.getElementById('filtro-data-fim')?.value || '';
+            const tipo = document.getElementById('filtro-tipo')?.value || '';
+            const status = document.getElementById('filtro-status')?.value || '';
+            const porPagina = document.getElementById('filtro-por-pagina')?.value || '10';
+            
+            console.log('📋 Filtros aplicados:', {
+                dataInicio,
+                dataFim,
+                tipo,
+                status,
+                porPagina
+            });
+            
+            // Adicionar feedback visual
+            const btnAplicar = event?.target || document.querySelector('[onclick="aplicarFiltros()"]');
+            if (btnAplicar) {
+                const textoOriginal = btnAplicar.innerHTML;
+                btnAplicar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Carregando...';
+                btnAplicar.disabled = true;
+                
+                // Restaurar após 2 segundos
+                setTimeout(() => {
+                    btnAplicar.innerHTML = textoOriginal;
+                    btnAplicar.disabled = false;
+                }, 2000);
+            }
+            
+            // Carregar dados com os filtros
             carregarConciliacoes(1);
         }
 
         // Limpar filtros
         function limparFiltros() {
-            document.getElementById('filtro-data-inicio').value = '';
-            document.getElementById('filtro-data-fim').value = '';
-            document.getElementById('filtro-tipo').value = '';
-            document.getElementById('filtro-status').value = '';
-            document.getElementById('filtro-por-pagina').value = '10';
+            console.log('🧹 Limpando filtros de conciliação...');
+            
+            // Limpar todos os campos de filtro
+            const filtroDataInicio = document.getElementById('filtro-data-inicio');
+            const filtroDataFim = document.getElementById('filtro-data-fim');
+            const filtroTipo = document.getElementById('filtro-tipo');
+            const filtroStatus = document.getElementById('filtro-status');
+            const filtroPorPagina = document.getElementById('filtro-por-pagina');
+            
+            if (filtroDataInicio) filtroDataInicio.value = '';
+            if (filtroDataFim) filtroDataFim.value = '';
+            if (filtroTipo) filtroTipo.value = '';
+            if (filtroStatus) filtroStatus.value = '';
+            if (filtroPorPagina) filtroPorPagina.value = '10';
+            
+            console.log('✅ Filtros limpos');
+            
+            // Adicionar feedback visual
+            const btnLimpar = event?.target || document.querySelector('[onclick="limparFiltros()"]');
+            if (btnLimpar) {
+                const textoOriginal = btnLimpar.innerHTML;
+                btnLimpar.innerHTML = '<i class="fas fa-check me-2"></i>Limpo!';
+                
+                // Restaurar após 1 segundo
+                setTimeout(() => {
+                    btnLimpar.innerHTML = textoOriginal;
+                }, 1000);
+            }
+            
+            // Recarregar dados sem filtros
             carregarConciliacoes(1);
         }
 
@@ -2391,6 +2498,133 @@
         function atualizarConciliacoes() {
             carregarEstatisticasConciliacoes();
             carregarConciliacoes(paginaAtualConciliacoes);
+        }
+
+        // Testar se os filtros estão funcionando
+        function testarFiltros() {
+            console.log('🧪 INICIANDO TESTE DOS FILTROS');
+            
+            // Teste 1: API sem filtros
+            fetch('/api/procedimentos')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ Teste 1 - API sem filtros:', data);
+                    alert(`✅ API funcionando! Total de procedimentos: ${data.procedimentos ? data.procedimentos.length : 0}`);
+                })
+                .catch(error => {
+                    console.error('❌ Teste 1 falhou:', error);
+                    alert(`❌ Erro na API: ${error.message}`);
+                });
+            
+            // Teste 2: API com filtro de status
+            setTimeout(() => {
+                fetch('/api/procedimentos?status=concluido')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('✅ Teste 2 - Filtro status=concluido:', data);
+                    })
+                    .catch(error => {
+                        console.error('❌ Teste 2 falhou:', error);
+                    });
+            }, 1000);
+            
+            // Teste 3: Verificar elementos do DOM
+            setTimeout(() => {
+                const elementos = {
+                    'filtro-data-inicio': document.getElementById('filtro-data-inicio'),
+                    'filtro-data-fim': document.getElementById('filtro-data-fim'),
+                    'filtro-tipo': document.getElementById('filtro-tipo'),
+                    'filtro-status': document.getElementById('filtro-status'),
+                    'filtro-por-pagina': document.getElementById('filtro-por-pagina')
+                };
+                
+                console.log('🔍 Elementos do DOM:', elementos);
+                
+                let elementosOk = 0;
+                let total = Object.keys(elementos).length;
+                
+                for (const [nome, elemento] of Object.entries(elementos)) {
+                    if (elemento) {
+                        elementosOk++;
+                        console.log(`✅ Elemento ${nome}: OK`);
+                    } else {
+                        console.error(`❌ Elemento ${nome}: NÃO ENCONTRADO`);
+                    }
+                }
+                
+                console.log(`📊 Elementos DOM: ${elementosOk}/${total} funcionando`);
+            }, 2000);
+        }
+
+        // Criar dados de exemplo para testar filtros
+        function criarDadosExemploFiltros() {
+            console.log('🏗️ Criando dados de exemplo...');
+            
+            fetch('/api/procedimentos/criar-exemplo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ Dados de exemplo criados:', data);
+                alert('✅ Dados de exemplo criados com sucesso!');
+                carregarConciliacoes(1);
+            })
+            .catch(error => {
+                console.error('❌ Erro ao criar dados de exemplo:', error);
+                
+                // Fallback: criar dados localmente via JavaScript
+                console.log('🔄 Tentando criar dados de exemplo localmente...');
+                criarDadosExemploLocal();
+            });
+        }
+
+        // Criar dados de exemplo localmente (fallback)
+        function criarDadosExemploLocal() {
+            // Simular dados de exemplo na tabela
+            const dadosExemplo = [
+                {
+                    id: 'EX001',
+                    data_criacao: new Date().toISOString().split('T')[0],
+                    tipo_procedimento: 'automatico',
+                    metodo: 'data_valor',
+                    status: 'concluido',
+                    total_extratos: 25,
+                    total_lancamentos: 30,
+                    conciliados: 20,
+                    divergencias: 5,
+                    usuario: 'Sistema'
+                },
+                {
+                    id: 'EX002',
+                    data_criacao: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+                    tipo_procedimento: 'manual',
+                    metodo: 'valor_descricao',
+                    status: 'em_andamento',
+                    total_extratos: 15,
+                    total_lancamentos: 18,
+                    conciliados: 12,
+                    divergencias: 3,
+                    usuario: 'Sistema'
+                }
+            ];
+            
+            console.log('📝 Exibindo dados de exemplo na tabela...');
+            exibirConciliacoes(dadosExemplo);
+            
+            // Atualizar paginação
+            atualizarPaginacao({
+                page: 1,
+                pages: 1,
+                per_page: 10,
+                total: dadosExemplo.length,
+                has_next: false,
+                has_prev: false
+            });
+            
+            alert('✅ Dados de exemplo locais exibidos! Agora teste os filtros.');
         }
 
         // Ver detalhes do procedimento

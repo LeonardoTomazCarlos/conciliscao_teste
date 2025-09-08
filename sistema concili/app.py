@@ -2889,5 +2889,89 @@ def alterar_senha_usuario():
         logging.error(f"Erro ao alterar senha do usuário: {e}")
         return jsonify({'error': str(e)}), 500
 
+# ====== ROUTE PARA CRIAR DADOS DE EXEMPLO ======
+
+@app.route('/api/procedimentos/criar-exemplo', methods=['POST'])
+@api_login_required
+@requires_permission('write')
+def criar_dados_exemplo_api():
+    """Cria dados de exemplo para testar os filtros"""
+    try:
+        from datetime import datetime, timedelta
+        import random
+        
+        # Verificar se já existem procedimentos
+        count_existente = ProcedimentoConciliacao.query.count()
+        
+        # Tipos e status possíveis
+        tipos = ['automatico', 'manual', 'parcial']
+        status_opcoes = ['em_andamento', 'concluido', 'erro', 'cancelado']
+        metodos = ['data_valor', 'data_valor_descricao', 'valor_descricao']
+        
+        procedimentos_criados = []
+        
+        # Criar 10 procedimentos de exemplo
+        for i in range(10):
+            # Data aleatória nos últimos 30 dias
+            dias_atras = random.randint(0, 30)
+            data_criacao = datetime.now() - timedelta(days=dias_atras)
+            
+            # Valores aleatórios
+            tipo = random.choice(tipos)
+            status = random.choice(status_opcoes)
+            metodo = random.choice(metodos)
+            
+            # Estatísticas aleatórias
+            total_extratos = random.randint(5, 50)
+            total_lancamentos = random.randint(5, 50)
+            conciliados = random.randint(0, min(total_extratos, total_lancamentos))
+            divergencias = random.randint(0, 10)
+            
+            procedimento = ProcedimentoConciliacao(
+                usuario_id=current_user.id,
+                tipo_procedimento=tipo,
+                metodo=metodo,
+                status=status,
+                data_criacao=data_criacao,
+                data_conclusao=data_criacao + timedelta(minutes=random.randint(5, 120)) if status == 'concluido' else None,
+                total_extratos=total_extratos,
+                total_lancamentos=total_lancamentos,
+                conciliados=conciliados,
+                divergencias=divergencias,
+                descricao=f"Procedimento de exemplo {i+1} - Tipo: {tipo}",
+                observacoes=f"Dados criados para teste dos filtros"
+            )
+            
+            db.session.add(procedimento)
+            procedimentos_criados.append({
+                'tipo': tipo,
+                'status': status,
+                'metodo': metodo,
+                'data': data_criacao.strftime('%Y-%m-%d')
+            })
+        
+        # Commit das mudanças
+        db.session.commit()
+        
+        # Log da ação
+        logging.info(f"Criados {len(procedimentos_criados)} procedimentos de exemplo por usuário {current_user.username}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'{len(procedimentos_criados)} procedimentos de exemplo criados',
+            'procedimentos_criados': len(procedimentos_criados),
+            'total_anterior': count_existente,
+            'total_atual': ProcedimentoConciliacao.query.count(),
+            'detalhes': procedimentos_criados
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Erro ao criar dados de exemplo: {e}")
+        return jsonify({
+            'success': False,
+            'error': f'Erro ao criar dados de exemplo: {str(e)}'
+        }), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000) 
