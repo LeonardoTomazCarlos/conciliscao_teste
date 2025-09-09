@@ -1701,19 +1701,30 @@
                 // Esconder todas as abas imediatamente
                 const allTabs = document.querySelectorAll('.tab-pane');
                 const allLinks = document.querySelectorAll('.nav-link');
-                
                 allTabs.forEach(tab => {
                     tab.style.display = 'none';
                     tab.style.opacity = '0';
                     tab.style.visibility = 'hidden';
                     tab.classList.remove('show', 'active');
                 });
-                
                 allLinks.forEach(link => {
                     link.classList.remove('active');
                 });
-                
-                console.log('🚫 Todas as abas escondidas preventivamente');
+                // Restaurar aba do localStorage, se existir e for válida
+                let abaSalva = localStorage.getItem('abaSistemaAtiva');
+                let abaAtivar = abaSalva && document.getElementById(abaSalva) ? abaSalva : 'dashboard';
+                const tab = document.getElementById(abaAtivar);
+                if (tab) {
+                    tab.classList.add('show', 'active');
+                    tab.style.display = 'block';
+                    tab.style.opacity = '1';
+                    tab.style.visibility = 'visible';
+                }
+                const link = document.querySelector(`[href="#${abaAtivar}"]`);
+                if (link) {
+                    link.classList.add('active');
+                }
+                console.log('🚫 Todas as abas escondidas preventivamente, restaurando aba:', abaAtivar);
             }, 10); // 10ms apenas para garantir que o DOM básico existe
         })();
     </script>
@@ -3088,52 +3099,35 @@
 
         function inicializarSistemaImediato() {
             console.log('🚀 Sistema iniciando instantaneamente...');
-            
-            // SEMPRE forçar Dashboard como inicial
-            let abaInicial = 'dashboard';
-            
-            console.log('🏠 Dashboard será sempre o inicial:', abaInicial);
-            
-            // Ativar a aba IMEDIATAMENTE - SEM DELAYS
+            // Restaurar aba ativa do localStorage, se existir
+            let abaInicial = localStorage.getItem('abaSistemaAtiva') || 'dashboard';
+            // Se a aba salva não existir no DOM, usar dashboard
+            if (!document.getElementById(abaInicial)) {
+                abaInicial = 'dashboard';
+                localStorage.setItem('abaSistemaAtiva', abaInicial);
+            }
+            console.log('🏠 Aba inicial:', abaInicial);
             ativarAbaSemDelay(abaInicial);
-            
             // Continuar inicialização normal
-            inicializarSistema();
+            inicializarSistema(abaInicial);
         }
 
         // Carregar dados iniciais
-        function inicializarSistema() {
-            
-            // Continuar com inicializações que não afetam a UI
-            periodoAtualDashboard = 'hoje';
-            carregarEstatisticas('hoje');
+        function inicializarSistema(abaAtiva) {
+            // Inicializações que não afetam a UI
             inicializarUsuario();
             setupDragAndDrop();
-            
-            console.log('✅ Dashboard ativo instantaneamente!');
-            
+            // Só carregar estatísticas se dashboard estiver ativo
+            if (abaAtiva === 'dashboard') {
+                periodoAtualDashboard = 'hoje';
+                carregarEstatisticas('hoje');
+            }
             // Carregamentos em background (não interferem na UI)
             setTimeout(() => {
-                carregarConciliacoes(1);
+                if (abaAtiva === 'conciliacao') carregarConciliacoes(1);
+                // Adicione outros carregamentos específicos de abas aqui se necessário
             }, 500);
-            
-            console.log('✅ Navegação por onclick habilitada - event listeners removidos');
-
-            // Função adicional para garantir isolamento das abas
-            function garantirIsolamentoAbas() {
-                document.querySelectorAll('.tab-pane').forEach(tab => {
-                    if (!tab.classList.contains('active')) {
-                        tab.style.display = 'none';
-                        tab.style.position = 'relative';
-                        tab.style.left = 'auto';
-                        tab.style.opacity = '0';
-                        tab.style.visibility = 'hidden';
-                    }
-                });
-            }
-
-            // REMOVIDO: setInterval que estava causando conflito
-            // setInterval(garantirIsolamentoAbas, 2000);
+            console.log('✅ Inicialização concluída para aba:', abaAtiva);
         }
 
         // REMOVIDO: funções duplicadas - agora são globais via window.ativarAba e window.ativarAbaSemDelay
@@ -3144,10 +3138,12 @@
             fetch('/api/usuario')
                 .then(response => response.json())
                 .then(usuario => {
-                    document.getElementById('user-name').textContent = usuario.nome;
-                    document.getElementById('user-avatar').textContent = usuario.iniciais;
-                    document.querySelector('.user-role').textContent = usuario.role;
-                    
+                    if(document.getElementById('user-name'))
+                        document.getElementById('user-name').textContent = usuario.nome || 'Usuário';
+                    if(document.getElementById('user-avatar'))
+                        document.getElementById('user-avatar').textContent = usuario.iniciais || 'US';
+                    if(document.querySelector('.user-role'))
+                        document.querySelector('.user-role').textContent = usuario.role || 'Usuário';
                     // Armazenar dados do usuário para uso futuro
                     window.currentUser = usuario;
                 })
@@ -3159,10 +3155,20 @@
                         iniciais: 'US',
                         role: 'Usuário'
                     };
-                    
-                    document.getElementById('user-name').textContent = usuarioPadrao.nome;
-                    document.getElementById('user-avatar').textContent = usuarioPadrao.iniciais;
-                    document.querySelector('.user-role').textContent = usuarioPadrao.role;
+                    if(document.getElementById('user-name'))
+                        document.getElementById('user-name').textContent = usuarioPadrao.nome;
+                    if(document.getElementById('user-avatar'))
+                        document.getElementById('user-avatar').textContent = usuarioPadrao.iniciais;
+                    if(document.querySelector('.user-role'))
+                        document.querySelector('.user-role').textContent = usuarioPadrao.role;
+                    // Exibir mensagem de erro amigável na tela
+                    let dashboard = document.getElementById('dashboard');
+                    if(dashboard) {
+                        let msg = document.createElement('div');
+                        msg.className = 'alert alert-warning mt-3';
+                        msg.innerText = 'Não foi possível carregar todos os dados do usuário. Algumas funcionalidades podem estar limitadas.';
+                        dashboard.prepend(msg);
+                    }
                 });
         }
 
