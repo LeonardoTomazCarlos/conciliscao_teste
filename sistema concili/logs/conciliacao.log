@@ -307,3 +307,74 @@
 2025-09-08 22:09:48,420 - root - INFO - Procedimento finalizado: PROC-20250908220948-94E0CABD - 0 conciliações
 2025-09-08 22:09:57,357 - root - INFO - Procedimento criado: PROC-20250908220956-32B44668 - upload_lancamentos por usuário admin
 2025-09-08 22:09:57,425 - root - INFO - Procedimento finalizado: PROC-20250908220956-32B44668 - 0 conciliações
+2025-09-09 17:59:13,361 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.25:5000
+2025-09-09 17:59:13,361 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-09 17:59:13,362 - werkzeug - INFO -  * Restarting with stat
+2025-09-09 17:59:14,203 - werkzeug - WARNING -  * Debugger is active!
+2025-09-09 17:59:14,206 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-09 18:01:04,521 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.25:5000
+2025-09-09 18:01:04,521 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-09 18:01:04,522 - werkzeug - INFO -  * Restarting with stat
+2025-09-09 18:01:05,396 - werkzeug - WARNING -  * Debugger is active!
+2025-09-09 18:01:05,399 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-09 18:02:18,996 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:18] "GET / HTTP/1.1" 200 -
+2025-09-09 18:02:19,042 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:19] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-09 18:02:19,233 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:19] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-09 18:02:20,110 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:20] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-09 18:02:22,893 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:22] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-09 18:02:24,531 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:24] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-09 18:02:24,539 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:24] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-09 18:02:24,554 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:24] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-09 18:02:26,211 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:26] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-09 18:02:27,462 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:27] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-09 18:02:27,475 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:27] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-09 18:02:27,489 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:27] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-09 18:02:31,641 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:31] "[33mGET /api/conciliacao HTTP/1.1[0m" 404 -
+2025-09-09 18:02:36,313 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:36] "[33mGET /api/conciliacao HTTP/1.1[0m" 404 -
+2025-09-09 18:02:36,577 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:36] "[33mGET /api/conciliacao HTTP/1.1[0m" 404 -
+2025-09-09 18:02:36,848 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:36] "[33mGET /api/conciliacao HTTP/1.1[0m" 404 -
+2025-09-09 18:02:37,317 - werkzeug - INFO - 127.0.0.1 - - [09/Sep/2025 18:02:37] "[33mGET /api/conciliacao HTTP/1.1[0m" 404 -
+2025-09-09 18:06:17,380 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.25:5000
+2025-09-09 18:06:17,380 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-09 18:06:17,381 - werkzeug - INFO -  * Restarting with stat
+2025-09-09 18:06:18,195 - werkzeug - WARNING -  * Debugger is active!
+2025-09-09 18:06:18,199 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-09 18:20:52,578 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:24:01,433 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:28:54,627 - root - INFO - Carregando conciliações para usuário: admin (ID: 1), Perfil: admin
+2025-09-09 18:28:54,633 - root - INFO - Conciliações encontradas: 35 (Página 1, 100 por página)
+2025-09-09 18:29:48,403 - root - INFO - Carregando conciliações para usuário: admin (ID: 1), Perfil: admin
+2025-09-09 18:29:48,406 - root - INFO - Conciliações encontradas: 35 (Página 1, 100 por página)
+2025-09-09 18:35:17,786 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:39:28,203 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:44:16,480 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:46:53,517 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:49:04,429 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:51:42,560 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:52:46,325 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:57:20,964 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 18:58:49,857 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 19:01:41,088 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 19:04:05,131 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 19:14:21,874 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.25:5000
+2025-09-09 19:14:21,874 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-09 19:14:21,875 - werkzeug - INFO -  * Restarting with stat
+2025-09-09 19:14:22,699 - werkzeug - WARNING -  * Debugger is active!
+2025-09-09 19:14:22,703 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-09 19:15:16,529 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 19:18:48,609 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 19:30:11,157 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 19:31:15,348 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-09 19:34:35,696 - waitress - INFO - Serving on http://0.0.0.0:8080
