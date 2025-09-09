@@ -1,0 +1,21 @@
+Data,Descrição,Valor,Tipo
+2024-09-11,Transferência PIX - João Silva,1500.00,credito
+2024-09-11,Compra cartão débito - Supermercado ABC,85.50,debito
+2024-09-12,Depósito em dinheiro,2000.00,credito
+2024-09-12,Transferência TED - Maria Santos,750.00,credito
+2024-09-13,Compra cartão débito - Posto de Gasolina,125.00,debito
+2024-09-13,Saque ATM,300.00,debito
+2024-09-14,Salário - Empresa XYZ,5000.00,credito
+2024-09-14,Transferência PIX - Pedro Costa,250.00,credito
+2024-09-15,Compra cartão débito - Farmácia,45.80,debito
+2024-09-15,Transferência PIX - Ana Lima,180.00,credito
+2024-09-16,Depósito cheque,1200.00,credito
+2024-09-16,Compra cartão débito - Restaurante,95.00,debito
+2024-09-17,Transferência PIX - Carlos Oliveira,320.00,credito
+2024-09-17,Saque ATM,200.00,debito
+2024-09-18,Compra cartão débito - Loja de Roupas,280.50,debito
+2024-09-18,Transferência PIX - Fernanda Rocha,150.00,credito
+2024-09-19,Depósito em dinheiro,800.00,credito
+2024-09-19,Compra cartão débito - Padaria,25.30,debito
+2024-09-20,Transferência PIX - Roberto Alves,400.00,credito
+2024-09-20,Saque ATM,150.00,debito
