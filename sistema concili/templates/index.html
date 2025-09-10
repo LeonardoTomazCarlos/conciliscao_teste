@@ -3009,6 +3009,217 @@
             body.innerHTML = '<div class="alert alert-info">Detalhes do procedimento carregados via arquivo externo</div>';
         }
 
+        // Função para renderizar detalhes completos do procedimento
+        function renderDetalhesProcedimento(data) {
+            const body = document.getElementById('detalhes-conciliacao-body');
+            if (!body) return;
+
+            let html = `
+                <div class="container-fluid">
+                    <!-- Informações do Procedimento -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informações do Procedimento</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <strong>ID:</strong> ${data.uuid}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Tipo:</strong> ${data.tipo_procedimento}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Método:</strong> ${data.metodo}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Status:</strong> 
+                                            <span class="badge ${data.status === 'concluido' ? 'bg-success' : 'bg-warning'}">${data.status}</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <strong>Data/Hora:</strong> ${formatarDataHora(data.data_criacao)}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Usuário:</strong> ${data.usuario ? data.usuario.nome : 'N/A'}
+                                        </div>
+                                    </div>
+                                    ${data.descricao ? `
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <strong>Descrição:</strong> ${data.descricao}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estatísticas -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary">${data.estatisticas.total_conciliacoes}</h5>
+                                    <p class="card-text">Total de Conciliações</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success">${data.estatisticas.conciliacoes_ativas}</h5>
+                                    <p class="card-text">Conciliações Ativas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title text-danger">${data.estatisticas.conciliacoes_canceladas}</h5>
+                                    <p class="card-text">Canceladas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title text-info">R$ ${data.estatisticas.valor_total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</h5>
+                                    <p class="card-text">Valor Total</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Conciliações -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0"><i class="fas fa-table me-2"></i>Dados Consolidados</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover mb-0">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Data</th>
+                                                    <th>Tipo</th>
+                                                    <th>Status</th>
+                                                    <th>Extrato</th>
+                                                    <th>Lançamento</th>
+                                                    <th>Valor</th>
+                                                    <th>Observações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>`;
+
+            // Adicionar as conciliações ao grid
+            if (data.conciliacoes && data.conciliacoes.length > 0) {
+                data.conciliacoes.forEach(conc => {
+                    const statusClass = conc.status === 'ativa' ? 'text-success' : 'text-danger';
+                    const statusIcon = conc.status === 'ativa' ? 'fas fa-check-circle' : 'fas fa-times-circle';
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${conc.id}</strong></td>
+                            <td>${formatarDataHora(conc.data_conciliacao)}</td>
+                            <td>
+                                <span class="badge bg-info">${conc.tipo_conciliacao}</span>
+                            </td>
+                            <td>
+                                <i class="${statusIcon} ${statusClass}"></i>
+                                <span class="${statusClass}">${conc.status}</span>
+                            </td>
+                            <td>
+                                ${conc.extrato ? `
+                                    <div class="small">
+                                        <strong>Data:</strong> ${conc.extrato.data}<br>
+                                        <strong>Desc:</strong> ${conc.extrato.descricao}<br>
+                                        <strong>Doc:</strong> ${conc.extrato.numero_documento || 'N/A'}
+                                    </div>
+                                ` : '<span class="text-muted">N/A</span>'}
+                            </td>
+                            <td>
+                                ${conc.lancamento ? `
+                                    <div class="small">
+                                        <strong>Data:</strong> ${conc.lancamento.data}<br>
+                                        <strong>Desc:</strong> ${conc.lancamento.descricao}<br>
+                                        <strong>Doc:</strong> ${conc.lancamento.numero_documento || 'N/A'}<br>
+                                        <strong>Cliente/Forn:</strong> ${conc.lancamento.fornecedor_cliente || 'N/A'}
+                                    </div>
+                                ` : '<span class="text-muted">N/A</span>'}
+                            </td>
+                            <td>
+                                <strong class="text-primary">
+                                    R$ ${(conc.extrato ? conc.extrato.valor : conc.lancamento ? conc.lancamento.valor : 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                                </strong>
+                            </td>
+                            <td>
+                                <small class="text-muted">${conc.observacoes || '-'}</small>
+                                ${conc.divergencias && conc.divergencias.length > 0 ? `
+                                    <div class="mt-1">
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            ${conc.divergencias.length} divergência(s)
+                                        </span>
+                                    </div>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="fas fa-info-circle me-2"></i>Nenhuma conciliação encontrada para este procedimento
+                        </td>
+                    </tr>
+                `;
+            }
+
+            html += `
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção de Divergências (se houver) -->
+                    ${data.estatisticas.divergencias_count > 0 ? `
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Divergências Encontradas (${data.estatisticas.divergencias_count})
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Este procedimento contém registros com divergências que podem precisar de atenção manual.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+
+            body.innerHTML = html;
+        }
+
         // Ver detalhes de uma conciliação individual
         function verDetalheConciliacaoIndividual(conciliacao_id) {
             console.log('Ver detalhes da conciliação:', conciliacao_id);
