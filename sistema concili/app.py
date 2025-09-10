@@ -395,6 +395,45 @@ def log_auditoria(
         logging.error(f"Erro ao registrar log de auditoria: {e}")
 
 
+def obter_ou_criar_sessao_conciliacao():
+    """Obter ou criar uma sessão ativa de conciliação para o usuário"""
+    try:
+        # Finalizar sessões antigas antes de continuar
+        finalizar_sessoes_antigas()
+        
+        # Buscar sessão ativa (criada nas últimas 2 horas)
+        sessao_ativa = (
+            ProcedimentoConciliacao.query.filter_by(
+                usuario_id=current_user.id,
+                tipo_procedimento="sessao_conciliacao",
+                status="em_andamento",
+            )
+            .filter(
+                ProcedimentoConciliacao.data_criacao
+                >= (datetime.utcnow() - timedelta(hours=2))
+            )
+            .first()
+        )
+
+        if sessao_ativa:
+            # Atualizar data da sessão existente
+            sessao_ativa.updated_at = datetime.utcnow()
+            db.session.commit()
+            logging.info(f"Usando sessão existente: {sessao_ativa.uuid}")
+            return sessao_ativa
+        else:
+            # Criar nova sessão
+            return criar_procedimento_conciliacao(
+                tipo_procedimento="sessao_conciliacao",
+                metodo="interativo",
+                descricao="Sessão de trabalho - Upload e conciliação de dados",
+            )
+
+    except Exception as e:
+        logging.error(f"Erro ao obter/criar sessão: {e}")
+        return None
+
+
 def criar_procedimento_conciliacao(
     tipo_procedimento, metodo="automatico", descricao=None
 ):
@@ -482,6 +521,33 @@ def finalizar_procedimento(procedimento_id, status="concluido"):
         logging.error(f"Erro ao finalizar procedimento {procedimento_id}: {e}")
         db.session.rollback()
         return False
+
+
+def finalizar_sessoes_antigas():
+    """Finalizar sessões antigas que ficaram em aberto (mais de 2 horas)"""
+    try:
+        # Buscar sessões antigas em andamento
+        limite_tempo = datetime.utcnow() - timedelta(hours=2)
+        
+        sessoes_antigas = ProcedimentoConciliacao.query.filter(
+            ProcedimentoConciliacao.status == "em_andamento",
+            ProcedimentoConciliacao.data_criacao < limite_tempo
+        ).all()
+        
+        sessoes_finalizadas = 0
+        for sessao in sessoes_antigas:
+            if finalizar_procedimento(sessao.id, "timeout"):
+                sessoes_finalizadas += 1
+                logging.info(f"Sessão {sessao.uuid} finalizada por timeout")
+        
+        if sessoes_finalizadas > 0:
+            logging.info(f"{sessoes_finalizadas} sessões antigas finalizadas automaticamente")
+        
+        return sessoes_finalizadas
+        
+    except Exception as e:
+        logging.error(f"Erro ao finalizar sessões antigas: {e}")
+        return 0
 
 
 def admin_required(f):
@@ -965,7 +1031,7 @@ def detectar_transacoes_recorrentes():
         raise e
 
 
-def conciliacao_automatica():
+def conciliacao_automatica(procedimento=None):
     """Realiza conciliação automática baseada em regras"""
     try:
         extratos_nao_conciliados = ExtratoBancario.query.filter_by(
@@ -1006,10 +1072,12 @@ def conciliacao_automatica():
                             )
                             else 1
                         )
+                        
                         conciliacao = Conciliacao(
                             extrato_id=extrato.id,
                             lancamento_id=lancamento.id,
                             usuario_id=usuario_responsavel,
+                            procedimento_id=procedimento.id if procedimento else None,
                             tipo_conciliacao="automatica",
                             observacoes="Conciliação automática por valor, data e tipo",
                         )
@@ -1024,10 +1092,13 @@ def conciliacao_automatica():
                         # Registrar na auditoria
                         log_auditoria(
                             "conciliacao_automatica",
-                            extrato.id,
-                            lancamento.id,
-                            usuario_responsavel,
+                            "conciliacao",
+                            None,
+                            None,
                             {
+                                "procedimento_uuid": procedimento.uuid if procedimento else None,
+                                "extrato_id": extrato.id,
+                                "lancamento_id": lancamento.id,
                                 "valor": float(extrato.valor),
                                 "data": extrato.data.isoformat(),
                             },
@@ -1362,21 +1433,39 @@ def criar_regra_conciliacao():
 @api_login_required
 def executar_conciliacao_automatica():
     try:
+        # Usar sessão única de conciliação
+        procedimento = obter_ou_criar_sessao_conciliacao()
+
+        if not procedimento:
+            return jsonify({"error": "Erro ao criar/obter sessão"}), 500
+
+        # Atualizar descrição da sessão para incluir a conciliação automática
+        if "Conciliação automática" not in (procedimento.descricao or ""):
+            nova_descricao = f"{procedimento.descricao or 'Sessão de trabalho'} - Conciliação automática executada"
+            procedimento.descricao = nova_descricao
+            db.session.commit()
+
         # Detectar transações recorrentes
         detectar_transacoes_recorrentes()
 
-        # Executar conciliação automática
-        conciliacoes = conciliacao_automatica()
+        # Executar conciliação automática com procedimento
+        conciliacoes = conciliacao_automatica(procedimento)
 
         # Verificar divergências
         verificar_divergencias()
 
+        # Finalizar a sessão automaticamente após a conciliação
+        finalizar_procedimento(procedimento.id, "concluido")
+
         log_auditoria(
             "conciliacao_automatica",
+            "procedimento_conciliacao",
+            procedimento.id,
             None,
-            None,
-            None,
-            {"conciliacoes_realizadas": conciliacoes},
+            {
+                "procedimento_uuid": procedimento.uuid,
+                "conciliacoes_realizadas": conciliacoes,
+            },
         )
 
         return jsonify(
@@ -1384,10 +1473,17 @@ def executar_conciliacao_automatica():
                 "success": True,
                 "message": f"Conciliação automática executada. {conciliacoes} conciliações realizadas.",
                 "conciliados": conciliacoes,
+                "procedimento_uuid": procedimento.uuid,
             }
         )
     except Exception as e:
         logging.error(f"Erro na conciliação automática: {e}")
+        # Se houver erro, tentar finalizar o procedimento como erro
+        if 'procedimento' in locals():
+            try:
+                finalizar_procedimento(procedimento.id, "erro")
+            except:
+                pass
         return jsonify({"error": str(e)}), 500
 
 
@@ -1952,7 +2048,7 @@ def get_procedimentos():
                 {
                     "id": proc.id,
                     "uuid": proc.uuid,
-                    "tipo_procedimento": proc.tipo_procedimento,
+                    "tipo_procedimento": "Conciliação",  # Simplificar exibição
                     "metodo": proc.metodo,
                     "data_criacao": proc.data_criacao.strftime("%Y-%m-%d %H:%M:%S"),
                     "status": proc.status,
@@ -2126,7 +2222,7 @@ def get_procedimento_detalhes(procedimento_id):
             {
                 "id": proc.id,
                 "uuid": proc.uuid,
-                "tipo_procedimento": proc.tipo_procedimento,
+                "tipo_procedimento": "Conciliação",  # Simplificar exibição
                 "metodo": proc.metodo,
                 "data_criacao": proc.data_criacao.strftime("%Y-%m-%d %H:%M:%S"),
                 "status": proc.status,
@@ -2184,7 +2280,7 @@ def export_procedimento(procedimento_id):
         # Cabeçalho do procedimento
         writer.writerow(["PROCEDIMENTO DE CONCILIAÇÃO"])
         writer.writerow(["ID Procedimento", proc.uuid])
-        writer.writerow(["Tipo", proc.tipo_procedimento])
+        writer.writerow(["Tipo", "Conciliação"])  # Simplificar exibição
         writer.writerow(["Método", proc.metodo])
         writer.writerow(
             ["Data Criação", proc.data_criacao.strftime("%Y-%m-%d %H:%M:%S")]
@@ -2270,6 +2366,81 @@ def export_procedimento(procedimento_id):
         logging.error(f"Erro ao exportar procedimento {procedimento_id}: {e}")
         return jsonify({"error": str(e)}), 500
 
+
+# ====== ROTAS PARA CONTROLE DE SESSÃO ======
+
+@app.route("/api/sessao/finalizar", methods=["POST"])
+@api_login_required
+def finalizar_sessao():
+    """Finalizar a sessão ativa de conciliação do usuário"""
+    try:
+        # Buscar sessão ativa
+        sessao_ativa = (
+            ProcedimentoConciliacao.query.filter_by(
+                usuario_id=current_user.id,
+                tipo_procedimento="sessao_conciliacao",
+                status="em_andamento",
+            )
+            .filter(
+                ProcedimentoConciliacao.data_criacao
+                >= (datetime.utcnow() - timedelta(hours=2))
+            )
+            .first()
+        )
+
+        if not sessao_ativa:
+            return jsonify({"error": "Nenhuma sessão ativa encontrada"}), 404
+
+        # Finalizar sessão
+        finalizar_procedimento(sessao_ativa.id, "concluido")
+
+        return jsonify({
+            "success": True,
+            "message": "Sessão finalizada com sucesso",
+            "procedimento_uuid": sessao_ativa.uuid
+        })
+
+    except Exception as e:
+        logging.error(f"Erro ao finalizar sessão: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/sessao/status", methods=["GET"])
+@api_login_required
+def status_sessao():
+    """Verificar status da sessão ativa"""
+    try:
+        # Buscar sessão ativa
+        sessao_ativa = (
+            ProcedimentoConciliacao.query.filter_by(
+                usuario_id=current_user.id,
+                tipo_procedimento="sessao_conciliacao",
+                status="em_andamento",
+            )
+            .filter(
+                ProcedimentoConciliacao.data_criacao
+                >= (datetime.utcnow() - timedelta(hours=2))
+            )
+            .first()
+        )
+
+        if sessao_ativa:
+            # Contar conciliações da sessão
+            total_conciliacoes = sessao_ativa.conciliacoes.count()
+            
+            return jsonify({
+                "sessao_ativa": True,
+                "procedimento_uuid": sessao_ativa.uuid,
+                "data_criacao": sessao_ativa.data_criacao.strftime("%Y-%m-%d %H:%M:%S"),
+                "descricao": sessao_ativa.descricao,
+                "total_conciliacoes": total_conciliacoes
+            })
+        else:
+            return jsonify({"sessao_ativa": False})
+
+    except Exception as e:
+        logging.error(f"Erro ao verificar status da sessão: {e}")
+        return jsonify({"error": str(e)}), 500
 
 # ====== FIM ROTAS PROCEDIMENTOS ======
 
@@ -2408,15 +2579,17 @@ def upload_extrato():
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(filepath)
 
-        # Criar procedimento para este upload
-        procedimento = criar_procedimento_conciliacao(
-            tipo_procedimento="upload_extrato",
-            metodo="automatico",
-            descricao=f"Upload de extrato bancário: {filename}",
-        )
+        # Usar sessão única de conciliação
+        procedimento = obter_ou_criar_sessao_conciliacao()
 
         if not procedimento:
-            return jsonify({"error": "Erro ao criar procedimento"}), 500
+            return jsonify({"error": "Erro ao criar/obter sessão"}), 500
+
+        # Atualizar descrição da sessão para incluir o upload do extrato
+        if "Upload de extrato" not in (procedimento.descricao or ""):
+            nova_descricao = f"{procedimento.descricao or 'Sessão de trabalho'} - Extrato: {filename}"
+            procedimento.descricao = nova_descricao
+            db.session.commit()
 
         # Determinar formato do arquivo
         formato = "CSV"
@@ -2487,8 +2660,8 @@ def upload_extrato():
 
         db.session.commit()
 
-        # Finalizar procedimento
-        finalizar_procedimento(procedimento.id, "concluido")
+        # NÃO finalizar procedimento aqui - deixar para a sessão completa
+        # finalizar_procedimento(procedimento.id, "concluido")
 
         # Registrar na auditoria
         log_auditoria(
@@ -2535,15 +2708,17 @@ def upload_lancamentos():
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(filepath)
 
-        # Criar procedimento para este upload
-        procedimento = criar_procedimento_conciliacao(
-            tipo_procedimento="upload_lancamentos",
-            metodo="automatico",
-            descricao=f"Upload de lançamentos contábeis: {filename}",
-        )
+        # Usar sessão única de conciliação
+        procedimento = obter_ou_criar_sessao_conciliacao()
 
         if not procedimento:
-            return jsonify({"error": "Erro ao criar procedimento"}), 500
+            return jsonify({"error": "Erro ao criar/obter sessão"}), 500
+
+        # Atualizar descrição da sessão para incluir o upload dos lançamentos
+        if "Upload de lançamentos" not in (procedimento.descricao or ""):
+            nova_descricao = f"{procedimento.descricao or 'Sessão de trabalho'} - Lançamentos: {filename}"
+            procedimento.descricao = nova_descricao
+            db.session.commit()
 
         # Processar arquivo
         registros = []
@@ -2599,8 +2774,8 @@ def upload_lancamentos():
 
         db.session.commit()
 
-        # Finalizar procedimento
-        finalizar_procedimento(procedimento.id, "concluido")
+        # NÃO finalizar procedimento aqui - deixar para a sessão completa
+        # finalizar_procedimento(procedimento.id, "concluido")
 
         # Registrar na auditoria
         log_auditoria(
@@ -2978,7 +3153,7 @@ def get_usuario():
                 "email": (
                     current_user.email
                     if hasattr(current_user, "email")
-                    else "usuario@financesync.com"
+                    else "usuario@conciliasync.com"
                 ),
                 "iniciais": iniciais,
                 "role": perfil_display,
@@ -2994,7 +3169,7 @@ def get_usuario():
             # Dados padrão para usuário não logado
             usuario = {
                 "nome": "Leonardo Carlos",
-                "email": "leonardo@financesync.com",
+                "email": "leonardo@conciliasync.com",
                 "iniciais": "LC",
                 "role": "Administrador",
                 "ultimo_acesso": datetime.now().strftime("%d/%m/%Y %H:%M"),
@@ -3007,7 +3182,7 @@ def get_usuario():
         return jsonify(
             {
                 "nome": "Usuário Sistema",
-                "email": "usuario@financesync.com",
+                "email": "usuario@conciliasync.com",
                 "iniciais": "US",
                 "role": "Usuário",
                 "ultimo_acesso": datetime.now().strftime("%d/%m/%Y %H:%M"),
@@ -3026,15 +3201,18 @@ def limpar_dados():
             "limpar_dados", "sistema", None, None, {"acao": "Limpeza completa de dados"}
         )
 
-        # Limpar todas as tabelas
+        # Limpar todas as tabelas na ordem correta (respeitando foreign keys)
         Conciliacao.query.delete()
+        Divergencia.query.delete()
         ExtratoBancario.query.delete()
         LancamentoContabil.query.delete()
-        Divergencia.query.delete()
+        ProcedimentoConciliacao.query.delete()
         db.session.commit()
 
-        return jsonify({"success": True, "message": "Todos os dados foram removidos"})
+        logging.info("Dados limpos com sucesso pelo usuário: " + current_user.username)
+        return jsonify({"success": True, "message": "Todos os dados foram removidos com sucesso!"})
     except Exception as e:
+        db.session.rollback()
         logging.error(f"Erro ao limpar dados: {e}")
         return jsonify({"error": str(e)}), 500
 

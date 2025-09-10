@@ -1702,7 +1702,7 @@ def get_usuario():
         if current_user.is_authenticated:
             usuario = {
                 'nome': current_user.username,
-                'email': getattr(current_user, 'email', 'admin@financesync.com'),
+                'email': getattr(current_user, 'email', 'admin@conciliasync.com'),
                 'iniciais': ''.join([n[0].upper() for n in current_user.username.split()[:2]]),
                 'role': 'Administrador' if current_user.is_admin else 'Usuário',
                 'ultimo_acesso': datetime.now().strftime('%d/%m/%Y %H:%M'),
@@ -1712,7 +1712,7 @@ def get_usuario():
             # Dados padrão para usuário não logado
             usuario = {
                 'nome': 'Leonardo Carlos',
-                'email': 'leonardo@financesync.com', 
+                'email': 'leonardo@conciliasync.com', 
                 'iniciais': 'LC',
                 'role': 'Administrador',
                 'ultimo_acesso': datetime.now().strftime('%d/%m/%Y %H:%M'),
@@ -1724,7 +1724,7 @@ def get_usuario():
         # Retornar dados padrão em caso de erro
         return jsonify({
             'nome': 'Usuário Sistema',
-            'email': 'usuario@financesync.com',
+            'email': 'usuario@conciliasync.com',
             'iniciais': 'US',
             'role': 'Usuário',
             'ultimo_acesso': datetime.now().strftime('%d/%m/%Y %H:%M'),

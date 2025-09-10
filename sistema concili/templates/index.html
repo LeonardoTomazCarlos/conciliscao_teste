@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceSync Pro - Sistema de Conciliação Bancária</title>
+    <title>ConciliaSync  - Sistema de Conciliação Bancária</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232563eb;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%2310b981;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M25 35h50v5H25zm0 15h50v5H25zm0 15h35v5H25z' fill='white'/%3E%3Ccircle cx='72' cy='65' r='8' fill='white'/%3E%3Cpath d='M69 65l2 2 4-4' stroke='%2310b981' stroke-width='2' fill='none'/%3E%3C/svg%3E">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -637,7 +637,7 @@
                         <div class="sidebar-logo">
                             <i class="fas fa-university fa-2x text-white"></i>
                         </div>
-                        <h4 class="text-white fw-bold">FinanceSync</h4>
+                        <h4 class="text-white fw-bold">ConciliaSync</h4>
                         <small class="text-white-50 text-uppercase tracking-wider">Pro System</small>
                     </div>
                     
@@ -1003,9 +1003,12 @@
                             <div class="card-body">
                                 <h5 class="card-title">Processo de Conciliação</h5>
                                 <p class="text-muted">O sistema irá comparar automaticamente os extratos bancários com os lançamentos contábeis.</p>
-                                <div class="d-flex gap-2">
+                                <div class="d-flex gap-2 flex-wrap">
                                     <button class="btn btn-success btn-action" onclick="iniciarConciliacao()">
                                         <i class="fas fa-play me-2"></i>Iniciar Conciliação
+                                    </button>
+                                    <button class="btn btn-warning btn-action" onclick="finalizarSessao()" id="btnFinalizarSessao" style="display:none;">
+                                        <i class="fas fa-check me-2"></i>Finalizar Sessão
                                     </button>
                                     <button class="btn btn-outline-secondary btn-action" onclick="limparDados()">
                                         <i class="fas fa-trash me-2"></i>Limpar Dados
@@ -1013,6 +1016,15 @@
                                     <button class="btn btn-info btn-action" onclick="atualizarConciliacoes()">
                                         <i class="fas fa-sync me-2"></i>Atualizar Lista
                                     </button>
+                                </div>
+                                
+                                <!-- Status da Sessão -->
+                                <div id="statusSessao" class="mt-3" style="display:none;">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Sessão Ativa:</strong> <span id="descricaoSessao"></span>
+                                        <br><small class="text-muted">Conciliações: <span id="totalConciliacoesSessao">0</span></small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2172,10 +2184,60 @@
             executarConciliacaoAutomatica();
         }
 
+        function finalizarSessao() {
+            if (confirm('Tem certeza que deseja finalizar a sessão atual? Isso encerrará o agrupamento de operações.')) {
+                fetch('/api/sessao/finalizar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Sessão finalizada com sucesso!');
+                        verificarStatusSessao();
+                        carregarEstatisticasConciliacoes();
+                        carregarConciliacoes(paginaAtualConciliacoes || 1);
+                    } else {
+                        alert('Erro ao finalizar sessão: ' + (data.error || data.message));
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao finalizar sessão:', error);
+                    alert('Erro ao finalizar sessão: ' + error.message);
+                });
+            }
+        }
+
+        function verificarStatusSessao() {
+            fetch('/api/sessao/status')
+                .then(response => response.json())
+                .then(data => {
+                    const statusSessao = document.getElementById('statusSessao');
+                    const btnFinalizar = document.getElementById('btnFinalizarSessao');
+                    const descricaoSessao = document.getElementById('descricaoSessao');
+                    const totalConciliacoes = document.getElementById('totalConciliacoesSessao');
+
+                    if (data.sessao_ativa) {
+                        statusSessao.style.display = 'block';
+                        btnFinalizar.style.display = 'inline-block';
+                        descricaoSessao.textContent = data.descricao || 'Sessão de trabalho';
+                        totalConciliacoes.textContent = data.total_conciliacoes || 0;
+                    } else {
+                        statusSessao.style.display = 'none';
+                        btnFinalizar.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao verificar status da sessão:', error);
+                });
+        }
+
         function limparDados() {
             if (confirm('Tem certeza que deseja limpar todos os dados?')) {
                 fetch('/api/limpar-dados', {
-                    method: 'POST',
+                    method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -2185,11 +2247,17 @@
                     if (data.success) {
                         alert('Dados limpos com sucesso!');
                         carregarEstatisticas();
+                        // Atualizar dados da aba de conciliação se estiver ativa
+                        if (document.getElementById('conciliacao').classList.contains('active')) {
+                            carregarEstatisticasConciliacoes();
+                            carregarConciliacoes(paginaAtualConciliacoes || 1);
+                        }
                     } else {
-                        alert('Erro ao limpar dados: ' + data.message);
+                        alert('Erro ao limpar dados: ' + (data.message || data.error));
                     }
                 })
                 .catch(error => {
+                    console.error('Erro ao limpar dados:', error);
                     alert('Erro ao limpar dados: ' + error.message);
                 });
             }
@@ -2344,8 +2412,7 @@
                         <td><strong>${proc.uuid}</strong></td>
                         <td>${formatarDataHora(proc.data_criacao)}</td>
                         <td>
-                            <div class="fw-bold">${proc.tipo_procedimento.replace('_', ' ').toUpperCase()}</div>
-                            <small class="text-muted">${proc.descricao || ''}</small>
+                            <div class="fw-bold">${proc.tipo_procedimento}</div>
                         </td>
                         <td>
                             <span class="badge ${metodoClass}">
@@ -3038,7 +3105,10 @@
                     
                     // Carregar dados específicos da aba se necessário
                     if (target === 'conciliacao') {
-                        setTimeout(() => carregarConciliacoes(1), 100);
+                        setTimeout(() => {
+                            carregarConciliacoes(1);
+                            verificarStatusSessao(); // Verificar se há sessão ativa
+                        }, 100);
                     } else if (target === 'divergencias') {
                         setTimeout(() => carregarDivergencias(), 100);
                     } else if (target === 'dashboard') {
@@ -3548,7 +3618,7 @@
                                         </div>
                                         <div class="col-sm-6">
                                             <strong>Email:</strong>
-                                            <p id="profile-email" class="mb-2">usuario@financesync.com</p>
+                                            <p id="profile-email" class="mb-2">usuario@conciliasync.com</p>
                                         </div>
                                         <div class="col-sm-6">
                                             <strong>Perfil:</strong>

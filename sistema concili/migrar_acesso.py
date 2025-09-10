@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 MIGRAÇÃO PARA CONTROLE DE ACESSO POR USUÁRIO
-Sistema FinanceSync Pro
+Sistema ConciliaSync Pro
 """
 
 from app import db, app, Usuario

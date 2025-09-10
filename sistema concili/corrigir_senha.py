@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 CORREÇÃO DA SENHA DO ADMIN
-Sistema FinanceSync Pro
+Sistema ConciliaSync Pro
 """
 
 from app import db, app, Usuario

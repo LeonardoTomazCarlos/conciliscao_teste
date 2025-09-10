@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 IMPLEMENTAÇÃO DE CONTROLE DE ACESSO POR USUÁRIO
-Sistema FinanceSync Pro - Controle de Conciliações por Usuário
+Sistema ConciliaSync Pro - Controle de Conciliações por Usuário
 """
 
 from app import db, app, Usuario, ContaBancaria, ExtratoBancario, LancamentoContabil, Conciliacao
