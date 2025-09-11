@@ -2711,7 +2711,9 @@
             const modalEl = document.getElementById('modalDetalhesConciliacao');
             const modal = new bootstrap.Modal(modalEl);
             // Limpar conteúdo
-            document.getElementById('detalhes-conciliacao-body').innerHTML = '<div class="text-center p-3">Carregando...</div>';
+            const modalBody = document.getElementById('detalhes-conciliacao-body');
+            modalBody.innerHTML = '<div class="text-center p-3">Carregando...</div>';
+            modalBody.setAttribute('data-procedimento-id', procedimento_id);
             modal.show();
 
             fetch(`/api/procedimentos/${procedimento_id}/detalhes`)
@@ -2762,50 +2764,35 @@
             console.log('🔍 Carregando divergências da aba nova...');
             
             try {
-                // Buscar dados da API de conciliação
-                const resp = await fetch('/api/conciliacao');
+                // Buscar dados da API de divergências
+                const resp = await fetch('/api/divergencias');
                 let divergencias = [];
                 
                 if (resp.ok) {
                     const dados = await resp.json();
-                    console.log('📊 Dados recebidos:', dados);
+                    console.log('📊 Dados de divergências recebidos:', dados);
                     
-                    // Processar extratos órfãos
-                    if (dados.extratos_orfaos && dados.extratos_orfaos.length > 0) {
-                        dados.extratos_orfaos.forEach((item, index) => {
-                            divergencias.push({
-                                id: `EXT_${index + 1}`,
-                                tipo: 'extrato_orfao',
-                                descricao: item.descricao || 'Extrato sem correspondência',
-                                valor_extrato: parseFloat(item.valor || 0),
-                                valor_lancamento: 0,
-                                diferenca: parseFloat(item.valor || 0),
-                                data: item.data || new Date().toISOString().split('T')[0],
-                                status: 'pendente'
-                            });
-                        });
-                    }
-                    
-                    // Processar lançamentos órfãos
-                    if (dados.lancamentos_orfaos && dados.lancamentos_orfaos.length > 0) {
-                        dados.lancamentos_orfaos.forEach((item, index) => {
-                            divergencias.push({
-                                id: `LAN_${index + 1}`,
-                                tipo: 'lancamento_orfao',
-                                descricao: item.descricao || 'Lançamento sem correspondência',
-                                valor_extrato: 0,
-                                valor_lancamento: parseFloat(item.valor || 0),
-                                diferenca: -parseFloat(item.valor || 0),
-                                data: item.data || new Date().toISOString().split('T')[0],
-                                status: 'pendente'
-                            });
-                        });
+                    // Processar divergências da API
+                    if (Array.isArray(dados) && dados.length > 0) {
+                        divergencias = dados.map(div => ({
+                            id: div.id,
+                            tipo: div.tipo,
+                            descricao: div.descricao,
+                            valor_extrato: div.extrato ? parseFloat(div.extrato.valor || 0) : 0,
+                            valor_lancamento: div.lancamento ? parseFloat(div.lancamento.valor || 0) : 0,
+                            diferenca: div.extrato && div.lancamento ? 
+                                Math.abs(parseFloat(div.extrato.valor || 0) - parseFloat(div.lancamento.valor || 0)) :
+                                (div.extrato ? parseFloat(div.extrato.valor || 0) : -parseFloat(div.lancamento.valor || 0)),
+                            data: div.created_at ? div.created_at.split(' ')[0] : new Date().toISOString().split('T')[0],
+                            status: div.status,
+                            extrato: div.extrato,
+                            lancamento: div.lancamento
+                        }));
                     }
                     
                     console.log(`✅ Processadas ${divergencias.length} divergências`);
                 } else {
-                    console.warn('⚠️ API não disponível, nenhuma divergência encontrada');
-                    // Usar array vazio quando API não estiver disponível
+                    console.warn('⚠️ Erro na API de divergências:', resp.status);
                     divergencias = [];
                 }
                 
@@ -3193,6 +3180,96 @@
                         </div>
                     </div>
 
+                    <!-- Seção de Registros Não Conciliados para Conciliação Manual -->
+                    ${(data.extratos_nao_conciliados && data.extratos_nao_conciliados.length > 0) || (data.lancamentos_nao_conciliados && data.lancamentos_nao_conciliados.length > 0) ? `
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-hand-paper me-2"></i>
+                                        Registros Disponíveis para Conciliação Manual
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Estes registros não foram conciliados automaticamente e estão disponíveis para conciliação manual.
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <!-- Extratos Não Conciliados -->
+                                        ${data.extratos_nao_conciliados && data.extratos_nao_conciliados.length > 0 ? `
+                                        <div class="col-md-6">
+                                            <h6 class="text-primary"><i class="fas fa-university me-2"></i>Extratos Bancários (${data.extratos_nao_conciliados.length})</h6>
+                                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                                <table class="table table-sm table-hover">
+                                                    <thead class="table-light sticky-top">
+                                                        <tr>
+                                                            <th>Data</th>
+                                                            <th>Descrição</th>
+                                                            <th>Valor</th>
+                                                            <th>Ação</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${data.extratos_nao_conciliados.map(extrato => `
+                                                        <tr>
+                                                            <td><small>${extrato.data}</small></td>
+                                                            <td><small>${extrato.descricao}</small></td>
+                                                            <td><small class="text-primary fw-bold">R$ ${extrato.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</small></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-outline-success" onclick="iniciarConciliacaoManual('extrato', ${extrato.id})" title="Conciliar Manualmente">
+                                                                    <i class="fas fa-link"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        `).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        ` : ''}
+                                        
+                                        <!-- Lançamentos Não Conciliados -->
+                                        ${data.lancamentos_nao_conciliados && data.lancamentos_nao_conciliados.length > 0 ? `
+                                        <div class="col-md-6">
+                                            <h6 class="text-secondary"><i class="fas fa-calculator me-2"></i>Lançamentos Contábeis (${data.lancamentos_nao_conciliados.length})</h6>
+                                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                                <table class="table table-sm table-hover">
+                                                    <thead class="table-light sticky-top">
+                                                        <tr>
+                                                            <th>Data</th>
+                                                            <th>Descrição</th>
+                                                            <th>Valor</th>
+                                                            <th>Ação</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${data.lancamentos_nao_conciliados.map(lancamento => `
+                                                        <tr>
+                                                            <td><small>${lancamento.data}</small></td>
+                                                            <td><small>${lancamento.descricao}</small></td>
+                                                            <td><small class="text-secondary fw-bold">R$ ${lancamento.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</small></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-outline-success" onclick="iniciarConciliacaoManual('lancamento', ${lancamento.id})" title="Conciliar Manualmente">
+                                                                    <i class="fas fa-link"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        `).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+
                     <!-- Seção de Divergências (se houver) -->
                     ${data.estatisticas.divergencias_count > 0 ? `
                     <div class="row mt-4">
@@ -3224,6 +3301,176 @@
         function verDetalheConciliacaoIndividual(conciliacao_id) {
             console.log('Ver detalhes da conciliação:', conciliacao_id);
             alert('Funcionalidade em desenvolvimento');
+        }
+
+        // Variáveis globais para conciliação manual
+        let conciliacaoManualEmAndamento = null;
+        let tipoSelecionado = null;
+        let idSelecionado = null;
+
+        // Iniciar processo de conciliação manual
+        function iniciarConciliacaoManual(tipo, id) {
+            console.log(`Iniciando conciliação manual: ${tipo} ID ${id}`);
+            
+            // Armazenar dados da seleção
+            tipoSelecionado = tipo;
+            idSelecionado = id;
+            
+            // Mostrar modal ou prompt para seleção do par
+            const tipoOposto = tipo === 'extrato' ? 'lançamento' : 'extrato';
+            const mensagem = `Conciliação Manual\n\nVocê selecionou um ${tipo} (ID: ${id}).\n\nAgora você precisa selecionar um ${tipoOposto} para conciliar.\n\nClique OK e depois clique no ${tipoOposto} desejado.`;
+            
+            alert(mensagem);
+            
+            // Destacar visualmente o item selecionado
+            destacarItemSelecionado(tipo, id);
+            
+            // Ativar modo de seleção
+            conciliacaoManualEmAndamento = {
+                tipo: tipo,
+                id: id,
+                aguardandoPar: true,
+                tipoOposto: tipoOposto
+            };
+            
+            // Atualizar interface para mostrar que estamos no modo de seleção
+            atualizarInterfaceConciliacaoManual();
+        }
+
+        // Destacar item selecionado visualmente
+        function destacarItemSelecionado(tipo, id) {
+            // Remover destaques anteriores
+            document.querySelectorAll('.item-selecionado').forEach(el => {
+                el.classList.remove('item-selecionado', 'table-primary');
+            });
+            
+            // Adicionar destaque ao item atual
+            const botao = document.querySelector(`button[onclick*="${tipo}'][onclick*="${id}"]`);
+            if (botao) {
+                const linha = botao.closest('tr');
+                if (linha) {
+                    linha.classList.add('item-selecionado', 'table-primary');
+                }
+            }
+        }
+
+        // Atualizar interface durante conciliação manual
+        function atualizarInterfaceConciliacaoManual() {
+            if (!conciliacaoManualEmAndamento) return;
+            
+            const tipoOposto = conciliacaoManualEmAndamento.tipoOposto;
+            
+            // Modificar todos os botões do tipo oposto para permitir seleção
+            const botoesOposto = document.querySelectorAll(`button[onclick*="${tipoOposto}"]`);
+            botoesOposto.forEach(botao => {
+                const onclick = botao.getAttribute('onclick');
+                const match = onclick.match(/iniciarConciliacaoManual\('(\w+)', (\d+)\)/);
+                if (match) {
+                    const tipoBtn = match[1];
+                    const idBtn = match[2];
+                    
+                    // Alterar para função de seleção de par
+                    botao.setAttribute('onclick', `selecionarParConciliacao('${tipoBtn}', ${idBtn})`);
+                    botao.innerHTML = '<i class="fas fa-check"></i>';
+                    botao.classList.remove('btn-outline-success');
+                    botao.classList.add('btn-success');
+                    botao.title = 'Clique para conciliar com o item selecionado';
+                }
+            });
+        }
+
+        // Selecionar par para conciliação
+        function selecionarParConciliacao(tipo, id) {
+            if (!conciliacaoManualEmAndamento) {
+                alert('Erro: Nenhuma conciliação manual em andamento');
+                return;
+            }
+            
+            const item1 = conciliacaoManualEmAndamento;
+            const item2 = { tipo: tipo, id: id };
+            
+            const confirmacao = confirm(`Confirmar Conciliação Manual\n\n${item1.tipo.toUpperCase()} ID: ${item1.id}\n${item2.tipo.toUpperCase()} ID: ${item2.id}\n\nDeseja prosseguir com a conciliação?`);
+            
+            if (confirmacao) {
+                executarConciliacaoManual(item1, item2);
+            } else {
+                cancelarConciliacaoManual();
+            }
+        }
+
+        // Executar conciliação manual via API
+        function executarConciliacaoManual(item1, item2) {
+            const dados = {
+                extrato_id: item1.tipo === 'extrato' ? item1.id : item2.id,
+                lancamento_id: item1.tipo === 'lancamento' ? item1.id : item2.id,
+                tipo_conciliacao: 'manual',
+                observacoes: 'Conciliação manual realizada pelo usuário'
+            };
+            
+            console.log('Enviando conciliação manual:', dados);
+            
+            fetch('/api/conciliar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ Conciliação manual realizada com sucesso!');
+                    
+                    // Limpar estado da conciliação manual
+                    cancelarConciliacaoManual();
+                    
+                    // Recarregar detalhes do procedimento para atualizar a tela
+                    const modalBody = document.getElementById('detalhes-conciliacao-body');
+                    if (modalBody && modalBody.closest('.modal').classList.contains('show')) {
+                        // Buscar o ID do procedimento atual para recarregar
+                        const procedimentoId = modalBody.getAttribute('data-procedimento-id');
+                        if (procedimentoId) {
+                            setTimeout(() => verDetalhesConciliacao(procedimentoId), 1000);
+                        }
+                    }
+                } else {
+                    alert('❌ Erro ao realizar conciliação manual: ' + (data.message || 'Erro desconhecido'));
+                    cancelarConciliacaoManual();
+                }
+            })
+            .catch(error => {
+                console.error('Erro na conciliação manual:', error);
+                alert('❌ Erro de conexão ao realizar conciliação manual');
+                cancelarConciliacaoManual();
+            });
+        }
+
+        // Cancelar conciliação manual
+        function cancelarConciliacaoManual() {
+            conciliacaoManualEmAndamento = null;
+            tipoSelecionado = null;
+            idSelecionado = null;
+            
+            // Remover destaques
+            document.querySelectorAll('.item-selecionado').forEach(el => {
+                el.classList.remove('item-selecionado', 'table-primary');
+            });
+            
+            // Restaurar botões originais
+            document.querySelectorAll('button[onclick*="selecionarParConciliacao"]').forEach(botao => {
+                const onclick = botao.getAttribute('onclick');
+                const match = onclick.match(/selecionarParConciliacao\('(\w+)', (\d+)\)/);
+                if (match) {
+                    const tipo = match[1];
+                    const id = match[2];
+                    
+                    botao.setAttribute('onclick', `iniciarConciliacaoManual('${tipo}', ${id})`);
+                    botao.innerHTML = '<i class="fas fa-link"></i>';
+                    botao.classList.remove('btn-success');
+                    botao.classList.add('btn-outline-success');
+                    botao.title = 'Conciliar Manualmente';
+                }
+            });
         }
 
         // Mostrar detalhes de uma divergência
@@ -3940,7 +4187,7 @@
                     <h5 class="modal-title" id="modalDetalhesConciliacaoLabel">Detalhes da Conciliação</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="detalhes-conciliacao-body">
+                <div class="modal-body" id="detalhes-conciliacao-body" data-procedimento-id="">
                     <!-- Conteúdo carregado dinamicamente -->
                 </div>
                 <div class="modal-footer">

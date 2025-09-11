@@ -400,7 +400,7 @@ def obter_ou_criar_sessao_conciliacao():
     try:
         # Finalizar sessões antigas antes de continuar
         finalizar_sessoes_antigas()
-        
+
         # Buscar sessão ativa (criada nas últimas 2 horas)
         sessao_ativa = (
             ProcedimentoConciliacao.query.filter_by(
@@ -528,23 +528,25 @@ def finalizar_sessoes_antigas():
     try:
         # Buscar sessões antigas em andamento
         limite_tempo = datetime.utcnow() - timedelta(hours=2)
-        
+
         sessoes_antigas = ProcedimentoConciliacao.query.filter(
             ProcedimentoConciliacao.status == "em_andamento",
-            ProcedimentoConciliacao.data_criacao < limite_tempo
+            ProcedimentoConciliacao.data_criacao < limite_tempo,
         ).all()
-        
+
         sessoes_finalizadas = 0
         for sessao in sessoes_antigas:
             if finalizar_procedimento(sessao.id, "timeout"):
                 sessoes_finalizadas += 1
                 logging.info(f"Sessão {sessao.uuid} finalizada por timeout")
-        
+
         if sessoes_finalizadas > 0:
-            logging.info(f"{sessoes_finalizadas} sessões antigas finalizadas automaticamente")
-        
+            logging.info(
+                f"{sessoes_finalizadas} sessões antigas finalizadas automaticamente"
+            )
+
         return sessoes_finalizadas
-        
+
     except Exception as e:
         logging.error(f"Erro ao finalizar sessões antigas: {e}")
         return 0
@@ -1072,7 +1074,7 @@ def conciliacao_automatica(procedimento=None):
                             )
                             else 1
                         )
-                        
+
                         conciliacao = Conciliacao(
                             extrato_id=extrato.id,
                             lancamento_id=lancamento.id,
@@ -1096,7 +1098,9 @@ def conciliacao_automatica(procedimento=None):
                             None,
                             None,
                             {
-                                "procedimento_uuid": procedimento.uuid if procedimento else None,
+                                "procedimento_uuid": (
+                                    procedimento.uuid if procedimento else None
+                                ),
                                 "extrato_id": extrato.id,
                                 "lancamento_id": lancamento.id,
                                 "valor": float(extrato.valor),
@@ -1479,7 +1483,7 @@ def executar_conciliacao_automatica():
     except Exception as e:
         logging.error(f"Erro na conciliação automática: {e}")
         # Se houver erro, tentar finalizar o procedimento como erro
-        if 'procedimento' in locals():
+        if "procedimento" in locals():
             try:
                 finalizar_procedimento(procedimento.id, "erro")
             except:
@@ -1886,12 +1890,33 @@ def get_estatisticas_conciliacoes():
 
 @app.route("/api/divergencias", methods=["GET"])
 @api_login_required
+@requires_permission("read")
 def get_divergencias():
-    divergencias = (
-        Divergencia.query.filter_by(status="pendente")
-        .order_by(Divergencia.created_at.desc())
-        .all()
-    )
+    # Controle de acesso: usuários comuns só veem suas próprias divergências
+    divergencias_query = Divergencia.query.filter_by(status="pendente")
+
+    if current_user.perfil == "usuario":
+        # Filtrar divergências relacionadas aos registros do usuário
+        divergencias_query = (
+            divergencias_query.join(
+                ExtratoBancario,
+                Divergencia.extrato_id == ExtratoBancario.id,
+                isouter=True,
+            )
+            .join(
+                LancamentoContabil,
+                Divergencia.lancamento_id == LancamentoContabil.id,
+                isouter=True,
+            )
+            .filter(
+                db.or_(
+                    ExtratoBancario.usuario_id == current_user.id,
+                    LancamentoContabil.usuario_id == current_user.id,
+                )
+            )
+        )
+
+    divergencias = divergencias_query.order_by(Divergencia.created_at.desc()).all()
     return jsonify(
         [
             {
@@ -2110,7 +2135,34 @@ def get_procedimento_detalhes(procedimento_id):
             Conciliacao.data_conciliacao.desc()
         ).all()
 
+        # Buscar divergências relacionadas ao usuário (se não for admin)
+        divergencias_query = Divergencia.query.filter(Divergencia.status == "pendente")
+        if current_user.perfil == "usuario":
+            # Filtrar divergências dos registros do próprio usuário
+            divergencias_query = (
+                divergencias_query.join(
+                    ExtratoBancario,
+                    Divergencia.extrato_id == ExtratoBancario.id,
+                    isouter=True,
+                )
+                .join(
+                    LancamentoContabil,
+                    Divergencia.lancamento_id == LancamentoContabil.id,
+                    isouter=True,
+                )
+                .filter(
+                    db.or_(
+                        ExtratoBancario.usuario_id == current_user.id,
+                        LancamentoContabil.usuario_id == current_user.id,
+                    )
+                )
+            )
+
+        divergencias = divergencias_query.all()
+
         conciliacoes_list = []
+
+        # Adicionar conciliações normais
         for c in conciliacoes:
             # Verificar se há divergências para esta conciliação
             divergencias = (
@@ -2208,15 +2260,115 @@ def get_procedimento_detalhes(procedimento_id):
                 }
             )
 
-        # Estatísticas do procedimento
-        total_conciliacoes = len(conciliacoes)
-        conciliacoes_ativas = sum(1 for c in conciliacoes if c.status == "ativa")
-        valor_total = sum(
-            float(c.extrato.valor)
-            for c in conciliacoes
-            if c.extrato and c.extrato.valor
+        # Adicionar divergências como registros separados com status "Divergência"
+        for div in divergencias:
+            # Determinar se é extrato ou lançamento
+            extrato_data = None
+            lancamento_data = None
+
+            if div.extrato:
+                extrato_data = {
+                    "id": div.extrato.id,
+                    "data": (
+                        div.extrato.data.strftime("%Y-%m-%d")
+                        if div.extrato.data
+                        else None
+                    ),
+                    "descricao": div.extrato.descricao,
+                    "valor": float(div.extrato.valor) if div.extrato.valor else 0,
+                    "tipo": div.extrato.tipo,
+                    "categoria": div.extrato.categoria,
+                    "numero_documento": div.extrato.numero_documento,
+                    "arquivo_origem": div.extrato.arquivo_origem,
+                }
+
+            if div.lancamento:
+                lancamento_data = {
+                    "id": div.lancamento.id,
+                    "data": (
+                        div.lancamento.data.strftime("%Y-%m-%d")
+                        if div.lancamento.data
+                        else None
+                    ),
+                    "descricao": div.lancamento.descricao,
+                    "valor": float(div.lancamento.valor) if div.lancamento.valor else 0,
+                    "tipo": div.lancamento.tipo,
+                    "categoria": div.lancamento.categoria,
+                    "numero_documento": div.lancamento.numero_documento,
+                    "fornecedor_cliente": div.lancamento.fornecedor_cliente,
+                    "arquivo_origem": div.lancamento.arquivo_origem,
+                }
+
+            # Adicionar registro de divergência na lista
+            conciliacoes_list.append(
+                {
+                    "id": f"div_{div.id}",  # ID único para divergências
+                    "data_conciliacao": (
+                        div.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                        if div.created_at
+                        else None
+                    ),
+                    "tipo_conciliacao": "divergencia",
+                    "status": "Divergência",
+                    "observacoes": f"Tipo: {div.tipo} - {div.descricao}",
+                    "extrato": extrato_data,
+                    "lancamento": lancamento_data,
+                    "divergencias": [
+                        {
+                            "id": div.id,
+                            "tipo": div.tipo,
+                            "descricao": div.descricao,
+                            "status": div.status,
+                        }
+                    ],
+                }
+            )
+
+        # Buscar extratos e lançamentos não conciliados do usuário e do período do procedimento
+        extratos_nao_conciliados = ExtratoBancario.query.filter_by(conciliado=False)
+        lancamentos_nao_conciliados = LancamentoContabil.query.filter_by(
+            conciliado=False
         )
-        divergencias_total = sum(len(c["divergencias"]) for c in conciliacoes_list)
+        # Filtrar por usuário se não for admin/auditor
+        if current_user.perfil == "usuario":
+            extratos_nao_conciliados = extratos_nao_conciliados.filter(
+                ExtratoBancario.usuario_id == current_user.id
+            )
+            lancamentos_nao_conciliados = lancamentos_nao_conciliados.filter(
+                LancamentoContabil.usuario_id == current_user.id
+            )
+        # Buscar todos os registros não conciliados (sem filtro de data)
+        # Para conciliação manual, mostrar todos os registros disponíveis
+        extratos_nao_conciliados = extratos_nao_conciliados.all()
+        lancamentos_nao_conciliados = lancamentos_nao_conciliados.all()
+
+        extratos_list = [
+            {
+                "id": e.id,
+                "data": e.data.strftime("%Y-%m-%d") if e.data else None,
+                "descricao": e.descricao,
+                "valor": float(e.valor) if e.valor else 0,
+                "tipo": e.tipo,
+                "categoria": e.categoria,
+                "numero_documento": e.numero_documento,
+                "arquivo_origem": e.arquivo_origem,
+            }
+            for e in extratos_nao_conciliados
+        ]
+        lancamentos_list = [
+            {
+                "id": l.id,
+                "data": l.data.strftime("%Y-%m-%d") if l.data else None,
+                "descricao": l.descricao,
+                "valor": float(l.valor) if l.valor else 0,
+                "tipo": l.tipo,
+                "categoria": l.categoria,
+                "numero_documento": l.numero_documento,
+                "fornecedor_cliente": l.fornecedor_cliente,
+                "arquivo_origem": l.arquivo_origem,
+            }
+            for l in lancamentos_nao_conciliados
+        ]
 
         return jsonify(
             {
@@ -2238,13 +2390,24 @@ def get_procedimento_detalhes(procedimento_id):
                     else None
                 ),
                 "estatisticas": {
-                    "total_conciliacoes": total_conciliacoes,
-                    "conciliacoes_ativas": conciliacoes_ativas,
-                    "conciliacoes_canceladas": total_conciliacoes - conciliacoes_ativas,
-                    "valor_total": valor_total,
-                    "divergencias_count": divergencias_total,
+                    "total_conciliacoes": len(conciliacoes),
+                    "conciliacoes_ativas": sum(
+                        1 for c in conciliacoes if c.status == "ativa"
+                    ),
+                    "conciliacoes_canceladas": len(conciliacoes)
+                    - sum(1 for c in conciliacoes if c.status == "ativa"),
+                    "valor_total": sum(
+                        float(c.extrato.valor)
+                        for c in conciliacoes
+                        if c.extrato and c.extrato.valor
+                    ),
+                    "divergencias_count": sum(
+                        len(c["divergencias"]) for c in conciliacoes_list
+                    ),
                 },
                 "conciliacoes": conciliacoes_list,
+                "extratos_nao_conciliados": extratos_list,
+                "lancamentos_nao_conciliados": lancamentos_list,
             }
         )
 
@@ -2369,6 +2532,7 @@ def export_procedimento(procedimento_id):
 
 # ====== ROTAS PARA CONTROLE DE SESSÃO ======
 
+
 @app.route("/api/sessao/finalizar", methods=["POST"])
 @api_login_required
 def finalizar_sessao():
@@ -2394,11 +2558,13 @@ def finalizar_sessao():
         # Finalizar sessão
         finalizar_procedimento(sessao_ativa.id, "concluido")
 
-        return jsonify({
-            "success": True,
-            "message": "Sessão finalizada com sucesso",
-            "procedimento_uuid": sessao_ativa.uuid
-        })
+        return jsonify(
+            {
+                "success": True,
+                "message": "Sessão finalizada com sucesso",
+                "procedimento_uuid": sessao_ativa.uuid,
+            }
+        )
 
     except Exception as e:
         logging.error(f"Erro ao finalizar sessão: {e}")
@@ -2427,20 +2593,25 @@ def status_sessao():
         if sessao_ativa:
             # Contar conciliações da sessão
             total_conciliacoes = sessao_ativa.conciliacoes.count()
-            
-            return jsonify({
-                "sessao_ativa": True,
-                "procedimento_uuid": sessao_ativa.uuid,
-                "data_criacao": sessao_ativa.data_criacao.strftime("%Y-%m-%d %H:%M:%S"),
-                "descricao": sessao_ativa.descricao,
-                "total_conciliacoes": total_conciliacoes
-            })
+
+            return jsonify(
+                {
+                    "sessao_ativa": True,
+                    "procedimento_uuid": sessao_ativa.uuid,
+                    "data_criacao": sessao_ativa.data_criacao.strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
+                    "descricao": sessao_ativa.descricao,
+                    "total_conciliacoes": total_conciliacoes,
+                }
+            )
         else:
             return jsonify({"sessao_ativa": False})
 
     except Exception as e:
         logging.error(f"Erro ao verificar status da sessão: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 # ====== FIM ROTAS PROCEDIMENTOS ======
 
@@ -3210,7 +3381,9 @@ def limpar_dados():
         db.session.commit()
 
         logging.info("Dados limpos com sucesso pelo usuário: " + current_user.username)
-        return jsonify({"success": True, "message": "Todos os dados foram removidos com sucesso!"})
+        return jsonify(
+            {"success": True, "message": "Todos os dados foram removidos com sucesso!"}
+        )
     except Exception as e:
         db.session.rollback()
         logging.error(f"Erro ao limpar dados: {e}")
