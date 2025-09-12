@@ -1426,3 +1426,400 @@
 2025-09-10 21:41:54,730 - werkzeug - INFO - 127.0.0.1 - - [10/Sep/2025 21:41:54] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
 2025-09-10 21:41:55,039 - werkzeug - INFO - 127.0.0.1 - - [10/Sep/2025 21:41:55] "GET /api/usuario HTTP/1.1" 200 -
 2025-09-10 21:41:57,340 - werkzeug - INFO - 127.0.0.1 - - [10/Sep/2025 21:41:57] "[33mGET /api/conciliacao HTTP/1.1[0m" 404 -
+2025-09-11 14:14:59,918 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-09-11 14:14:59,918 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-11 14:14:59,920 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 14:15:00,921 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 14:15:00,923 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 14:40:00,283 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:40:00] "GET /login HTTP/1.1" 200 -
+2025-09-11 14:58:45,213 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:58:45] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-11 14:58:45,256 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:58:45] "GET / HTTP/1.1" 200 -
+2025-09-11 14:58:45,269 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:58:45] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-11 14:58:45,585 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:58:45] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-11 14:58:45,870 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:58:45] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 14:58:56,517 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:58:56] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 14:58:56,816 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:58:56] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-11 14:58:59,945 - root - INFO - Procedimento criado: PROC-20250911145859-D1A382C9 - sessao_conciliacao por usuário admin
+2025-09-11 14:59:00,056 - root - INFO - Procedimento finalizado: PROC-20250911145859-D1A382C9 - 0 conciliações
+2025-09-11 14:59:00,077 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:59:00] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-11 14:59:01,301 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:59:01] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 14:59:01,584 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:59:01] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 14:59:01,625 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:59:01] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-11 14:59:04,034 - root - INFO - Procedimento criado: PROC-20250911145904-FE70FD9A - sessao_conciliacao por usuário admin
+2025-09-11 14:59:04,131 - root - INFO - Procedimento finalizado: PROC-20250911145904-FE70FD9A - 0 conciliações
+2025-09-11 14:59:04,162 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:59:04] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-11 14:59:04,935 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:59:04] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 14:59:05,290 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:59:05] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-11 14:59:05,292 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 14:59:05] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 15:01:19,426 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 15:01:19,614 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 15:01:20,510 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 15:01:20,512 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 15:01:56,274 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 15:01:56,379 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 15:01:57,235 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 15:01:57,237 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 15:03:24,957 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 15:03:25,149 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 15:03:26,062 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 15:03:26,064 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 15:39:34,836 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 15:39:35,049 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 15:39:36,091 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 15:39:36,093 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 15:39:39,716 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:39] "GET / HTTP/1.1" 200 -
+2025-09-11 15:39:39,725 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:39] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-11 15:39:39,781 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:39] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-11 15:39:40,650 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:40] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 15:39:41,390 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:41] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 15:39:42,236 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:42] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-11 15:39:42,251 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:42] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 15:39:45,163 - root - INFO - Dados limpos com sucesso pelo usuário: admin
+2025-09-11 15:39:45,164 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:45] "DELETE /api/limpar-dados HTTP/1.1" 200 -
+2025-09-11 15:39:46,434 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:46] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 15:39:46,467 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:46] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 15:39:46,484 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:46] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-11 15:39:47,818 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:47] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-11 15:39:56,199 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:56] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-11 15:39:59,179 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:39:59] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 15:40:16,114 - root - INFO - Procedimento criado: PROC-20250911154016-703B7DA3 - sessao_conciliacao por usuário admin
+2025-09-11 15:40:16,218 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:16] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-09-11 15:40:16,363 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:16] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 15:40:20,658 - root - INFO - Usando sessão existente: PROC-20250911154016-703B7DA3
+2025-09-11 15:40:20,712 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:20] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-09-11 15:40:21,042 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:21] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 15:40:22,498 - root - INFO - Usando sessão existente: PROC-20250911154016-703B7DA3
+2025-09-11 15:40:22,674 - root - INFO - Procedimento finalizado: PROC-20250911154016-703B7DA3 - 5 conciliações
+2025-09-11 15:40:22,690 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:22] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-11 15:40:24,240 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:24] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 15:40:25,813 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:25] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 15:40:27,892 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:27] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 15:40:28,266 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:28] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-11 15:40:29,776 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:29] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 15:40:30,297 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:30] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 15:40:31,751 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:31] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 15:40:32,441 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:32] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 15:40:34,199 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:34] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 15:40:34,580 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:40:34] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 15:55:18,531 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:18] "GET / HTTP/1.1" 200 -
+2025-09-11 15:55:18,543 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:18] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-11 15:55:18,621 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:18] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-11 15:55:18,990 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:18] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 15:55:19,808 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:19] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 15:55:21,325 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:21] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 15:55:22,193 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:22] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 15:55:23,353 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:23] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-11 15:55:26,922 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:26] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 15:55:28,321 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:28] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 15:55:28,741 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:28] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-11 15:55:37,943 - root - INFO - Todos os dados foram limpos do sistema
+2025-09-11 15:55:37,944 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:37] "POST /api/limpar-todos-dados HTTP/1.1" 200 -
+2025-09-11 15:55:39,084 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:39] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-11 15:55:39,774 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:39] "GET / HTTP/1.1" 200 -
+2025-09-11 15:55:40,079 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:40] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-11 15:55:40,391 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:40] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-11 15:55:40,499 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:40] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 15:55:46,385 - root - INFO - Procedimento criado: PROC-20250911155546-D4D59579 - sessao_conciliacao por usuário admin
+2025-09-11 15:55:46,435 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:46] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-09-11 15:55:46,753 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:46] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 15:55:48,996 - root - INFO - Usando sessão existente: PROC-20250911155546-D4D59579
+2025-09-11 15:55:49,053 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:49] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-09-11 15:55:49,392 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:49] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 15:55:50,404 - root - INFO - Usando sessão existente: PROC-20250911155546-D4D59579
+2025-09-11 15:55:50,542 - root - INFO - Procedimento finalizado: PROC-20250911155546-D4D59579 - 5 conciliações
+2025-09-11 15:55:50,564 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:50] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-11 15:55:51,752 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:51] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 15:55:52,512 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:52] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 15:55:55,385 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:55] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-11 15:55:55,401 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 15:55:55] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 16:01:51,311 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:01:51] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:01:52,384 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:01:52] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 16:01:53,581 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:01:53] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:01:54,071 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:01:54] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:01:54,952 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:01:54] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 16:01:55,469 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:01:55] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:01:56,782 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:01:56] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-11 16:01:59,189 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:01:59] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 16:02:00,037 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:02:00] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 16:02:00,288 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:02:00] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:05:56,513 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\carregar_dados_teste.py', reloading
+2025-09-11 16:05:56,770 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:05:57,587 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:05:57,589 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:07:33,172 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\carregar_dados_teste.py', reloading
+2025-09-11 16:07:33,300 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:07:34,198 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:07:34,200 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:08:49,805 - root - INFO - Procedimento criado: PROC-20250911160849-EBC1A4B4 - sessao_conciliacao por usuário admin
+2025-09-11 16:08:49,875 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:08:49] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-09-11 16:08:50,069 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:08:50] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 16:08:54,189 - root - INFO - Usando sessão existente: PROC-20250911160849-EBC1A4B4
+2025-09-11 16:08:54,267 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:08:54] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-09-11 16:08:54,594 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:08:54] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 16:08:55,552 - root - INFO - Usando sessão existente: PROC-20250911160849-EBC1A4B4
+2025-09-11 16:08:55,850 - root - INFO - Procedimento finalizado: PROC-20250911160849-EBC1A4B4 - 7 conciliações
+2025-09-11 16:08:55,864 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:08:55] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-11 16:08:57,324 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:08:57] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-11 16:08:58,410 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:08:58] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:09:01,985 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:01] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 16:09:03,078 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:03] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 16:09:07,257 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:07] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 16:09:09,279 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:09] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 16:09:10,142 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:10] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-11 16:09:14,948 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:14] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 16:09:15,213 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:15] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-11 16:09:23,512 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:23] "GET /api/procedimentos/37/detalhes HTTP/1.1" 200 -
+2025-09-11 16:09:40,805 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:40] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 16:09:44,069 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:44] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 16:09:47,459 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:47] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 16:09:49,229 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:49] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 16:09:49,551 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:49] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 16:09:50,071 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:50] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 16:09:53,877 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:53] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 16:09:54,154 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:54] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-11 16:09:58,568 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:09:58] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-11 16:11:27,848 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 16:11:28,188 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:11:29,073 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:11:29,075 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:14:59,031 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 16:14:59,155 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:14:59,920 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:14:59,922 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:15:11,280 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 16:15:11,477 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:15:12,276 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:15:12,278 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:15:24,658 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\carregar_dados_teste.py', reloading
+2025-09-11 16:15:24,806 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:15:25,578 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:15:25,581 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:15:32,800 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\carregar_dados_teste.py', reloading
+2025-09-11 16:15:33,045 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:15:33,763 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:15:33,765 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:15:45,086 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\carregar_dados_teste.py', reloading
+2025-09-11 16:15:45,223 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:15:46,008 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:15:46,010 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:15:58,375 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\carregar_dados_teste.py', reloading
+2025-09-11 16:15:58,562 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:15:59,490 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:15:59,492 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:27:00,260 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\carregar_dados_teste.py', reloading
+2025-09-11 16:27:00,363 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 16:27:01,338 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 16:27:01,339 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 16:27:07,420 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:07] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:27:07,856 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:07] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:27:08,863 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:08] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 16:27:09,741 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:09] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 16:27:11,323 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:11] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 16:27:11,930 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:11] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:27:13,162 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:13] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 16:27:15,178 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:15] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 16:27:16,352 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:27:16] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-11 16:35:17,902 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:35:17] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-11 16:35:18,311 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:35:18] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-11 16:35:18,984 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:35:18] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-11 16:35:19,277 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:35:19] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-11 16:35:31,141 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:35:31] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-11 16:35:31,187 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 16:35:31] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 17:06:56,776 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:06:56] "GET / HTTP/1.1" 200 -
+2025-09-11 17:06:56,789 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:06:56] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-11 17:06:56,863 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:06:56] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-11 17:06:57,692 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:06:57] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-11 17:06:57,693 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:06:57] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 17:07:18,642 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:07:18] "GET /api/procedimentos?page=1&per_page=10&data_inicio=2025-09-09&data_fim=2025-09-10 HTTP/1.1" 200 -
+2025-09-11 17:07:26,231 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:07:26] "GET /api/procedimentos?page=1&per_page=10&data_inicio=2025-09-11&data_fim=2025-09-11 HTTP/1.1" 200 -
+2025-09-11 17:16:45,685 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:16:45] "GET / HTTP/1.1" 200 -
+2025-09-11 17:16:45,701 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:16:45] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-11 17:16:45,742 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:16:45] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-11 17:16:46,570 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:16:46] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 17:16:46,587 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:16:46] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-11 17:16:53,063 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:16:53] "GET /api/procedimentos?page=1&per_page=10&metodo=automatico HTTP/1.1" 200 -
+2025-09-11 17:16:57,636 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:16:57] "GET /api/procedimentos?page=1&per_page=10&metodo=manual HTTP/1.1" 200 -
+2025-09-11 17:17:00,203 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:17:00] "GET /api/procedimentos?page=1&per_page=10&metodo=manual HTTP/1.1" 200 -
+2025-09-11 17:17:08,602 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:17:08] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 17:17:21,388 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:17:21] "GET /api/procedimentos?page=1&per_page=10&metodo=manual HTTP/1.1" 200 -
+2025-09-11 17:30:49,612 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:30:49] "GET / HTTP/1.1" 200 -
+2025-09-11 17:30:49,635 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:30:49] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-11 17:30:49,870 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:30:49] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-11 17:30:50,524 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:30:50] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-11 17:30:50,524 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:30:50] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 17:30:54,413 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:30:54] "GET /api/procedimentos?page=1&per_page=10&metodo=manual HTTP/1.1" 200 -
+2025-09-11 17:30:57,424 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:30:57] "GET /api/procedimentos?page=1&per_page=10&metodo=manual HTTP/1.1" 200 -
+2025-09-11 17:31:01,929 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:31:01] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 17:31:05,312 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:31:05] "GET /api/procedimentos?page=1&per_page=10&metodo=automatico HTTP/1.1" 200 -
+2025-09-11 17:31:07,720 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:31:07] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-11 17:33:23,871 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 17:33:24,018 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 17:33:24,914 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 17:33:24,916 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 17:33:33,060 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 17:33:33,194 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 17:33:34,138 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 17:33:34,140 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 17:34:44,501 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:34:44] "[32mGET /?id=963f658d-1a0a-4cfc-ac23-cbbc4adc1e33&vscodeBrowserReqId=1757622884180 HTTP/1.1[0m" 302 -
+2025-09-11 17:34:44,772 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:34:44] "GET /register HTTP/1.1" 200 -
+2025-09-11 17:35:19,895 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 17:35:20,055 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 17:35:20,943 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 17:35:20,944 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 17:39:33,879 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 17:39:34,060 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 17:39:34,884 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 17:39:34,885 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 17:39:43,161 - werkzeug - INFO -  * Detected change in 'C:\\Users\\leonardocarlos\\OneDrive - SHAREPOINT\\Área de Trabalho\\Projetos\\Projetos Git\\conciliscao_teste\\sistema concili\\app.py', reloading
+2025-09-11 17:39:43,411 - werkzeug - INFO -  * Restarting with stat
+2025-09-11 17:39:44,268 - werkzeug - WARNING -  * Debugger is active!
+2025-09-11 17:39:44,270 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-11 17:39:47,553 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:39:47] "[32mGET /?id=963f658d-1a0a-4cfc-ac23-cbbc4adc1e33&vscodeBrowserReqId=1757623187229 HTTP/1.1[0m" 302 -
+2025-09-11 17:39:47,821 - werkzeug - INFO - 127.0.0.1 - - [11/Sep/2025 17:39:47] "GET /register HTTP/1.1" 200 -
+2025-09-12 09:01:29,083 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-09-12 09:01:29,084 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-12 09:01:29,085 - werkzeug - INFO -  * Restarting with stat
+2025-09-12 09:01:29,885 - werkzeug - WARNING -  * Debugger is active!
+2025-09-12 09:01:29,887 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-12 09:01:36,256 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:36] "GET /login HTTP/1.1" 200 -
+2025-09-12 09:01:49,476 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:49] "GET /register HTTP/1.1" 200 -
+2025-09-12 09:01:49,527 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:49] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-09-12 09:01:52,415 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:52] "GET /login HTTP/1.1" 200 -
+2025-09-12 09:01:54,432 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:54] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-12 09:01:54,477 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:54] "GET / HTTP/1.1" 200 -
+2025-09-12 09:01:54,807 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:54] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-12 09:01:55,069 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:55] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-12 09:01:55,365 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:55] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-12 09:01:55,675 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:55] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 09:01:57,955 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:01:57] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 09:02:01,401 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:02:01] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-12 09:02:02,804 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:02:02] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-12 09:02:03,461 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:02:03] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 09:03:16,899 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:16] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 09:03:17,456 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:17] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-12 09:03:18,225 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:18] "GET /api/estatisticas?periodo=mes HTTP/1.1" 200 -
+2025-09-12 09:03:18,497 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:18] "GET /api/estatisticas?periodo=ano HTTP/1.1" 200 -
+2025-09-12 09:03:20,750 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:20] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 09:03:21,026 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:21] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-12 09:03:27,840 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:27] "GET /api/procedimentos/37/detalhes HTTP/1.1" 200 -
+2025-09-12 09:03:38,981 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:38] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-12 09:03:55,684 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:55] "GET /admin HTTP/1.1" 200 -
+2025-09-12 09:03:55,717 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:03:55] "GET /api/admin/usuarios HTTP/1.1" 200 -
+2025-09-12 09:04:11,023 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:04:11] "GET /api/auditoria HTTP/1.1" 200 -
+2025-09-12 09:04:55,561 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:04:55] "GET / HTTP/1.1" 200 -
+2025-09-12 09:04:55,587 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:04:55] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-12 09:04:55,823 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:04:55] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-12 09:04:57,579 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:04:57] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 09:05:02,997 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:05:02] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-12 09:05:04,094 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:05:04] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-12 09:05:06,366 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:05:06] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-12 09:05:21,642 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:05:21] "POST /logout HTTP/1.1" 200 -
+2025-09-12 09:05:22,167 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 09:05:22] "GET /login HTTP/1.1" 200 -
+2025-09-12 12:37:38,592 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.43.25:5000
+2025-09-12 12:37:38,594 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-12 12:37:38,596 - werkzeug - INFO -  * Restarting with stat
+2025-09-12 12:37:39,572 - werkzeug - WARNING -  * Debugger is active!
+2025-09-12 12:37:39,573 - werkzeug - INFO -  * Debugger PIN: 394-551-152
+2025-09-12 12:37:46,167 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:37:46] "GET /login HTTP/1.1" 200 -
+2025-09-12 12:37:49,103 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:37:49] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-12 12:37:49,270 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:37:49] "GET / HTTP/1.1" 200 -
+2025-09-12 12:37:49,592 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:37:49] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-12 12:37:49,858 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:37:49] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-12 12:37:53,878 - root - INFO - Iniciando verificação de divergências...
+2025-09-12 12:37:53,878 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-12 12:37:53,904 - root - INFO - Verificando valores diferentes...
+2025-09-12 12:37:53,906 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-12 12:37:53,910 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-12 12:37:53,917 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:37:53] "POST /api/verificar-divergencias HTTP/1.1" 200 -
+2025-09-12 12:37:56,145 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:37:56] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-12 12:38:02,441 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:02] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-12 12:38:11,632 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:11] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:38:21,152 - root - INFO - Todos os dados foram limpos do sistema
+2025-09-12 12:38:21,153 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:21] "POST /api/limpar-todos-dados HTTP/1.1" 200 -
+2025-09-12 12:38:22,461 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:22] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:38:23,727 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:23] "GET / HTTP/1.1" 200 -
+2025-09-12 12:38:23,747 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:23] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:38:24,797 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:24] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-12 12:38:25,127 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:25] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-12 12:38:25,256 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:25] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:38:26,052 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:26] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 12:38:26,333 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:26] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-12 12:38:29,239 - root - INFO - Dados limpos com sucesso pelo usuário: admin
+2025-09-12 12:38:29,240 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:29] "DELETE /api/limpar-dados HTTP/1.1" 200 -
+2025-09-12 12:38:30,189 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:30] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:38:30,531 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:30] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:38:30,533 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:38:30] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 12:39:22,505 - root - INFO - Procedimento criado: PROC-20250912123922-E48CB428 - sessao_conciliacao por usuário admin
+2025-09-12 12:39:22,570 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:22] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-09-12 12:39:22,728 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:22] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:39:29,534 - root - INFO - Usando sessão existente: PROC-20250912123922-E48CB428
+2025-09-12 12:39:29,595 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:29] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-09-12 12:39:29,916 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:29] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:39:31,836 - root - INFO - Procedimento criado: PROC-20250912123931-0693D343 - conciliacao por usuário admin
+2025-09-12 12:39:31,859 - root - INFO - Iniciando verificação de divergências...
+2025-09-12 12:39:31,859 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-12 12:39:31,864 - root - INFO - Verificando valores diferentes...
+2025-09-12 12:39:31,865 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-12 12:39:31,866 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-12 12:39:31,883 - root - INFO - Procedimento finalizado: PROC-20250912123931-0693D343 - 0 conciliações
+2025-09-12 12:39:31,906 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:31] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-12 12:39:33,840 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:33] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:39:36,209 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:36] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 12:39:36,514 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:36] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-12 12:39:50,720 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:50] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-12 12:39:53,667 - root - INFO - Iniciando verificação de divergências...
+2025-09-12 12:39:53,668 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-12 12:39:53,675 - root - INFO - Verificando valores diferentes...
+2025-09-12 12:39:53,676 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-12 12:39:53,678 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-12 12:39:53,680 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:53] "POST /api/verificar-divergencias HTTP/1.1" 200 -
+2025-09-12 12:39:56,277 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:39:56] "GET /api/divergencias HTTP/1.1" 200 -
+2025-09-12 12:46:34,223 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:34] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:46:44,409 - root - INFO - Todos os dados foram limpos do sistema
+2025-09-12 12:46:44,411 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:44] "POST /api/limpar-todos-dados HTTP/1.1" 200 -
+2025-09-12 12:46:46,037 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:46] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:46:46,733 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:46] "GET / HTTP/1.1" 200 -
+2025-09-12 12:46:47,045 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:47] "[33mGET /js/funcoes_simples.js HTTP/1.1[0m" 404 -
+2025-09-12 12:46:47,373 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:47] "GET /api/usuario HTTP/1.1" 200 -
+2025-09-12 12:46:47,495 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:47] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:46:49,155 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:49] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 12:46:49,441 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:49] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-12 12:46:59,107 - root - INFO - Dados limpos com sucesso pelo usuário: admin
+2025-09-12 12:46:59,109 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:46:59] "DELETE /api/limpar-dados HTTP/1.1" 200 -
+2025-09-12 12:47:00,722 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:47:00] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:47:01,043 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:47:01] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 12:47:01,058 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:47:01] "GET /api/conciliacoes/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:47:10,957 - root - INFO - Procedimento criado: PROC-20250912124710-6A649308 - sessao_conciliacao por usuário admin
+2025-09-12 12:47:11,069 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:47:11] "POST /api/upload-extrato HTTP/1.1" 200 -
+2025-09-12 12:47:11,212 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:47:11] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:51:17,396 - root - INFO - Usando sessão existente: PROC-20250912124710-6A649308
+2025-09-12 12:51:17,515 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:17] "POST /api/upload-lancamentos HTTP/1.1" 200 -
+2025-09-12 12:51:17,623 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:17] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:51:21,073 - root - INFO - Procedimento criado: PROC-20250912125121-2C2373E8 - conciliacao por usuário admin
+2025-09-12 12:51:21,357 - root - INFO - Iniciando verificação de divergências...
+2025-09-12 12:51:21,358 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-12 12:51:21,389 - root - INFO - Verificando valores diferentes...
+2025-09-12 12:51:21,392 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-12 12:51:21,394 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-12 12:51:21,415 - root - INFO - Procedimento finalizado: PROC-20250912125121-2C2373E8 - 7 conciliações
+2025-09-12 12:51:21,446 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:21] "POST /api/conciliacao-automatica HTTP/1.1" 200 -
+2025-09-12 12:51:22,757 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:22] "GET /api/estatisticas HTTP/1.1" 200 -
+2025-09-12 12:51:24,608 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:24] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 12:51:24,898 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:24] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-12 12:51:25,401 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:25] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:51:25,989 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:25] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:51:27,705 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:27] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-12 12:51:28,023 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:28] "GET /api/estatisticas?periodo=hoje HTTP/1.1" 200 -
+2025-09-12 12:51:29,634 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:29] "GET /api/estatisticas?periodo=semana HTTP/1.1" 200 -
+2025-09-12 12:51:35,989 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:35] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
+2025-09-12 12:51:36,286 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:36] "GET /api/sessao/status HTTP/1.1" 200 -
+2025-09-12 12:51:44,770 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:44] "GET /api/procedimentos/41/detalhes HTTP/1.1" 200 -

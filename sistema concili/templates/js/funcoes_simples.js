@@ -506,7 +506,12 @@ function executarConciliacaoAutomatica() {
                 carregarDados();
             }
         } else {
-            alert('❌ Erro na conciliação: ' + (data.error || 'Erro desconhecido'));
+            // Tratar especificamente a falta de dados
+            if (data.message && data.message.includes('Não há dados suficientes')) {
+                alert('⚠️ ' + data.message);
+            } else {
+                alert('❌ Erro na conciliação: ' + (data.error || data.message || 'Erro desconhecido'));
+            }
         }
     })
     .catch(error => {

@@ -1120,7 +1120,11 @@ def conciliacao_automatica(procedimento=None):
 def verificar_divergencias():
     """Verifica e cria alertas de divergências"""
     try:
-        # Verificar duplicatas
+        logging.info("Iniciando verificação de divergências...")
+        divergencias_criadas = 0
+        
+        # 1. Verificar duplicatas nos extratos
+        logging.info("Verificando duplicatas nos extratos...")
         extratos = ExtratoBancario.query.all()
         for extrato in extratos:
             duplicatas = ExtratoBancario.query.filter(
@@ -1131,6 +1135,7 @@ def verificar_divergencias():
             ).all()
 
             if duplicatas:
+                logging.info(f"Duplicata encontrada: {extrato.descricao} - {extrato.valor}")
                 for duplicata in duplicatas:
                     # Verificar se já existe esta divergência
                     divergencia_existente = Divergencia.query.filter_by(
@@ -1144,29 +1149,75 @@ def verificar_divergencias():
                             descricao=f"Transação duplicada detectada: {extrato.descricao} - R$ {extrato.valor}",
                         )
                         db.session.add(divergencia)
+                        divergencias_criadas += 1
+                        logging.info(f"Divergência de duplicata criada para extrato ID {extrato.id}")
 
-        # Verificar valores incorretos (diferença > 5%)
-        conciliacoes = Conciliacao.query.filter_by(status="ativa").all()
-        for conciliacao in conciliacoes:
-            if conciliacao.extrato and conciliacao.lancamento:
-                if abs(conciliacao.extrato.valor - conciliacao.lancamento.valor) > 0.01:
-                    # Verificar se já existe esta divergência
-                    divergencia_existente = Divergencia.query.filter_by(
-                        tipo="valor_incorreto",
-                        extrato_id=conciliacao.extrato_id,
-                        lancamento_id=conciliacao.lancamento_id,
-                    ).first()
-
-                    if not divergencia_existente:
-                        divergencia = Divergencia(
+        # 2. Verificar valores diferentes entre extratos e lançamentos com mesmo documento
+        logging.info("Verificando valores diferentes...")
+        extratos = ExtratoBancario.query.all()
+        for extrato in extratos:
+            if extrato.numero_documento:
+                lancamentos = LancamentoContabil.query.filter_by(
+                    numero_documento=extrato.numero_documento
+                ).all()
+                
+                for lancamento in lancamentos:
+                    # Converter valores para comparação (extrato pode ter sinal negativo)
+                    valor_extrato = abs(float(extrato.valor))
+                    valor_lancamento = abs(float(lancamento.valor))
+                    diferenca = abs(valor_extrato - valor_lancamento)
+                    
+                    # Se a diferença for maior que R$ 0.01
+                    if diferenca > 0.01:
+                        # Verificar se já existe esta divergência
+                        divergencia_existente = Divergencia.query.filter_by(
                             tipo="valor_incorreto",
-                            extrato_id=conciliacao.extrato_id,
-                            lancamento_id=conciliacao.lancamento_id,
-                            descricao=f"Diferença de valor detectada: Extrato R$ {conciliacao.extrato.valor} vs Lançamento R$ {conciliacao.lancamento.valor}",
-                        )
-                        db.session.add(divergencia)
+                            extrato_id=extrato.id,
+                            lancamento_id=lancamento.id,
+                        ).first()
+
+                        if not divergencia_existente:
+                            divergencia = Divergencia(
+                                tipo="valor_incorreto",
+                                extrato_id=extrato.id,
+                                lancamento_id=lancamento.id,
+                                descricao=f"Diferença de valor detectada: Extrato R$ {extrato.valor} vs Lançamento R$ {lancamento.valor} (Diferença: R$ {diferenca:.2f})",
+                            )
+                            db.session.add(divergencia)
+                            divergencias_criadas += 1
+                            logging.info(f"Divergência de valor criada: Extrato {extrato.id} vs Lançamento {lancamento.id}")
+
+        # 3. Verificar extratos sem lançamentos correspondentes
+        logging.info("Verificando extratos sem lançamentos...")
+        extratos_sem_lancamento = ExtratoBancario.query.filter(
+            ~ExtratoBancario.numero_documento.in_(
+                db.session.query(LancamentoContabil.numero_documento).filter(
+                    LancamentoContabil.numero_documento.isnot(None)
+                )
+            )
+        ).all()
+        
+        for extrato in extratos_sem_lancamento:
+            if extrato.numero_documento:  # Só criar divergência se tiver número de documento
+                divergencia_existente = Divergencia.query.filter_by(
+                    tipo="sem_correspondencia",
+                    extrato_id=extrato.id
+                ).first()
+
+                if not divergencia_existente:
+                    divergencia = Divergencia(
+                        tipo="sem_correspondencia",
+                        extrato_id=extrato.id,
+                        descricao=f"Extrato sem lançamento correspondente: {extrato.descricao} - Doc: {extrato.numero_documento}",
+                    )
+                    db.session.add(divergencia)
+                    divergencias_criadas += 1
+                    logging.info(f"Divergência de correspondência criada para extrato ID {extrato.id}")
 
         db.session.commit()
+        logging.info(f"Verificação de divergências concluída. {divergencias_criadas} novas divergências criadas.")
+        
+        return divergencias_criadas
 
     except Exception as e:
         db.session.rollback()
@@ -1437,17 +1488,26 @@ def criar_regra_conciliacao():
 @api_login_required
 def executar_conciliacao_automatica():
     try:
-        # Usar sessão única de conciliação
-        procedimento = obter_ou_criar_sessao_conciliacao()
+        # Verificar se há dados para conciliar ANTES de criar qualquer procedimento
+        extratos_nao_conciliados = ExtratoBancario.query.filter_by(conciliado=False).count()
+        lancamentos_nao_conciliados = LancamentoContabil.query.filter_by(conciliado=False).count()
+        
+        if extratos_nao_conciliados == 0 or lancamentos_nao_conciliados == 0:
+            return jsonify({
+                "success": False,
+                "message": "Não há dados suficientes para realizar a conciliação. Faça upload dos extratos e lançamentos primeiro.",
+                "conciliados": 0
+            })
+
+        # Criar procedimento específico para conciliação automática
+        procedimento = criar_procedimento_conciliacao(
+            tipo_procedimento="conciliacao",
+            metodo="automatico",
+            descricao="Conciliação automática executada"
+        )
 
         if not procedimento:
-            return jsonify({"error": "Erro ao criar/obter sessão"}), 500
-
-        # Atualizar descrição da sessão para incluir a conciliação automática
-        if "Conciliação automática" not in (procedimento.descricao or ""):
-            nova_descricao = f"{procedimento.descricao or 'Sessão de trabalho'} - Conciliação automática executada"
-            procedimento.descricao = nova_descricao
-            db.session.commit()
+            return jsonify({"error": "Erro ao criar procedimento de conciliação automática"}), 500
 
         # Detectar transações recorrentes
         detectar_transacoes_recorrentes()
@@ -1971,6 +2031,28 @@ def resolver_divergencia(divergencia_id):
     return jsonify({"success": True, "message": "Divergência resolvida com sucesso"})
 
 
+@app.route("/api/verificar-divergencias", methods=["POST"])
+@api_login_required
+def forcar_verificacao_divergencias():
+    """Força a verificação de divergências"""
+    try:
+        # Executar verificação de divergências
+        divergencias_criadas = verificar_divergencias()
+        
+        # Contar divergências totais pendentes
+        total_divergencias = Divergencia.query.filter_by(status="pendente").count()
+        
+        return jsonify({
+            "success": True, 
+            "message": f"Verificação concluída. {divergencias_criadas} novas divergências criadas. Total pendentes: {total_divergencias}",
+            "divergencias_criadas": divergencias_criadas,
+            "total_pendentes": total_divergencias
+        })
+    except Exception as e:
+        logging.error(f"Erro ao verificar divergências: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 # ====== ROTAS PARA PROCEDIMENTOS ======
 
 
@@ -1989,6 +2071,12 @@ def get_procedimentos():
         metodo = request.args.get("metodo")
         page = request.args.get("page", 1, type=int)
         per_page = request.args.get("per_page", 10, type=int)
+
+        # Debug dos parâmetros recebidos
+        print(f"🔍 DEBUG PARAMS: data_inicio={data_inicio}, data_fim={data_fim}")
+        print(f"🔍 DEBUG PARAMS: tipo={repr(tipo)}, status={repr(status)}")
+        print(f"🔍 DEBUG PARAMS: metodo={repr(metodo)}, usuario_id={usuario_id}")
+        print(f"🔍 DEBUG PARAMS: page={page}, per_page={per_page}")
 
         # Construir query base com controle de acesso
         query = ProcedimentoConciliacao.query
@@ -2023,7 +2111,9 @@ def get_procedimentos():
             query = query.filter(ProcedimentoConciliacao.status == status)
 
         if metodo:
+            print(f"🔍 DEBUG FILTRO: Filtrando por método: '{metodo}'")
             query = query.filter(ProcedimentoConciliacao.metodo == metodo)
+            print(f"🔍 DEBUG: Query após filtro de método aplicada")
 
         # Apenas admin/auditor podem filtrar por outro usuário
         if usuario_id and current_user.perfil in ["admin", "auditor"]:
@@ -2034,6 +2124,16 @@ def get_procedimentos():
 
         # Paginação
         procedimentos = query.paginate(page=page, per_page=per_page, error_out=False)
+        
+        print(f"🔍 DEBUG: Total de procedimentos encontrados: {procedimentos.total}")
+        print(f"🔍 DEBUG: Procedimentos na página atual: {len(procedimentos.items)}")
+        
+        # Debug dos métodos dos procedimentos encontrados
+        if procedimentos.items:
+            metodos_encontrados = [p.metodo for p in procedimentos.items]
+            print(f"🔍 DEBUG: Métodos dos procedimentos encontrados: {metodos_encontrados}")
+        else:
+            print("🔍 DEBUG: Nenhum procedimento encontrado com os filtros aplicados")
 
         # Montar resultado
         items = []

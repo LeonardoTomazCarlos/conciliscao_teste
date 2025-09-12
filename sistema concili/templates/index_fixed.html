@@ -446,7 +446,12 @@
                     alert(`Conciliação realizada! ${data.conciliados} itens conciliados.`);
                     carregarEstatisticas();
                 } else {
-                    alert('Erro na conciliação: ' + data.message);
+                    // Tratar especificamente a falta de dados
+                    if (data.message && data.message.includes('Não há dados suficientes')) {
+                        alert('⚠️ ' + data.message);
+                    } else {
+                        alert('❌ Erro na conciliação: ' + (data.error || data.message || 'Erro desconhecido'));
+                    }
                 }
             })
             .catch(error => {

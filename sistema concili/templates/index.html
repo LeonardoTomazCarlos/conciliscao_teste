@@ -756,6 +756,19 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Botão de teste temporário -->
+                            <div class="card card-dashboard mb-2" style="background: #f8f9fa; border: 1px dashed #6c757d;">
+                                <div class="card-body py-2">
+                                    <small class="text-muted">Debug:</small>
+                                    <button class="btn btn-sm btn-outline-info ms-2" onclick="testarFiltros()">
+                                        <i class="fas fa-bug me-1"></i>Testar Filtros
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning ms-1" onclick="console.log('Período atual:', periodoAtualDashboard)">
+                                        <i class="fas fa-info me-1"></i>Período Atual
+                                    </button>
+                                </div>
+                            </div>
 
                             <!-- Cards de Estatísticas -->
                             <div class="row g-4 mb-5">
@@ -998,6 +1011,14 @@
                             </div>
                         </div>
 
+                        <!-- Botão Debug para Estatísticas (temporário) -->
+                        <div class="alert alert-warning">
+                            <button class="btn btn-sm btn-primary" onclick="carregarEstatisticasConciliacoes()">
+                                🔧 Testar Carregamento de Estatísticas
+                            </button>
+                            <span class="ms-2">Use este botão para forçar o carregamento das estatísticas</span>
+                        </div>
+
                         <!-- Ações Principais -->
                         <div class="card card-dashboard mb-4">
                             <div class="card-body">
@@ -1045,12 +1066,11 @@
                                         <input type="date" class="form-control" id="filtro-data-fim">
                                     </div>
                                     <div class="col-md-2 mb-3">
-                                        <label for="filtro-tipo" class="form-label">Tipo</label>
-                                        <select class="form-select" id="filtro-tipo">
+                                        <label for="filtro-metodo" class="form-label">Método</label>
+                                        <select class="form-select" id="filtro-metodo">
                                             <option value="">Todos</option>
                                             <option value="automatico">Automático</option>
                                             <option value="manual">Manual</option>
-                                            <option value="parcial">Parcial</option>
                                         </select>
                                     </div>
                                     <div class="col-md-2 mb-3">
@@ -1241,6 +1261,35 @@
                                         <button class="btn btn-outline-success ms-2" onclick="exportarDivergenciasCSV()">
                                             <i class="fas fa-file-csv me-2"></i>Exportar CSV
                                         </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Debug e Ações de Divergências -->
+                        <div class="card card-dashboard mb-4" style="background: #f8f9fa; border: 1px dashed #6c757d;">
+                            <div class="card-header bg-transparent border-0">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="fas fa-bug text-danger me-2"></i>Debug - Divergências
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <button class="btn btn-warning btn-sm me-2" onclick="forcarVerificacaoDivergencias()">
+                                            <i class="fas fa-search me-1"></i>Forçar Verificação
+                                        </button>
+                                        <button class="btn btn-info btn-sm me-2" onclick="debugDivergencias()">
+                                            <i class="fas fa-info me-1"></i>Debug Status
+                                        </button>
+                                        <button class="btn btn-success btn-sm" onclick="criarDivergenciasTeste()">
+                                            <i class="fas fa-plus me-1"></i>Criar Teste
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">
+                                            <strong>Dica:</strong> Use "Forçar Verificação" para analisar os dados atuais em busca de divergências.
+                                        </small>
                                     </div>
                                 </div>
                             </div>
@@ -1914,6 +1963,8 @@
         }
 
         function carregarEstatisticas(periodo = 'total', dataInicio = null, dataFim = null) {
+            console.log('Carregando estatísticas:', { periodo, dataInicio, dataFim });
+            
             // Construir parâmetros da requisição
             const params = new URLSearchParams();
             if (periodo && periodo !== 'total') {
@@ -1926,6 +1977,9 @@
                 params.append('data_fim', dataFim);
             }
 
+            const url = `/api/estatisticas?${params}`;
+            console.log('URL da requisição:', url);
+
             // Exibir indicador de carregamento
             const elementos = ['total-extratos', 'total-lancamentos', 'total-conciliados', 'total-divergencias'];
             elementos.forEach(id => {
@@ -1933,9 +1987,14 @@
                 if (element) element.textContent = '...';
             });
 
-            fetch(`/api/estatisticas?${params}`)
-                .then(response => response.json())
+            fetch(url)
+                .then(response => {
+                    console.log('Resposta recebida:', response.status);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Dados recebidos:', data);
+                    
                     // Atualizar elementos básicos
                     const totalExtratosEl = document.getElementById('total-extratos');
                     const totalLancamentosEl = document.getElementById('total-lancamentos');
@@ -1982,21 +2041,66 @@
                         const element = document.getElementById(id);
                         if (element) element.textContent = 'Erro';
                     });
+                    
+                    // Mostrar alerta para o usuário
+                    alert('Erro ao carregar estatísticas: ' + error.message);
                 });
         }
 
         // Variável global para armazenar o período atual
         let periodoAtualDashboard = 'total';
 
+        // Função de teste para verificar elementos
+        function testarFiltros() {
+            console.log('=== TESTE DOS FILTROS ===');
+            
+            const periodosParaTestar = ['hoje', 'semana', 'mes', 'ano'];
+            
+            periodosParaTestar.forEach(periodo => {
+                const botao = document.getElementById(`filtro-${periodo}`);
+                console.log(`Botão filtro-${periodo}:`, botao ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
+                
+                if (botao) {
+                    console.log(`  - Texto: ${botao.textContent.trim()}`);
+                    console.log(`  - Classes: ${botao.className}`);
+                    console.log(`  - onclick: ${botao.getAttribute('onclick')}`);
+                }
+            });
+            
+            // Testar container
+            const container = document.getElementById('dashboard');
+            console.log('Container dashboard:', container ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
+            
+            // Testar elementos de estatísticas
+            const elementosEstatisticas = ['total-extratos', 'total-lancamentos', 'total-conciliados', 'total-divergencias'];
+            elementosEstatisticas.forEach(id => {
+                const elemento = document.getElementById(id);
+                console.log(`Elemento ${id}:`, elemento ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
+                if (elemento) {
+                    console.log(`  - Valor atual: ${elemento.textContent}`);
+                }
+            });
+            
+            console.log('=== FIM DO TESTE ===');
+        }
+
         // Aplicar filtro de período
         function aplicarFiltroPeriodo(periodo) {
+            console.log('Aplicando filtro de período:', periodo);
             periodoAtualDashboard = periodo;
             
-            // Atualizar estado visual dos botões
-            document.querySelectorAll('#dashboard .btn-group .btn').forEach(btn => {
+            // Atualizar estado visual dos botões - usar seletor mais específico
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.getElementById(`filtro-${periodo}`).classList.add('active');
+            
+            const botaoAtivo = document.getElementById(`filtro-${periodo}`);
+            if (botaoAtivo) {
+                botaoAtivo.classList.add('active');
+                console.log('Botão ativado:', botaoAtivo.id);
+            } else {
+                console.error('Botão não encontrado:', `filtro-${periodo}`);
+            }
             
             // Ocultar filtro personalizado se estiver visível
             const containerPersonalizado = document.getElementById('filtro-personalizado-container');
@@ -2005,6 +2109,7 @@
             }
             
             // Carregar estatísticas com o novo período
+            console.log('Carregando estatísticas para período:', periodo);
             carregarEstatisticas(periodo);
         }
 
@@ -2172,7 +2277,12 @@
                         carregarConciliacoes(paginaAtualConciliacoes);
                     }
                 } else {
-                    alert('Erro na conciliação: ' + data.message);
+                    // Tratar especificamente a falta de dados
+                    if (data.message && data.message.includes('Não há dados suficientes')) {
+                        alert('⚠️ ' + data.message);
+                    } else {
+                        alert('❌ Erro na conciliação: ' + (data.error || data.message || 'Erro desconhecido'));
+                    }
                 }
             })
             .catch(error => {
@@ -2277,16 +2387,53 @@
 
         // Carregar estatísticas das conciliações
         function carregarEstatisticasConciliacoes() {
+            console.log('🚀 DEBUG: carregarEstatisticasConciliacoes() CHAMADA');
+            console.log('📊 Carregando estatísticas de conciliações...');
+            
             fetch('/api/conciliacoes/estatisticas')
-                .then(response => response.json())
+                .then(response => {
+                    console.log('🌐 Resposta API recebida:', response.status, response.statusText);
+                    return response.json();
+                })
                 .then(data => {
-                    document.getElementById('stat-total-conciliacoes').textContent = data.total_conciliacoes || 0;
-                    document.getElementById('stat-conciliacoes-ativas').textContent = data.conciliacoes_ativas || 0;
-                    document.getElementById('stat-conciliacoes-automaticas').textContent = data.conciliacoes_automaticas || 0;
-                    document.getElementById('stat-conciliacoes-recentes').textContent = data.conciliacoes_recentes || 0;
+                    console.log('📈 Estatísticas de conciliações recebidas:', data);
+                    
+                    // Verificar se elementos existem
+                    const totalElement = document.getElementById('stat-total-conciliacoes');
+                    const ativasElement = document.getElementById('stat-conciliacoes-ativas');
+                    const automaticasElement = document.getElementById('stat-conciliacoes-automaticas');
+                    const recentesElement = document.getElementById('stat-conciliacoes-recentes');
+                    
+                    console.log('🎯 Elementos encontrados:', {
+                        total: !!totalElement,
+                        ativas: !!ativasElement,
+                        automaticas: !!automaticasElement,
+                        recentes: !!recentesElement
+                    });
+                    
+                    if (totalElement) {
+                        const valor = data.total_conciliacoes || 0;
+                        totalElement.textContent = valor;
+                        console.log('✅ stat-total-conciliacoes atualizado para:', valor);
+                    }
+                    if (ativasElement) {
+                        const valor = data.conciliacoes_ativas || 0;
+                        ativasElement.textContent = valor;
+                        console.log('✅ stat-conciliacoes-ativas atualizado para:', valor);
+                    }
+                    if (automaticasElement) {
+                        const valor = data.conciliacoes_automaticas || 0;
+                        automaticasElement.textContent = valor;
+                        console.log('✅ stat-conciliacoes-automaticas atualizado para:', valor);
+                    }
+                    if (recentesElement) {
+                        const valor = data.conciliacoes_recentes || 0;
+                        recentesElement.textContent = valor;
+                        console.log('✅ stat-conciliacoes-recentes atualizado para:', valor);
+                    }
                 })
                 .catch(error => {
-                    console.error('Erro ao carregar estatísticas:', error);
+                    console.error('❌ Erro ao carregar estatísticas de conciliações:', error);
                 });
         }
 
@@ -2305,10 +2452,17 @@
                 document.getElementById('filtro-data-inicio').value : null;
             const dataFim = document.getElementById('filtro-data-fim') ? 
                 document.getElementById('filtro-data-fim').value : null;
-            const tipo = document.getElementById('filtro-tipo') ? 
-                document.getElementById('filtro-tipo').value : null;
+            const metodo = document.getElementById('filtro-metodo') ? 
+                document.getElementById('filtro-metodo').value : null;
             const status = document.getElementById('filtro-status') ? 
                 document.getElementById('filtro-status').value : null;
+
+            console.log('🔍 DEBUG FILTROS CARREGADOS:', {
+                dataInicio,
+                dataFim,
+                metodo,
+                status
+            });
 
             if (dataInicio) {
                 params.append('data_inicio', dataInicio);
@@ -2318,13 +2472,17 @@
                 params.append('data_fim', dataFim);
                 console.log('📅 Filtro data fim:', dataFim);
             }
-            if (tipo) {
-                params.append('tipo', tipo);
-                console.log('🔄 Filtro tipo:', tipo);
+            if (metodo && metodo !== '') {
+                params.append('metodo', metodo);
+                console.log('🔄 Filtro método aplicado:', metodo);
+            } else {
+                console.log('🔄 Filtro método não aplicado. Valor:', metodo);
             }
-            if (status) {
+            if (status && status !== '') {
                 params.append('status', status);
-                console.log('📊 Filtro status:', status);
+                console.log('📊 Filtro status aplicado:', status);
+            } else {
+                console.log('📊 Filtro status não aplicado. Valor:', status);
             }
 
             const urlCompleta = `/api/procedimentos?${params}`;
@@ -2507,7 +2665,7 @@
             // Obter valores dos filtros
             const dataInicio = document.getElementById('filtro-data-inicio')?.value || '';
             const dataFim = document.getElementById('filtro-data-fim')?.value || '';
-            const tipo = document.getElementById('filtro-tipo')?.value || '';
+            const tipo = document.getElementById('filtro-metodo')?.value || '';
             const status = document.getElementById('filtro-status')?.value || '';
             const porPagina = document.getElementById('filtro-por-pagina')?.value || '10';
             
@@ -2544,13 +2702,13 @@
             // Limpar todos os campos de filtro
             const filtroDataInicio = document.getElementById('filtro-data-inicio');
             const filtroDataFim = document.getElementById('filtro-data-fim');
-            const filtroTipo = document.getElementById('filtro-tipo');
+            const filtroMetodo = document.getElementById('filtro-metodo');
             const filtroStatus = document.getElementById('filtro-status');
             const filtroPorPagina = document.getElementById('filtro-por-pagina');
             
             if (filtroDataInicio) filtroDataInicio.value = '';
             if (filtroDataFim) filtroDataFim.value = '';
-            if (filtroTipo) filtroTipo.value = '';
+            if (filtroMetodo) filtroMetodo.value = '';
             if (filtroStatus) filtroStatus.value = '';
             if (filtroPorPagina) filtroPorPagina.value = '10';
             
@@ -2611,7 +2769,7 @@
                 const elementos = {
                     'filtro-data-inicio': document.getElementById('filtro-data-inicio'),
                     'filtro-data-fim': document.getElementById('filtro-data-fim'),
-                    'filtro-tipo': document.getElementById('filtro-tipo'),
+                    'filtro-metodo': document.getElementById('filtro-metodo'),
                     'filtro-status': document.getElementById('filtro-status'),
                     'filtro-por-pagina': document.getElementById('filtro-por-pagina')
                 };
@@ -2994,6 +3152,84 @@
             if (!body) return;
             
             body.innerHTML = '<div class="alert alert-info">Detalhes do procedimento carregados via arquivo externo</div>';
+        }
+
+        // Funções de Debug para Divergências
+        function forcarVerificacaoDivergencias() {
+            console.log('🔍 Forçando verificação de divergências...');
+            
+            const loadingMsg = 'Verificando divergências...';
+            const botao = event.target;
+            const textoOriginal = botao.innerHTML;
+            botao.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + loadingMsg;
+            botao.disabled = true;
+            
+            fetch('/api/verificar-divergencias', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ Resposta da verificação:', data);
+                
+                if (data.success) {
+                    alert(`✅ ${data.message}`);
+                    // Recarregar divergências
+                    carregarDivergencias();
+                } else {
+                    alert(`❌ Erro: ${data.error || 'Erro desconhecido'}`);
+                }
+            })
+            .catch(error => {
+                console.error('❌ Erro na verificação:', error);
+                alert('❌ Erro ao verificar divergências: ' + error.message);
+            })
+            .finally(() => {
+                botao.innerHTML = textoOriginal;
+                botao.disabled = false;
+            });
+        }
+
+        function debugDivergencias() {
+            console.log('🐛 Debug de divergências...');
+            
+            // Fazer requisição para a API de divergências
+            fetch('/api/divergencias')
+            .then(response => response.json())
+            .then(data => {
+                console.log('📊 Dados de divergências da API:', data);
+                
+                const info = `
+Debug de Divergências:
+• Total de divergências retornadas: ${Array.isArray(data) ? data.length : 'Não é array'}
+• Estrutura dos dados: ${JSON.stringify(data, null, 2)}
+• URL da requisição: /api/divergencias
+• Status da resposta: ${response.status}
+                `;
+                
+                alert(info);
+            })
+            .catch(error => {
+                console.error('❌ Erro no debug:', error);
+                alert('❌ Erro no debug: ' + error.message);
+            });
+        }
+
+        function criarDivergenciasTeste() {
+            const info = `
+Para criar divergências de teste:
+1. Faça upload dos arquivos:
+   - extrato_com_divergencias.csv
+   - lancamentos_com_divergencias.csv
+2. Execute uma conciliação automática
+3. Clique em "Forçar Verificação" aqui
+4. As divergências aparecerão na lista
+
+Os arquivos de teste já estão na pasta 'exemplos'.
+            `;
+            alert(info);
         }
 
         // Função para renderizar detalhes completos do procedimento
@@ -3642,19 +3878,34 @@
 
         // Carregar dados iniciais
         function inicializarSistema(abaAtiva) {
+            console.log('🚀 Inicializando sistema para aba:', abaAtiva);
+            
             // Inicializações que não afetam a UI
             inicializarUsuario();
             setupDragAndDrop();
+            
             // Só carregar estatísticas se dashboard estiver ativo
             if (abaAtiva === 'dashboard') {
-                periodoAtualDashboard = 'hoje';
-                carregarEstatisticas('hoje');
+                console.log('📊 Inicializando dashboard...');
+                
+                // Aguardar um pouco para garantir que todos os elementos estejam no DOM
+                setTimeout(() => {
+                    // Aplicar filtro padrão "hoje"
+                    aplicarFiltroPeriodo('hoje');
+                    console.log('📅 Filtro "hoje" aplicado por padrão');
+                }, 100);
             }
+            
             // Carregamentos em background (não interferem na UI)
             setTimeout(() => {
-                if (abaAtiva === 'conciliacao') carregarConciliacoes(1);
+                if (abaAtiva === 'conciliacao') {
+                    console.log('🔄 Carregando dados da aba conciliação...');
+                    carregarEstatisticasConciliacoes();
+                    carregarConciliacoes(1);
+                }
                 // Adicione outros carregamentos específicos de abas aqui se necessário
             }, 500);
+            
             console.log('✅ Inicialização concluída para aba:', abaAtiva);
         }
 
