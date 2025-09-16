@@ -1823,3 +1823,88 @@
 2025-09-12 12:51:35,989 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:35] "GET /api/procedimentos?page=1&per_page=10 HTTP/1.1" 200 -
 2025-09-12 12:51:36,286 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:36] "GET /api/sessao/status HTTP/1.1" 200 -
 2025-09-12 12:51:44,770 - werkzeug - INFO - 127.0.0.1 - - [12/Sep/2025 12:51:44] "GET /api/procedimentos/41/detalhes HTTP/1.1" 200 -
+2025-09-15 00:40:58,071 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-15 00:41:28,483 - root - INFO - Procedimento finalizado: PROC-20250912124710-6A649308 - 0 conciliações
+2025-09-15 00:41:28,493 - root - INFO - Sessão PROC-20250912124710-6A649308 finalizada por timeout
+2025-09-15 00:41:28,493 - root - INFO - 1 sessões antigas finalizadas automaticamente
+2025-09-15 00:41:28,503 - root - INFO - Procedimento criado: PROC-20250915004128-DDF34E45 - sessao_conciliacao por usuário admin
+2025-09-15 00:41:32,203 - root - INFO - Usando sessão existente: PROC-20250915004128-DDF34E45
+2025-09-15 00:41:33,585 - root - INFO - Procedimento criado: PROC-20250915004133-25AB3AF9 - conciliacao por usuário admin
+2025-09-15 00:41:33,609 - root - INFO - Iniciando verificação de divergências...
+2025-09-15 00:41:33,609 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-15 00:41:33,625 - root - INFO - Verificando valores diferentes...
+2025-09-15 00:41:33,626 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-15 00:41:33,628 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-15 00:41:33,636 - root - INFO - Procedimento finalizado: PROC-20250915004133-25AB3AF9 - 0 conciliações
+2025-09-15 00:42:15,281 - root - INFO - Procedimento criado: PROC-20250915004215-F58DE641 - conciliacao por usuário admin
+2025-09-15 00:42:15,304 - root - INFO - Iniciando verificação de divergências...
+2025-09-15 00:42:15,304 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-15 00:42:15,316 - root - INFO - Verificando valores diferentes...
+2025-09-15 00:42:15,317 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-15 00:42:15,318 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-15 00:42:15,327 - root - INFO - Procedimento finalizado: PROC-20250915004215-F58DE641 - 0 conciliações
+2025-09-15 00:44:21,811 - root - INFO - Procedimento finalizado: PROC-20250915004128-DDF34E45 - 0 conciliações
+2025-09-15 00:44:25,708 - root - INFO - Dados limpos com sucesso pelo usuário: admin
+2025-09-15 00:45:18,136 - root - INFO - Procedimento criado: PROC-20250915004518-AEAECC6C - sessao_conciliacao por usuário admin
+2025-09-15 00:45:33,548 - root - INFO - Usando sessão existente: PROC-20250915004518-AEAECC6C
+2025-09-15 00:45:35,234 - root - INFO - Procedimento criado: PROC-20250915004535-91A20847 - conciliacao por usuário admin
+2025-09-15 00:45:35,523 - root - INFO - Iniciando verificação de divergências...
+2025-09-15 00:45:35,523 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-15 00:45:35,533 - root - INFO - Verificando valores diferentes...
+2025-09-15 00:45:35,533 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-15 00:45:35,534 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-15 00:45:35,542 - root - INFO - Procedimento finalizado: PROC-20250915004535-91A20847 - 18 conciliações
+2025-09-15 00:45:41,465 - root - INFO - Iniciando verificação de divergências...
+2025-09-15 00:45:41,465 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-15 00:45:41,476 - root - INFO - Verificando valores diferentes...
+2025-09-15 00:45:41,476 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-15 00:45:41,477 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-16 13:13:05,937 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.59:5000
+2025-09-16 13:13:05,937 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-16 13:13:05,942 - werkzeug - INFO -  * Restarting with stat
+2025-09-16 13:13:06,765 - werkzeug - WARNING -  * Debugger is active!
+2025-09-16 13:13:06,768 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-16 13:14:17,848 - werkzeug - INFO - 127.0.0.1 - - [16/Sep/2025 13:14:17] "[33mGET /teste_filtros_conciliacao.html?id=bc9cfeeb-2706-4143-bc7b-b9da11fc2115&vscodeBrowserReqId=1758039257532 HTTP/1.1[0m" 404 -
+2025-09-16 13:14:22,318 - werkzeug - INFO - 127.0.0.1 - - [16/Sep/2025 13:14:22] "[33mGET /teste_filtros_conciliacao.html?id=bc9cfeeb-2706-4143-bc7b-b9da11fc2115&vscodeBrowserReqId=1758039262313 HTTP/1.1[0m" 404 -
+2025-09-16 13:14:46,249 - werkzeug - INFO - 127.0.0.1 - - [16/Sep/2025 13:14:46] "[33mGET /teste_filtros_conciliacao.html HTTP/1.1[0m" 404 -
+2025-09-16 13:14:46,429 - werkzeug - INFO - 127.0.0.1 - - [16/Sep/2025 13:14:46] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-09-16 13:14:46,621 - werkzeug - INFO - 127.0.0.1 - - [16/Sep/2025 13:14:46] "[33mGET /teste_filtros_conciliacao.html HTTP/1.1[0m" 404 -
+2025-09-16 13:24:27,194 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.59:5000
+2025-09-16 13:24:27,194 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-16 13:24:27,195 - werkzeug - INFO -  * Restarting with stat
+2025-09-16 13:24:28,001 - werkzeug - WARNING -  * Debugger is active!
+2025-09-16 13:24:28,004 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-16 13:25:28,833 - werkzeug - INFO - 127.0.0.1 - - [16/Sep/2025 13:25:28] "[32mGET /?id=bc9cfeeb-2706-4143-bc7b-b9da11fc2115&vscodeBrowserReqId=1758039928521 HTTP/1.1[0m" 302 -
+2025-09-16 13:25:29,102 - werkzeug - INFO - 127.0.0.1 - - [16/Sep/2025 13:25:29] "GET /register HTTP/1.1" 200 -
+2025-09-16 13:25:31,083 - werkzeug - INFO - 127.0.0.1 - - [16/Sep/2025 13:25:31] "[33mGET /teste_filtros_conciliacao.html?id=bc9cfeeb-2706-4143-bc7b-b9da11fc2115&vscodeBrowserReqId=1758039931079 HTTP/1.1[0m" 404 -
+2025-09-16 13:30:14,195 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.59:5000
+2025-09-16 13:30:14,195 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-16 13:30:14,196 - werkzeug - INFO -  * Restarting with stat
+2025-09-16 13:30:15,063 - werkzeug - WARNING -  * Debugger is active!
+2025-09-16 13:30:15,066 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-16 13:33:18,734 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.59:5000
+2025-09-16 13:33:18,734 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-16 13:33:18,735 - werkzeug - INFO -  * Restarting with stat
+2025-09-16 13:33:19,562 - werkzeug - WARNING -  * Debugger is active!
+2025-09-16 13:33:19,565 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-16 13:34:23,985 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.59:5000
+2025-09-16 13:34:23,985 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-16 13:34:23,986 - werkzeug - INFO -  * Restarting with stat
+2025-09-16 13:34:24,801 - werkzeug - WARNING -  * Debugger is active!
+2025-09-16 13:34:24,805 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-16 13:34:39,266 - waitress - INFO - Serving on http://0.0.0.0:8080

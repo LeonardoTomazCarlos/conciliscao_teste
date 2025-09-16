@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run offline divergence test",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"\"c:\\Users\\samue\\OneDrive\\Documentos\\GitHub\\conciliscao_teste\\sistema concili\\scripts\\testar_divergencias_offline.py\""
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run offline divergence test (quoted path)",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"\"c:\\Users\\samue\\OneDrive\\Documentos\\GitHub\\conciliscao_teste\\sistema concili\\scripts\\testar_divergencias_offline.py\""
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		}
+	]
+}

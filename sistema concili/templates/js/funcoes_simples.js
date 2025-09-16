@@ -158,139 +158,16 @@ function exportarDivergenciasCSV() {
 
 // Aplicar filtros de conciliações
 function aplicarFiltros() {
-    console.log('Aplicando filtros de conciliações');
-    
-    // Mostrar estado de carregamento
-    const tabela = document.getElementById('tabela-conciliacoes');
-    if (tabela) {
-        tabela.innerHTML = `
-            <tr>
-                <td colspan="9" class="text-center py-4">
-                    <div class="spinner-border text-primary mb-3" role="status"></div>
-                    <div class="text-primary">Carregando dados...</div>
-                    <small class="text-muted">Aplicando filtros e atualizando resultados</small>
-                </td>
-            </tr>
-        `;
-    }
-    
-    // Desabilitar botões durante o carregamento
-    const btnAplicar = document.querySelector('button[onclick="aplicarFiltros()"]');
-    const btnLimpar = document.querySelector('button[onclick="limparFiltros()"]');
-    if (btnAplicar) btnAplicar.disabled = true;
-    if (btnLimpar) btnLimpar.disabled = true;
-    
-    // Coletar dados dos filtros
-    const dataInicio = document.getElementById('filtro-data-inicio').value;
-    const dataFim = document.getElementById('filtro-data-fim').value;
-    const tipo = document.getElementById('filtro-tipo').value;
-    const status = document.getElementById('filtro-status').value;
-    const porPagina = document.getElementById('filtro-por-pagina')?.value || '10';
-    
-    // Construir parâmetros para a requisição
-    const params = new URLSearchParams();
-    if (dataInicio) params.append('data_inicio', dataInicio);
-    if (dataFim) params.append('data_fim', dataFim);
-    if (tipo) params.append('tipo', tipo);
-    if (status) params.append('status', status);
-    params.append('por_pagina', porPagina);
-    
-    // Carregar conciliações com os filtros
-    fetch(`/api/conciliacoes?${params}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao carregar dados: ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Atualizar a tabela de conciliações
-            const tabela = document.getElementById('tabela-conciliacoes');
-            if (!tabela) return;
-            
-            if (!data || data.length === 0) {
-                tabela.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="text-center py-4">
-                            <div class="text-muted">
-                                <i class="fas fa-search fa-2x mb-3 d-block"></i>
-                                <div>Nenhuma conciliação encontrada com os filtros aplicados</div>
-                                <small class="text-muted mt-2">Tente ajustar os critérios de busca</small>
-                            </div>
-                        </td>
-                    </tr>`;
-                
-                // Zerar estatísticas quando não há dados
-                atualizarEstatisticasConciliacao([]);
-                return;
-            }
-            
-            tabela.innerHTML = data.map(item => `
-                <tr>
-                    <td>${item.id_procedimento}</td>
-                    <td>${new Date(item.data_hora).toLocaleString('pt-BR')}</td>
-                    <td>${item.tipo}</td>
-                    <td>${item.metodo}</td>
-                    <td>${item.total_conciliacoes}</td>
-                    <td>
-                        <span class="badge ${item.status === 'Concluído' ? 'bg-success' : 
-                                          item.status === 'Em Andamento' ? 'bg-warning' : 'bg-danger'}">
-                            ${item.status}
-                        </span>
-                    </td>
-                    <td>${item.usuario}</td>
-                    <td>R$ ${parseFloat(item.valor_total).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <button class="btn btn-primary" onclick="verDetalhesConciliacao(${item.id_procedimento})" title="Ver Detalhes">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-danger" onclick="cancelarConciliacao(${item.id_procedimento})" title="Cancelar">
-                                <i class="fas fa-times"></i>
-                            </button>
-                            <button class="btn btn-success" onclick="exportarProcedimento(${item.id_procedimento})" title="Exportar">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-            
-            // Atualizar estatísticas
-            const statTotal = document.getElementById('stat-total-conciliacoes');
-            const statAtivas = document.getElementById('stat-conciliacoes-ativas');
-            const statAutomaticas = document.getElementById('stat-conciliacoes-automaticas');
-            const statRecentes = document.getElementById('stat-conciliacoes-recentes');
-            
-            if (statTotal) statTotal.textContent = data.length;
-            if (statAtivas) statAtivas.textContent = data.filter(item => item.status === 'Concluído').length;
-            if (statAutomaticas) statAutomaticas.textContent = data.filter(item => item.tipo === 'Automática').length;
-            if (statRecentes) statRecentes.textContent = data.filter(item => {
-                const data = new Date(item.data_hora);
-                const trintaDiasAtras = new Date();
-                trintaDiasAtras.setDate(trintaDiasAtras.getDate() - 30);
-                return data >= trintaDiasAtras;
-            }).length;
-        })
-        .catch(error => {
-            console.error('Erro ao carregar conciliações:', error);
-            const tabela = document.getElementById('tabela-conciliacoes');
-            if (tabela) {
-                tabela.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="text-center text-danger py-4">
-                            <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
-                            Erro ao carregar conciliações. Tente novamente mais tarde.
-                        </td>
-                    </tr>`;
-            }
-        });
+    console.log('🔍 Aplicando filtros de conciliações...');
+    carregarConciliacoes(true);
 }
 
 // Limpar filtros de conciliações
 function limparFiltros() {
-    console.log('Limpando filtros de conciliações');
-    const campos = ['filtro-data-inicio', 'filtro-data-fim', 'filtro-tipo', 'filtro-status', 'filtro-por-pagina'];
+    console.log('🗑️ Limpando filtros de conciliações...');
+    
+    // Limpar campos - CORRIGIDO com IDs corretos
+    const campos = ['filtro-data-inicio', 'filtro-data-fim', 'filtro-metodo', 'filtro-status', 'filtro-por-pagina'];
     campos.forEach(campo => {
         const elemento = document.getElementById(campo);
         if (elemento) {
@@ -302,10 +179,17 @@ function limparFiltros() {
         }
     });
     
+    console.log('✅ Filtros limpos, carregando todos os procedimentos...');
+    
     // Após limpar, carregar todas as conciliações sem filtros
-    fetch('/api/conciliacoes')
-        .then(response => response.json())
+    fetch('/api/procedimentos')
+        .then(response => {
+            console.log('📡 Response status:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('📊 Dados recebidos:', data);
+            
             const tabela = document.getElementById('tabela-conciliacoes');
             if (!tabela) return;
             
@@ -315,7 +199,8 @@ function limparFiltros() {
                         <td colspan="9" class="text-center py-4">
                             <div class="text-muted">
                                 <i class="fas fa-info-circle fa-2x mb-3 d-block"></i>
-                                Nenhuma conciliação encontrada
+                                Nenhum procedimento encontrado no sistema
+                                <br><small class="text-muted mt-2">Execute conciliações para ver os resultados aqui</small>
                             </div>
                         </td>
                     </tr>`;
@@ -326,17 +211,18 @@ function limparFiltros() {
                 <tr>
                     <td>${item.id_procedimento}</td>
                     <td>${new Date(item.data_hora).toLocaleString('pt-BR')}</td>
-                    <td>${item.tipo}</td>
-                    <td>${item.metodo}</td>
-                    <td>${item.total_conciliacoes}</td>
+                    <td><span class="badge bg-info">${item.tipo}</span></td>
+                    <td><span class="badge bg-secondary">${item.metodo}</span></td>
+                    <td><strong>${item.total_conciliacoes}</strong></td>
                     <td>
                         <span class="badge ${item.status === 'Concluído' ? 'bg-success' : 
-                                          item.status === 'Em Andamento' ? 'bg-warning' : 'bg-danger'}">
+                                          item.status === 'Em Andamento' ? 'bg-warning' : 
+                                          item.status === 'Com Erro' ? 'bg-danger' : 'bg-secondary'}">
                             ${item.status}
                         </span>
                     </td>
-                    <td>${item.usuario}</td>
-                    <td>R$ ${parseFloat(item.valor_total).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td><i class="fas fa-user me-1"></i>${item.usuario}</td>
+                    <td><strong>R$ ${parseFloat(item.valor_total).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
                     <td>
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-primary" onclick="verDetalhesConciliacao(${item.id_procedimento})" title="Ver Detalhes">
@@ -355,9 +241,11 @@ function limparFiltros() {
             
             // Atualizar estatísticas
             atualizarEstatisticasConciliacao(data);
+            
+            console.log('✅ Dados recarregados sem filtros');
         })
         .catch(error => {
-            console.error('Erro ao carregar conciliações:', error);
+            console.error('❌ Erro ao carregar conciliações:', error);
             const tabela = document.getElementById('tabela-conciliacoes');
             if (tabela) {
                 tabela.innerHTML = `
@@ -365,6 +253,7 @@ function limparFiltros() {
                         <td colspan="9" class="text-center text-danger py-4">
                             <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
                             Erro ao carregar conciliações. Tente novamente mais tarde.
+                            <br><small>Erro: ${error.message}</small>
                         </td>
                     </tr>`;
             }
@@ -539,10 +428,119 @@ function verDetalhesConciliacao(id) {
     alert('Detalhes da conciliação ' + id + '\n\nFuncionalidade em desenvolvimento...');
 }
 
-// Exportar procedimento
-function exportarProcedimento(id) {
-    console.log('Exportar procedimento:', id);
-    alert('Exportação do procedimento ' + id + ' em desenvolvimento');
+// Carregar conciliações (procedimentos) automaticamente
+function carregarConciliacoes(aplicarFiltros = false) {
+    console.log('🔄 Carregando conciliações/procedimentos...');
+    
+    const url = aplicarFiltros ? construirUrlComFiltros() : '/api/procedimentos';
+    console.log('🌐 URL:', url);
+    
+    const tabela = document.getElementById('tabela-conciliacoes');
+    if (tabela) {
+        tabela.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <div class="text-primary">Carregando procedimentos...</div>
+                </td>
+            </tr>
+        `;
+    }
+    
+    fetch(url)
+        .then(response => {
+            console.log('📡 Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('📊 Dados recebidos:', data);
+            
+            if (!tabela) return;
+            
+            if (!data || data.length === 0) {
+                tabela.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="fas fa-info-circle fa-2x mb-3 d-block"></i>
+                                <div>Nenhum procedimento encontrado</div>
+                                <small class="text-muted mt-2">Execute conciliações ou crie dados de exemplo para ver os resultados</small>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            tabela.innerHTML = data.map(item => `
+                <tr>
+                    <td><strong>${item.id_procedimento}</strong></td>
+                    <td>${new Date(item.data_hora).toLocaleString('pt-BR')}</td>
+                    <td><span class="badge bg-info">${item.tipo}</span></td>
+                    <td><span class="badge bg-secondary">${item.metodo}</span></td>
+                    <td><strong class="text-primary">${item.total_conciliacoes}</strong></td>
+                    <td>
+                        <span class="badge ${item.status === 'Concluído' ? 'bg-success' : 
+                                          item.status === 'Em Andamento' ? 'bg-warning' : 
+                                          item.status === 'Com Erro' ? 'bg-danger' : 
+                                          item.status === 'Parcial' ? 'bg-info' : 'bg-secondary'}">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td><i class="fas fa-user me-1"></i>${item.usuario}</td>
+                    <td><strong class="text-success">R$ ${parseFloat(item.valor_total).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary" onclick="verDetalhesConciliacao(${item.id_procedimento})" title="Ver Detalhes">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="cancelarConciliacao(${item.id_procedimento})" title="Cancelar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="btn btn-success" onclick="exportarProcedimento(${item.id_procedimento})" title="Exportar">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Atualizar estatísticas
+            atualizarEstatisticasConciliacao(data);
+            
+            console.log('✅ Conciliações carregadas com sucesso!');
+        })
+        .catch(error => {
+            console.error('❌ Erro ao carregar conciliações:', error);
+            if (tabela) {
+                tabela.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center text-danger py-4">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
+                            Erro ao carregar procedimentos
+                            <br><small>Erro: ${error.message}</small>
+                        </td>
+                    </tr>`;
+            }
+        });
+}
+
+// Construir URL com filtros
+function construirUrlComFiltros() {
+    const params = new URLSearchParams();
+    
+    const dataInicio = document.getElementById('filtro-data-inicio')?.value;
+    const dataFim = document.getElementById('filtro-data-fim')?.value;
+    const metodo = document.getElementById('filtro-metodo')?.value;
+    const status = document.getElementById('filtro-status')?.value;
+    const porPagina = document.getElementById('filtro-por-pagina')?.value;
+    
+    if (dataInicio) params.append('data_inicio', dataInicio);
+    if (dataFim) params.append('data_fim', dataFim);
+    if (metodo) params.append('metodo', metodo);
+    if (status) params.append('status', status);
+    if (porPagina) params.append('por_pagina', porPagina);
+    
+    return `/api/procedimentos?${params}`;
 }
 
 // Carregar dados do usuário
@@ -1269,6 +1267,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const periodoSelect = document.getElementById('filtro-periodo-relatorio');
     if (periodoSelect) {
         periodoSelect.addEventListener('change', controlarCamposDataPersonalizada);
+    }
+    
+    // Detectar mudança de aba e carregar dados automaticamente
+    const tabElements = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabElements.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function (e) {
+            const tabId = e.target.getAttribute('href');
+            console.log('🔄 Mudança para aba:', tabId);
+            
+            if (tabId === '#conciliacao') {
+                console.log('🎯 Carregando dados da aba Conciliação...');
+                carregarConciliacoes();
+            }
+        });
+    });
+    
+    // Carregar dados iniciais se já estiver na aba de conciliação
+    const activeTab = document.querySelector('.nav-link.active[href="#conciliacao"]');
+    if (activeTab) {
+        console.log('🎯 Aba Conciliação já ativa, carregando dados...');
+        carregarConciliacoes();
     }
     
     // Carregar filtros salvos na inicialização

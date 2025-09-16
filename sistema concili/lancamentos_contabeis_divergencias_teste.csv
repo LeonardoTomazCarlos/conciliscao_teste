@@ -1,0 +1,24 @@
+Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
+2024-10-01,Recebimento PIX - João Silva,1500.00,credito,Receitas,João Silva,Vendas
+2024-10-01,Compra Supermercado ABC,85.50,debito,Alimentação,Supermercado ABC,Administrativo
+2024-10-02,Depósito em dinheiro,2000.00,credito,Receitas,Caixa,Vendas
+2024-10-02,Recebimento TED - Maria Santos,750.00,credito,Receitas,Maria Santos,Vendas
+2024-10-03,Combustível Posto Gasolina,120.00,debito,Transporte,Posto de Gasolina,Operacional
+2024-10-03,Saque ATM,300.00,debito,Caixa,Caixa,Administrativo
+2024-10-04,Salário Empresa XYZ,5000.00,credito,Receitas,Empresa XYZ,Vendas
+2024-10-04,Recebimento PIX - Pedro Costa,250.00,credito,Receitas,Pedro Costa,Vendas
+2024-10-05,Medicamentos Farmácia,45.80,debito,Saúde,Farmácia,Administrativo
+2024-10-05,Recebimento PIX - Ana Lima,180.00,credito,Receitas,Ana Lima,Vendas
+2024-10-06,Depósito cheque,1200.00,credito,Receitas,Caixa,Vendas
+2024-10-06,Almoço Restaurante,95.00,debito,Alimentação,Restaurante,Administrativo
+2024-10-07,Recebimento PIX - Carlos Oliveira,320.00,credito,Receitas,Carlos Oliveira,Vendas
+2024-10-07,Saque ATM,200.00,debito,Caixa,Caixa,Administrativo
+2024-10-08,Compra Loja de Roupas,280.50,debito,Vestuário,Loja de Roupas,Administrativo
+2024-10-08,Recebimento PIX - Fernanda Rocha,150.00,credito,Receitas,Fernanda Rocha,Vendas
+2024-10-09,Depósito em dinheiro,800.00,credito,Receitas,Caixa,Vendas
+2024-10-09,Pão Padaria,25.30,debito,Alimentação,Padaria,Administrativo
+2024-10-10,Recebimento PIX - Roberto Alves,400.00,credito,Receitas,Roberto Alves,Vendas
+2024-10-10,Saque ATM,150.00,debito,Caixa,Caixa,Administrativo
+2024-10-11,Manutenção escritório,125.60,debito,Infraestrutura,Empresa de Limpeza,Administrativo
+2024-10-12,Material de escritório,89.40,debito,Material,Papelaria Central,Administrativo
+2024-10-12,Recebimento PIX - Juliana Moura,350.00,credito,Receitas,Juliana Moura,Vendas

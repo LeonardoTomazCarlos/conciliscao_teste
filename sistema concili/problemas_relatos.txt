@@ -1,0 +1,4 @@
+a parte divergencias nos topicos: filtrar, remover filtro, 
+atualizar da parte divergencias,n estão funcioanando.
+
+a parte relatorios os botoes estao funcioanando mais n estao fazendo as suas funcoes
