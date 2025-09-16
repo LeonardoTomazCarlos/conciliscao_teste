@@ -1,0 +1,6 @@
+Data,Descrição,Valor,Tipo
+2025-01-25,Transação Data Divergente Ext,500.00,credito
+2025-01-26,Compra Data Divergente,150.75,debito
+2025-01-27,PIX Data Divergente,300.50,credito
+2025-01-28,Saque Data Divergente,200.00,debito
+2025-01-29,Depósito Data Divergente,750.25,credito

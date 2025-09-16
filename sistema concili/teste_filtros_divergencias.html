@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Filtros de Divergências</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">🧪 Teste dos Filtros de Divergências</h1>
+        
+        <!-- Botões de Teste -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <button class="btn btn-success btn-lg w-100" onclick="criarDadosExemploDivergencias()">
+                    <i class="fas fa-plus"></i> Criar Divergências Teste
+                </button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-lg w-100" onclick="carregarDivergencias()">
+                    <i class="fas fa-sync"></i> Carregar Divergências
+                </button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-info btn-lg w-100" onclick="debugDivergencias()">
+                    <i class="fas fa-bug"></i> Debug Status
+                </button>
+            </div>
+        </div>
+        
+        <!-- Filtros -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-filter"></i> Filtros de Divergências</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="filtro-tipo-divergencia" class="form-label">Tipo de Divergência</label>
+                        <select class="form-select" id="filtro-tipo-divergencia">
+                            <option value="">Todos os tipos</option>
+                            <option value="extrato_orfao">Extrato Órfão</option>
+                            <option value="lancamento_orfao">Lançamento Órfão</option>
+                            <option value="diferenca_valor">Diferença de Valor</option>
+                            <option value="data_divergente">Data Divergente</option>
+                            <option value="duplicata">Duplicata</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtro-status-divergencia" class="form-label">Status</label>
+                        <select class="form-select" id="filtro-status-divergencia">
+                            <option value="">Todos os status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="analisando">Em Análise</option>
+                            <option value="resolvido">Resolvido</option>
+                            <option value="ignorado">Ignorado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtro-data-inicial-div" class="form-label">Data Inicial</label>
+                        <input type="date" class="form-control" id="filtro-data-inicial-div">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtro-data-final-div" class="form-label">Data Final</label>
+                        <input type="date" class="form-control" id="filtro-data-final-div">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <button class="btn btn-primary" onclick="aplicarFiltrosDivergencias()">
+                            <i class="fas fa-search"></i> Aplicar Filtros
+                        </button>
+                        <button class="btn btn-secondary ms-2" onclick="limparFiltrosDivergencias()">
+                            <i class="fas fa-times"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estatísticas -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" id="divergencias-pendentes">0</h4>
+                                <p class="card-text">Pendentes</p>
+                            </div>
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" id="divergencias-resolvidas">0</h4>
+                                <p class="card-text">Resolvidas</p>
+                            </div>
+                            <i class="fas fa-check fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" id="valor-divergencias">R$ 0,00</h4>
+                                <p class="card-text">Valor Total</p>
+                            </div>
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" id="percentual-divergencias">0%</h4>
+                                <p class="card-text">% Pendentes</p>
+                            </div>
+                            <i class="fas fa-percentage fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabela de Resultados -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-table"></i> Divergências Encontradas</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Valor Extrato</th>
+                                <th>Valor Lançamento</th>
+                                <th>Diferença</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-divergencias-nova">
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
+                                        <div>Nenhuma divergência carregada</div>
+                                        <small>Clique em "Criar Divergências Teste" para começar</small>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Log de Ações -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-terminal"></i> Log de Ações</h5>
+            </div>
+            <div class="card-body">
+                <div id="log-acoes" style="max-height: 300px; overflow-y: auto; background: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 0.9em;">
+                    <div class="text-muted">Aguardando ações...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para adicionar log
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('log-acoes');
+            const timestamp = new Date().toLocaleTimeString('pt-BR');
+            const colors = {
+                'info': '#007bff',
+                'success': '#28a745',
+                'error': '#dc3545',
+                'warning': '#ffc107'
+            };
+            
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color: #6c757d;">[${timestamp}]</span> <span style="color: ${colors[type]};">${message}</span>`;
+            logEntry.style.marginBottom = '5px';
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Incluir as funções do sistema principal aqui
+        // Carregar divergências com filtros
+        function carregarDivergencias() {
+            addLog('🔍 Carregando divergências...', 'info');
+            
+            // Mostrar estado de carregamento
+            const tabela = document.getElementById('tabela-divergencias-nova');
+            if (tabela) {
+                tabela.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-4">
+                            <div class="spinner-border text-warning mb-3" role="status"></div>
+                            <div class="text-warning">Carregando divergências...</div>
+                            <small class="text-muted">Analisando extratos e lançamentos</small>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            // Coletar dados dos filtros
+            const tipoFiltro = document.getElementById('filtro-tipo-divergencia')?.value || '';
+            const statusFiltro = document.getElementById('filtro-status-divergencia')?.value || '';
+            const dataInicial = document.getElementById('filtro-data-inicial-div')?.value || '';
+            const dataFinal = document.getElementById('filtro-data-final-div')?.value || '';
+            
+            addLog(`📋 Filtros: tipo=${tipoFiltro}, status=${statusFiltro}, data_inicio=${dataInicial}, data_fim=${dataFinal}`, 'info');
+            
+            // Construir parâmetros para a requisição
+            const params = new URLSearchParams();
+            if (tipoFiltro) params.append('tipo', tipoFiltro);
+            if (statusFiltro) params.append('status', statusFiltro);
+            if (dataInicial) params.append('data_inicio', dataInicial);
+            if (dataFinal) params.append('data_fim', dataFinal);
+            params.append('por_pagina', '50');
+            
+            const url = `/api/divergencias?${params}`;
+            addLog(`🌐 URL: ${url}`, 'info');
+            
+            // Fazer requisição
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar divergências: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const divergencias = data.divergencias || data;
+                    addLog(`📊 Recebidas ${divergencias.length} divergências`, 'success');
+                    
+                    // Atualizar tabela
+                    if (!tabela) return;
+                    
+                    if (!divergencias || divergencias.length === 0) {
+                        tabela.innerHTML = `
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-search fa-2x mb-3 d-block"></i>
+                                        <div>Nenhuma divergência encontrada</div>
+                                        <small class="text-muted mt-2">Tente ajustar os filtros ou criar dados de exemplo</small>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        
+                        // Zerar estatísticas
+                        atualizarEstatisticas([]);
+                        return;
+                    }
+                    
+                    // Renderizar divergências
+                    tabela.innerHTML = divergencias.map(item => renderizarLinhaDivergencia(item)).join('');
+                    
+                    // Atualizar estatísticas
+                    atualizarEstatisticas(divergencias);
+                })
+                .catch(error => {
+                    addLog(`❌ Erro: ${error.message}`, 'error');
+                    if (tabela) {
+                        tabela.innerHTML = `
+                            <tr>
+                                <td colspan="9" class="text-center text-danger py-4">
+                                    <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
+                                    Erro ao carregar divergências. Tente novamente.
+                                    <br><small>Erro: ${error.message}</small>
+                                </td>
+                            </tr>`;
+                    }
+                });
+        }
+
+        // Renderizar linha da tabela de divergências
+        function renderizarLinhaDivergencia(item) {
+            const tipoClass = {
+                'extrato_orfao': 'bg-warning',
+                'lancamento_orfao': 'bg-info', 
+                'diferenca_valor': 'bg-danger',
+                'data_divergente': 'bg-secondary',
+                'duplicata': 'bg-dark'
+            }[item.tipo] || 'bg-primary';
+            
+            const statusClass = {
+                'pendente': 'bg-warning',
+                'analisando': 'bg-info',
+                'resolvido': 'bg-success',
+                'ignorado': 'bg-secondary'
+            }[item.status] || 'bg-warning';
+            
+            const tipoNome = {
+                'extrato_orfao': 'Extrato Órfão',
+                'lancamento_orfao': 'Lançamento Órfão',
+                'diferenca_valor': 'Diferença de Valor',
+                'data_divergente': 'Data Divergente',
+                'duplicata': 'Duplicata'
+            }[item.tipo] || item.tipo;
+            
+            const valorExtrato = item.extrato_bancario ? 
+                `R$ ${parseFloat(item.extrato_bancario.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}` : 
+                '-';
+            
+            const valorLancamento = item.lancamento_contabil ? 
+                `R$ ${parseFloat(item.lancamento_contabil.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}` : 
+                '-';
+            
+            let diferenca = '-';
+            if (item.extrato_bancario && item.lancamento_contabil) {
+                const diff = parseFloat(item.extrato_bancario.valor) - parseFloat(item.lancamento_contabil.valor);
+                diferenca = `R$ ${Math.abs(diff).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            }
+            
+            const data = item.extrato_bancario?.data || item.lancamento_contabil?.data || 'N/A';
+            
+            return `
+                <tr class="align-middle">
+                    <td class="fw-bold">${item.id}</td>
+                    <td><span class="badge ${tipoClass}">${tipoNome}</span></td>
+                    <td>
+                        <div class="text-truncate" style="max-width: 200px;" title="${item.descricao}">
+                            ${item.descricao}
+                        </div>
+                        <small class="text-muted">${item.motivo || ''}</small>
+                    </td>
+                    <td class="text-end">${valorExtrato}</td>
+                    <td class="text-end">${valorLancamento}</td>
+                    <td class="text-end ${diferenca !== '-' && diferenca !== 'R$ 0,00' ? 'text-danger fw-bold' : ''}">${diferenca}</td>
+                    <td>${data}</td>
+                    <td><span class="badge ${statusClass}">${item.status}</span></td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary" onclick="verDetalhes('${item.id}')" title="Ver Detalhes">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-success" onclick="resolver('${item.id}')" title="Resolver">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Atualizar estatísticas
+        function atualizarEstatisticas(divergencias) {
+            const pendentes = divergencias.filter(d => d.status === 'pendente').length;
+            const resolvidas = divergencias.filter(d => d.status === 'resolvido').length;
+            
+            let valorTotal = 0;
+            divergencias.forEach(d => {
+                if (d.extrato_bancario && d.lancamento_contabil) {
+                    valorTotal += Math.abs(parseFloat(d.extrato_bancario.valor) - parseFloat(d.lancamento_contabil.valor));
+                } else if (d.extrato_bancario) {
+                    valorTotal += parseFloat(d.extrato_bancario.valor);
+                } else if (d.lancamento_contabil) {
+                    valorTotal += parseFloat(d.lancamento_contabil.valor);
+                }
+            });
+            
+            const percentual = divergencias.length > 0 ? ((pendentes / divergencias.length) * 100).toFixed(1) : 0;
+            
+            document.getElementById('divergencias-pendentes').textContent = pendentes;
+            document.getElementById('divergencias-resolvidas').textContent = resolvidas;
+            document.getElementById('valor-divergencias').textContent = `R$ ${valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('percentual-divergencias').textContent = `${percentual}%`;
+        }
+
+        // Aplicar filtros
+        function aplicarFiltrosDivergencias() {
+            addLog('🔍 Aplicando filtros...', 'info');
+            carregarDivergencias();
+        }
+
+        // Limpar filtros
+        function limparFiltrosDivergencias() {
+            addLog('🧹 Limpando filtros...', 'info');
+            document.getElementById('filtro-tipo-divergencia').value = '';
+            document.getElementById('filtro-status-divergencia').value = '';
+            document.getElementById('filtro-data-inicial-div').value = '';
+            document.getElementById('filtro-data-final-div').value = '';
+            carregarDivergencias();
+        }
+
+        // Criar dados de exemplo
+        function criarDadosExemploDivergencias() {
+            addLog('🔄 Criando divergências de exemplo...', 'info');
+            
+            fetch('/api/divergencias/criar-exemplo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addLog(`✅ ${data.message}`, 'success');
+                    carregarDivergencias();
+                } else {
+                    addLog(`❌ Erro: ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                addLog(`❌ Erro na requisição: ${error.message}`, 'error');
+            });
+        }
+
+        // Debug
+        function debugDivergencias() {
+            addLog('🔧 Executando debug...', 'info');
+            
+            fetch('/api/divergencias')
+            .then(response => response.json())
+            .then(data => {
+                const divergencias = data.divergencias || data;
+                const info = {
+                    total: divergencias.length,
+                    pendentes: divergencias.filter(d => d.status === 'pendente').length,
+                    resolvidas: divergencias.filter(d => d.status === 'resolvido').length,
+                    tipos: [...new Set(divergencias.map(d => d.tipo))]
+                };
+                
+                addLog(`📊 Debug: ${JSON.stringify(info)}`, 'info');
+                alert(`Debug Divergências:\nTotal: ${info.total}\nPendentes: ${info.pendentes}\nResolvidas: ${info.resolvidas}\nTipos: ${info.tipos.join(', ')}`);
+            })
+            .catch(error => {
+                addLog(`❌ Erro no debug: ${error.message}`, 'error');
+            });
+        }
+
+        // Funções auxiliares
+        function verDetalhes(id) {
+            addLog(`👁️ Ver detalhes: ${id}`, 'info');
+            alert(`Detalhes da divergência ${id}`);
+        }
+
+        function resolver(id) {
+            addLog(`✅ Resolver: ${id}`, 'info');
+            alert(`Resolver divergência ${id}`);
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('🚀 Página de teste de divergências carregada', 'success');
+            addLog('💡 Dica: Comece criando divergências de exemplo para testar os filtros', 'info');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
+2024-12-20,Venda PIX Duplicada,500.00,credito,Receitas,Cliente PIX,Vendas
+2024-12-20,Venda PIX Duplicada,500.00,credito,Receitas,Cliente PIX,Vendas
+2024-12-21,Compra Shopping Center,125.75,debito,Compras,Shopping,Administrativo
+2024-12-22,Saque Operacional,200.00,debito,Caixa,Banco,Operacional
+2024-12-22,Depósito Cliente,350.00,credito,Receitas,Cliente Envelope,Vendas
+2024-12-23,Venda Cliente Premium,1000.00,credito,Receitas,Cliente Premium,Vendas
+2024-12-23,Estorno Produto,45.50,credito,Estornos,Cliente Estorno,Vendas
+2024-12-24,Material Natal,89.90,debito,Material,Loja Natal,Administrativo
+2024-12-25,Presente Corporativo,150.00,debito,Presentes,Loja Presentes,Administrativo
+2024-12-25,Transferência Família,300.00,credito,Receitas,Família,Vendas
+2024-12-26,Compra Pós-Feriado,67.80,debito,Compras,Loja Diversas,Administrativo
+2024-12-27,Transferência com Erro,995.00,credito,Receitas,Cliente Erro,Vendas
+2024-12-28,Conta a Pagar,156.45,debito,Contas,Fornecedor Conta,Administrativo
+2024-12-29,Venda Fim Período,750.00,credito,Receitas,Cliente Fim,Vendas
+2024-12-30,Material Preparação,234.56,debito,Material,Fornecedor Prep,Operacional
+2024-12-31,Venda Reveillon,888.88,credito,Receitas,Cliente Reveillon,Vendas
+2024-12-21,Duplicata Lançamento,999.99,debito,Erro,Fornecedor Dup,Operacional
+2024-12-21,Duplicata Lançamento,999.99,debito,Erro,Fornecedor Dup,Operacional

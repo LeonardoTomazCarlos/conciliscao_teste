@@ -1,0 +1,30 @@
+Data,Descrição,Valor,Tipo
+2024-12-01,Salário Dezembro,5000.00,credito
+2024-12-02,Transferência PIX - Cliente A,1200.50,credito
+2024-12-02,Compra Supermercado,89.90,debito
+2024-12-03,Depósito Cheque,750.00,credito
+2024-12-03,Saque ATM,300.00,debito
+2024-12-04,Transferência TED - Cliente B,2000.00,credito
+2024-12-04,Pagamento Cartão,156.78,debito
+2024-12-05,PIX Recebido - Cliente C,890.00,credito
+2024-12-05,Compra Online,234.50,debito
+2024-12-06,Estorno Compra,67.80,credito
+2024-12-06,Taxa Bancária,15.00,debito
+2024-12-07,Transferência - Fornecedor,1500.00,debito
+2024-12-07,Recebimento Boleto,445.60,credito
+2024-12-08,Compra Farmácia,42.30,debito
+2024-12-08,PIX - Cliente D,680.00,credito
+2024-12-09,Saque Emergencial,500.00,debito
+2024-12-09,Depósito Vista,1000.00,credito
+2024-12-10,Pagamento Conta Luz,187.45,debito
+2024-12-10,Transferência Recebida,956.20,credito
+2024-12-11,Compra Combustível,120.00,debito
+2024-12-11,PIX Cliente E,340.75,credito
+2024-12-12,Taxa Manutenção,25.00,debito
+2024-12-12,Recebimento Serviço,780.00,credito
+2024-12-13,Compra Eletrônicos,450.00,debito
+2024-12-13,PIX Recebido,123.45,credito
+2024-12-14,Transferência Pagamento,2200.00,debito
+2024-12-14,Depósito Cliente,890.30,credito
+2024-12-15,Saque Final Mês,800.00,debito
+2024-12-15,Bônus Natal,1500.00,credito

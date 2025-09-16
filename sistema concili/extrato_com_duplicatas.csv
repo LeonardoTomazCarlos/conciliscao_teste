@@ -1,0 +1,19 @@
+Data,Descrição,Valor,Tipo
+2024-12-20,Transferência PIX Duplicada,500.00,credito
+2024-12-20,Transferência PIX Duplicada,500.00,credito
+2024-12-20,Transferência PIX Duplicada,500.00,credito
+2024-12-21,Compra Loja Shopping,125.75,debito
+2024-12-21,Compra Loja Shopping,125.75,debito
+2024-12-22,Saque ATM Centro,200.00,debito
+2024-12-22,Depósito Envelope,350.00,credito
+2024-12-23,PIX Cliente Premium,1000.00,credito
+2024-12-23,Estorno Parcial,45.50,credito
+2024-12-24,Compra Natal,89.90,debito
+2024-12-25,Presente Natal,150.00,debito
+2024-12-25,PIX Família,300.00,credito
+2024-12-26,Compra Pós-Natal,67.80,debito
+2024-12-27,Transferência Erro,999.99,credito
+2024-12-28,Pagamento Conta,156.45,debito
+2024-12-29,PIX Fim Ano,750.00,credito
+2024-12-30,Compra Preparação,234.56,debito
+2024-12-31,Transferência Reveillon,888.88,credito

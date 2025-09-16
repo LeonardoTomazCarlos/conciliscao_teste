@@ -52,12 +52,210 @@ function verificarEstadoAbas() {
     return tabsVisiveis;
 }
 
+// Carregar divergências com filtros
+function carregarDivergencias() {
+    console.log('🔍 Carregando divergências...');
+    
+    // Mostrar estado de carregamento
+    const tabela = document.getElementById('tabela-divergencias-nova');
+    if (tabela) {
+        tabela.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center py-4">
+                    <div class="spinner-border text-warning mb-3" role="status"></div>
+                    <div class="text-warning">Carregando divergências...</div>
+                    <small class="text-muted">Analisando extratos e lançamentos</small>
+                </td>
+            </tr>
+        `;
+    }
+    
+    // Coletar dados dos filtros
+    const tipoFiltro = document.getElementById('filtro-tipo-divergencia')?.value || '';
+    const statusFiltro = document.getElementById('filtro-status-divergencia')?.value || '';
+    const dataInicial = document.getElementById('filtro-data-inicial-div')?.value || '';
+    const dataFinal = document.getElementById('filtro-data-final-div')?.value || '';
+    
+    console.log('📋 Filtros de divergências:', { tipoFiltro, statusFiltro, dataInicial, dataFinal });
+    
+    // Construir parâmetros para a requisição
+    const params = new URLSearchParams();
+    if (tipoFiltro) params.append('tipo', tipoFiltro);
+    if (statusFiltro) params.append('status', statusFiltro);
+    if (dataInicial) params.append('data_inicio', dataInicial);
+    if (dataFinal) params.append('data_fim', dataFinal);
+    params.append('por_pagina', '50');
+    
+    const url = `/api/divergencias?${params}`;
+    console.log('🌐 URL da requisição:', url);
+    
+    // Fazer requisição
+    fetch(url)
+        .then(response => {
+            console.log('📡 Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Erro ao carregar divergências: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📊 Dados de divergências recebidos:', data);
+            
+            // Se retornou formato com paginação
+            const divergencias = data.divergencias || data;
+            const total = data.total || divergencias.length;
+            
+            // Atualizar tabela
+            if (!tabela) return;
+            
+            if (!divergencias || divergencias.length === 0) {
+                tabela.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="fas fa-search fa-2x mb-3 d-block"></i>
+                                <div>Nenhuma divergência encontrada</div>
+                                <small class="text-muted mt-2">Tente ajustar os filtros ou criar dados de exemplo</small>
+                            </div>
+                        </td>
+                    </tr>`;
+                
+                // Zerar estatísticas
+                atualizarEstatisticasDivergencias([]);
+                return;
+            }
+            
+            // Renderizar divergências
+            tabela.innerHTML = divergencias.map(item => renderizarLinhaDivergencia(item)).join('');
+            
+            // Atualizar estatísticas
+            atualizarEstatisticasDivergencias(divergencias);
+            
+            console.log('✅ Divergências carregadas com sucesso!');
+        })
+        .catch(error => {
+            console.error('❌ Erro ao carregar divergências:', error);
+            if (tabela) {
+                tabela.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center text-danger py-4">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
+                            Erro ao carregar divergências. Tente novamente.
+                            <br><small>Erro: ${error.message}</small>
+                        </td>
+                    </tr>`;
+            }
+        });
+}
+
+// Renderizar linha da tabela de divergências
+function renderizarLinhaDivergencia(item) {
+    const tipoClass = {
+        'extrato_orfao': 'bg-warning',
+        'lancamento_orfao': 'bg-info', 
+        'diferenca_valor': 'bg-danger',
+        'data_divergente': 'bg-secondary',
+        'duplicata': 'bg-dark'
+    }[item.tipo] || 'bg-primary';
+    
+    const statusClass = {
+        'pendente': 'bg-warning',
+        'analisando': 'bg-info',
+        'resolvido': 'bg-success',
+        'ignorado': 'bg-secondary'
+    }[item.status] || 'bg-warning';
+    
+    const tipoNome = {
+        'extrato_orfao': 'Extrato Órfão',
+        'lancamento_orfao': 'Lançamento Órfão',
+        'diferenca_valor': 'Diferença de Valor',
+        'data_divergente': 'Data Divergente',
+        'duplicata': 'Duplicata'
+    }[item.tipo] || item.tipo;
+    
+    const valorExtrato = item.extrato_bancario ? 
+        `R$ ${parseFloat(item.extrato_bancario.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}` : 
+        '-';
+    
+    const valorLancamento = item.lancamento_contabil ? 
+        `R$ ${parseFloat(item.lancamento_contabil.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}` : 
+        '-';
+    
+    let diferenca = '-';
+    if (item.extrato_bancario && item.lancamento_contabil) {
+        const diff = parseFloat(item.extrato_bancario.valor) - parseFloat(item.lancamento_contabil.valor);
+        diferenca = `R$ ${Math.abs(diff).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+    
+    const data = item.extrato_bancario?.data || item.lancamento_contabil?.data || 'N/A';
+    
+    return `
+        <tr class="align-middle">
+            <td class="fw-bold">${item.id}</td>
+            <td><span class="badge ${tipoClass}">${tipoNome}</span></td>
+            <td>
+                <div class="text-truncate" style="max-width: 200px;" title="${item.descricao}">
+                    ${item.descricao}
+                </div>
+                <small class="text-muted">${item.motivo || ''}</small>
+            </td>
+            <td class="text-end">${valorExtrato}</td>
+            <td class="text-end">${valorLancamento}</td>
+            <td class="text-end ${diferenca !== '-' && diferenca !== 'R$ 0,00' ? 'text-danger fw-bold' : ''}">${diferenca}</td>
+            <td>${data}</td>
+            <td><span class="badge ${statusClass}">${item.status}</span></td>
+            <td>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-primary" onclick="verDetalhesDivergencia('${item.id}')" title="Ver Detalhes">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-success" onclick="resolverDivergencia('${item.id}')" title="Resolver">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-secondary" onclick="ignorarDivergencia('${item.id}')" title="Ignorar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+// Atualizar estatísticas de divergências
+function atualizarEstatisticasDivergencias(divergencias) {
+    const pendentes = divergencias.filter(d => d.status === 'pendente').length;
+    const resolvidas = divergencias.filter(d => d.status === 'resolvido').length;
+    
+    // Calcular valor total das divergências
+    let valorTotal = 0;
+    divergencias.forEach(d => {
+        if (d.extrato_bancario && d.lancamento_contabil) {
+            valorTotal += Math.abs(parseFloat(d.extrato_bancario.valor) - parseFloat(d.lancamento_contabil.valor));
+        } else if (d.extrato_bancario) {
+            valorTotal += parseFloat(d.extrato_bancario.valor);
+        } else if (d.lancamento_contabil) {
+            valorTotal += parseFloat(d.lancamento_contabil.valor);
+        }
+    });
+    
+    const percentual = divergencias.length > 0 ? ((pendentes / divergencias.length) * 100).toFixed(1) : 0;
+    
+    // Atualizar elementos da UI
+    const elemPendentes = document.getElementById('divergencias-pendentes');
+    const elemResolvidas = document.getElementById('divergencias-resolvidas');
+    const elemValor = document.getElementById('valor-divergencias');
+    const elemPercentual = document.getElementById('percentual-divergencias');
+    
+    if (elemPendentes) elemPendentes.textContent = pendentes;
+    if (elemResolvidas) elemResolvidas.textContent = resolvidas;
+    if (elemValor) elemValor.textContent = `R$ ${valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if (elemPercentual) elemPercentual.textContent = `${percentual}%`;
+}
+
 // Aplicar filtros nas divergências
 function aplicarFiltrosDivergencias() {
-    console.log('Aplicando filtros nas divergências');
-    if (typeof carregarDivergencias === 'function') {
-        carregarDivergencias();
-    }
+    console.log('🔍 Aplicando filtros nas divergências...');
+    carregarDivergencias();
 }
 
 // Função auxiliar para formatar valores monetários
@@ -131,23 +329,119 @@ function renderizarLinhaConciliacao(item) {
 
 // Limpar filtros das divergências
 function limparFiltrosDivergencias() {
-    console.log('Limpando filtros das divergências');
-    const campos = ['filtro-tipo-divergencia', 'filtro-status-divergencia', 'filtro-data-inicial', 'filtro-data-final'];
+    console.log('🗑️ Limpando filtros das divergências...');
+    
+    // Limpar campos de filtro - CORRIGIDO com IDs corretos
+    const campos = ['filtro-tipo-divergencia', 'filtro-status-divergencia', 'filtro-data-inicial-div', 'filtro-data-final-div'];
     campos.forEach(campo => {
         const elemento = document.getElementById(campo);
-        if (elemento) elemento.value = '';
+        if (elemento) {
+            elemento.value = '';
+        }
     });
-    if (typeof carregarDivergencias === 'function') {
+    
+    console.log('✅ Filtros de divergências limpos, carregando todas as divergências...');
+    carregarDivergencias();
+}
+
+// Recarregar divergências
+function atualizarListaDivergencias() {
+    console.log('🔄 Atualizando lista de divergências...');
+    carregarDivergencias();
+}
+
+// Criar divergências de teste
+function criarDivergenciasTeste() {
+    console.log('🧪 Criando divergências de teste...');
+    
+    fetch('/api/divergencias/criar-exemplo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('✅ Divergências de teste criadas:', data.message);
+            alert(`✅ ${data.message}`);
+            carregarDivergencias(); // Recarregar lista
+        } else {
+            console.error('❌ Erro ao criar divergências:', data.error);
+            alert(`❌ Erro: ${data.error}`);
+        }
+    })
+    .catch(error => {
+        console.error('❌ Erro na requisição:', error);
+        alert(`❌ Erro na requisição: ${error.message}`);
+    });
+}
+
+// Funções auxiliares para ações nas divergências
+function verDetalhesDivergencia(id) {
+    console.log('👁️ Ver detalhes da divergência:', id);
+    alert(`Detalhes da divergência ${id}\n(Funcionalidade em desenvolvimento)`);
+}
+
+function resolverDivergencia(id) {
+    console.log('✅ Resolver divergência:', id);
+    if (confirm(`Tem certeza que deseja marcar a divergência ${id} como resolvida?`)) {
+        alert(`Divergência ${id} marcada como resolvida\n(Funcionalidade em desenvolvimento)`);
         carregarDivergencias();
     }
 }
 
-// Recarregar divergências
-function recarregarDivergencias() {
-    console.log('Recarregando divergências');
-    if (typeof carregarDivergencias === 'function') {
+function ignorarDivergencia(id) {
+    console.log('🚫 Ignorar divergência:', id);
+    if (confirm(`Tem certeza que deseja ignorar a divergência ${id}?`)) {
+        alert(`Divergência ${id} ignorada\n(Funcionalidade em desenvolvimento)`);
         carregarDivergencias();
     }
+}
+
+// Debug - forçar verificação de divergências
+function forcarVerificacaoDivergencias() {
+    console.log('🔍 Forçando verificação de divergências...');
+    alert('Forçando nova verificação de divergências...');
+    
+    fetch('/api/divergencias/criar-exemplo', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('📊 Resultado da verificação:', data);
+        carregarDivergencias();
+    })
+    .catch(error => {
+        console.error('❌ Erro na verificação:', error);
+    });
+}
+
+// Debug - mostrar status das divergências
+function debugDivergencias() {
+    console.log('🔧 Debug do status das divergências...');
+    
+    fetch('/api/divergencias')
+    .then(response => response.json())
+    .then(data => {
+        const divergencias = data.divergencias || data;
+        console.log('📋 Status das divergências:', {
+            total: divergencias.length,
+            pendentes: divergencias.filter(d => d.status === 'pendente').length,
+            resolvidas: divergencias.filter(d => d.status === 'resolvido').length,
+            tipos: [...new Set(divergencias.map(d => d.tipo))]
+        });
+        
+        alert(`Debug Divergências:
+Total: ${divergencias.length}
+Pendentes: ${divergencias.filter(d => d.status === 'pendente').length}
+Resolvidas: ${divergencias.filter(d => d.status === 'resolvido').length}
+Tipos: ${[...new Set(divergencias.map(d => d.tipo))].join(', ')}`);
+    })
+    .catch(error => {
+        console.error('❌ Erro no debug:', error);
+        alert(`Erro no debug: ${error.message}`);
+    });
 }
 
 // Exportar divergências para CSV
@@ -1279,15 +1573,23 @@ document.addEventListener('DOMContentLoaded', function() {
             if (tabId === '#conciliacao') {
                 console.log('🎯 Carregando dados da aba Conciliação...');
                 carregarConciliacoes();
+            } else if (tabId === '#divergencias') {
+                console.log('🎯 Carregando dados da aba Divergências...');
+                carregarDivergencias();
             }
         });
     });
     
-    // Carregar dados iniciais se já estiver na aba de conciliação
-    const activeTab = document.querySelector('.nav-link.active[href="#conciliacao"]');
-    if (activeTab) {
+    // Carregar dados iniciais se já estiver na aba de conciliação ou divergências
+    const activeTabConciliacao = document.querySelector('.nav-link.active[href="#conciliacao"]');
+    const activeTabDivergencias = document.querySelector('.nav-link.active[href="#divergencias"]');
+    
+    if (activeTabConciliacao) {
         console.log('🎯 Aba Conciliação já ativa, carregando dados...');
         carregarConciliacoes();
+    } else if (activeTabDivergencias) {
+        console.log('🎯 Aba Divergências já ativa, carregando dados...');
+        carregarDivergencias();
     }
     
     // Carregar filtros salvos na inicialização

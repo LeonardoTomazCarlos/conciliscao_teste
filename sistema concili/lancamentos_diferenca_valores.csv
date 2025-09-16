@@ -1,0 +1,19 @@
+Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
+2025-01-02,Venda Janeiro - Produto A,1205.00,credito,Receitas,Cliente A,Vendas
+2025-01-02,Compra Material Escritório,85.50,debito,Material,Fornecedor Mat,Administrativo
+2025-01-03,Recebimento PIX,750.00,credito,Receitas,Cliente PIX,Vendas
+2025-01-03,Pagamento Fornecedor Principal,455.00,debito,Fornecedores,Fornecedor ABC,Operacional
+2025-01-04,Depósito Cliente VIP,1995.00,credito,Receitas,Cliente VIP,Vendas
+2025-01-04,Saque Operacional,300.00,debito,Caixa,Banco,Operacional
+2025-01-05,Venda Cliente Premium,895.00,credito,Receitas,Cliente Premium,Vendas
+2025-01-05,Compra Equipamentos,678.90,debito,Equipamentos,Fornecedor Equip,Operacional
+2025-01-06,Pagamento Boleto,567.30,credito,Receitas,Cliente Boleto,Vendas
+2025-01-06,Taxa Bancária Mensal,25.00,debito,Taxas,Banco,Administrativo
+2025-01-07,Transferência Empresarial,1095.00,credito,Receitas,Empresa Transfer,Vendas
+2025-01-07,Conta Energia Elétrica,234.67,debito,Utilidades,Cia Energia,Administrativo
+2025-01-08,Venda Rápida PIX,445.80,credito,Receitas,Cliente Rápido,Vendas
+2025-01-08,Combustível Frota,156.40,debito,Transporte,Posto Combustível,Operacional
+2025-01-09,Recebimento Cheque,784.00,credito,Receitas,Cliente Cheque,Vendas
+2025-01-09,Saque Emergencial,400.00,debito,Caixa,Banco,Operacional
+2025-01-10,Venda Empresarial,1510.00,credito,Receitas,Empresa Cliente,Vendas
+2025-01-10,Pagamento Cartão Corporativo,267.85,debito,Despesas,Banco Cartão,Administrativo

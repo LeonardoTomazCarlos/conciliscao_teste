@@ -1,0 +1,32 @@
+Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
+2024-12-01,Folha Pagamento Dezembro,5000.00,credito,Receitas,RH Empresa,Vendas
+2024-12-02,Venda Cliente A,1200.00,credito,Receitas,Cliente A,Vendas
+2024-12-02,Compra Supermercado Central,89.90,debito,Alimentação,Supermercado Central,Administrativo
+2024-12-03,Recebimento Cheque Cliente,750.00,credito,Receitas,Cliente Diversos,Vendas
+2024-12-03,Saque Operacional,300.00,debito,Caixa,Banco Central,Operacional
+2024-12-04,Venda TED Cliente B,1995.00,credito,Receitas,Cliente B,Vendas
+2024-12-04,Pagamento Cartão Corporativo,156.78,debito,Despesas,Banco Cartão,Administrativo
+2024-12-05,Venda PIX Cliente C,890.00,credito,Receitas,Cliente C,Vendas
+2024-12-05,Compra Material Online,234.50,debito,Material,Loja Online,Operacional
+2024-12-06,Estorno Produto Defeituoso,67.80,credito,Estornos,Loja Diversos,Vendas
+2024-12-06,Taxa Bancária Mensal,15.00,debito,Taxas,Banco Central,Administrativo
+2024-12-07,Pagamento Fornecedor Principal,1500.00,debito,Fornecedores,Fornecedor ABC,Operacional
+2024-12-07,Recebimento Boleto Cliente,445.60,credito,Receitas,Cliente Boleto,Vendas
+2024-12-08,Compra Medicamentos,42.30,debito,Saúde,Farmácia Popular,Administrativo
+2024-12-08,Venda PIX Cliente D,680.00,credito,Receitas,Cliente D,Vendas
+2024-12-09,Saque Emergência,500.00,debito,Caixa,Banco Central,Operacional
+2024-12-09,Depósito à Vista,1000.00,credito,Receitas,Cliente Vista,Vendas
+2024-12-10,Conta Energia Elétrica,187.45,debito,Utilidades,Companhia Luz,Administrativo
+2024-12-10,Transferência Recebida,960.00,credito,Receitas,Cliente Transfer,Vendas
+2024-12-11,Combustível Veículos,120.00,debito,Transporte,Posto Combustível,Operacional
+2024-12-11,Venda Cliente E,340.75,credito,Receitas,Cliente E,Vendas
+2024-12-12,Taxa Manutenção Conta,25.00,debito,Taxas,Banco Central,Administrativo
+2024-12-12,Prestação Serviços,780.00,credito,Receitas,Cliente Serviços,Vendas
+2024-12-13,Equipamentos Eletrônicos,445.00,debito,Equipamentos,Loja Eletrônicos,Operacional
+2024-12-13,Venda Pequena,123.45,credito,Receitas,Cliente Pequeno,Vendas
+2024-12-14,Pagamento Grande Fornecedor,2200.00,debito,Fornecedores,Fornecedor XYZ,Operacional
+2024-12-14,Depósito Cliente VIP,890.30,credito,Receitas,Cliente VIP,Vendas
+2024-12-15,Saque Fim Período,800.00,debito,Caixa,Banco Central,Operacional
+2024-12-15,Bônus Fim Ano,1500.00,credito,Receitas,Bônus Especial,Vendas
+2024-12-16,Compra sem Extrato,299.99,debito,Material,Fornecedor Solo,Operacional
+2024-12-17,Venda sem Extrato,567.80,credito,Receitas,Cliente Solo,Vendas

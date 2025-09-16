@@ -1,0 +1,6 @@
+Data,Descrição,Valor,Tipo
+2024-01-15,Pagamento Fornecedor ABC,1500.5,debito
+2024-01-16,Recebimento Cliente XYZ,2000.0,credito
+2024-01-17,Pagamento Funcionários,2995.0,debito
+2024-01-18,Venda Produto A,3500.0,credito
+2024-01-19,Pagamento Impostos,800.0,debito
