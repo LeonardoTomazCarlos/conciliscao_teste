@@ -137,7 +137,7 @@
 
         .register-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
             margin: 0 auto;
         }
 
@@ -301,6 +301,11 @@
             transform: translateY(20px);
             opacity: 0;
             animation: slideUp 0.5s ease forwards;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group-animated.first-field {
+            margin-top: 2rem;
             margin-bottom: 1.5rem;
         }
         
@@ -537,6 +542,14 @@
                 padding: 1rem 0.5rem;
             }
             
+            .register-container {
+                margin: 10px;
+            }
+            
+            .card {
+                border-radius: 16px;
+            }
+            
             .card-header {
                 padding: 2rem 1.5rem;
             }
@@ -636,7 +649,7 @@
 
                 <div class="card-body">
                     <form id="register-form" method="POST">
-                        <div class="form-group-animated">
+                        <div class="form-group-animated first-field">
                             <label class="form-label">
                                 <i class="fas fa-user me-2"></i>Nome Completo
                             </label>
