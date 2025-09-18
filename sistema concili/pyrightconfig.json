@@ -1,0 +1,16 @@
+{
+    "pythonVersion": "3.12",
+    "typeCheckingMode": "off",
+    "reportMissingTypeStubs": false,
+    "reportUnknownParameterType": false,
+    "reportUnknownVariableType": false,
+    "reportUnknownMemberType": false,
+    "reportUnknownArgumentType": false,
+    "reportMissingParameterType": false,
+    "reportGeneralTypeIssues": false,
+    "reportOptionalMemberAccess": false,
+    "reportPrivateUsage": false,
+    "reportUntypedFunctionDecorator": false,
+    "reportUnknownLambdaType": false,
+    "reportDeprecated": false
+}

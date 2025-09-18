@@ -1,0 +1,15 @@
+[tool.pyright]
+pythonVersion = "3.12"
+reportMissingTypeStubs = false
+reportUnknownParameterType = false
+reportUnknownVariableType = false
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
+reportMissingParameterType = false
+reportGeneralTypeIssues = false
+reportOptionalMemberAccess = false
+reportPrivateUsage = false
+reportUntypedFunctionDecorator = false
+
+[tool.pylance]
+typeCheckingMode = "off"
