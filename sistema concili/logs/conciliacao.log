@@ -1980,3 +1980,113 @@
 2025-09-18 16:01:09,247 - waitress - INFO - Serving on http://0.0.0.0:8080
 2025-09-18 16:04:01,119 - waitress - INFO - Serving on http://0.0.0.0:8080
 2025-09-18 16:07:04,523 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:11:21,913 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:14:59,079 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:16:29,177 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.20:5000
+2025-09-18 16:16:29,177 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 16:16:29,182 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 16:16:29,976 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 16:16:29,979 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 16:16:37,713 - werkzeug - INFO - 127.0.0.1 - - [18/Sep/2025 16:16:37] "[32mGET /?id=2acd8826-1f8a-4f2b-be37-de4311066e0d&vscodeBrowserReqId=1758222997708 HTTP/1.1[0m" 302 -
+2025-09-18 16:16:37,721 - werkzeug - INFO - 127.0.0.1 - - [18/Sep/2025 16:16:37] "GET /register HTTP/1.1" 200 -
+2025-09-18 16:18:06,514 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:20:54,431 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.20:5000
+2025-09-18 16:20:54,431 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 16:20:54,432 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 16:20:55,222 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 16:20:55,225 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 16:21:03,320 - werkzeug - INFO - 127.0.0.1 - - [18/Sep/2025 16:21:03] "[32mGET /?id=2acd8826-1f8a-4f2b-be37-de4311066e0d&vscodeBrowserReqId=1758223263312 HTTP/1.1[0m" 302 -
+2025-09-18 16:21:03,329 - werkzeug - INFO - 127.0.0.1 - - [18/Sep/2025 16:21:03] "GET /register HTTP/1.1" 200 -
+2025-09-18 16:21:29,993 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:23:02,644 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.20:5000
+2025-09-18 16:23:02,644 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 16:23:02,645 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 16:23:03,460 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 16:23:03,463 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 16:35:38,895 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.20:5000
+2025-09-18 16:35:38,895 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 16:35:38,896 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 16:35:39,684 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 16:35:39,687 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 16:35:50,739 - werkzeug - INFO -  * Detected change in 'C:\\Users\\samue\\OneDrive\\Documentos\\GitHub\\conciliscao_teste\\sistema concili\\test_api_auth.py', reloading
+2025-09-18 16:35:50,802 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 16:35:51,629 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 16:35:51,632 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 16:38:23,844 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:51:42,780 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.20:5000
+2025-09-18 16:51:42,780 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 16:51:42,781 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 16:51:43,588 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 16:51:43,591 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 16:53:06,733 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:54:50,708 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:56:52,806 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 16:58:22,995 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.20:5000
+2025-09-18 16:58:22,995 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 16:58:22,996 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 16:58:23,858 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 16:58:23,862 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 17:00:23,649 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.20:5000
+2025-09-18 17:00:23,649 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 17:00:23,650 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 17:00:24,470 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 17:00:24,474 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 17:02:52,308 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-09-18 17:02:52,308 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 17:02:52,309 - werkzeug - INFO -  * Restarting with stat
+2025-09-18 17:02:53,117 - werkzeug - WARNING -  * Debugger is active!
+2025-09-18 17:02:53,120 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-18 17:04:05,389 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:12:52,417 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:13:12,007 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:14:07,174 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:16:44,593 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:18:16,431 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:22:05,591 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.1.20:8080
+2025-09-18 17:22:05,591 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 17:25:23,893 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.1.20:8080
+2025-09-18 17:25:23,893 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 17:26:34,548 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-09-18 17:26:34,548 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 17:32:23,710 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-09-18 17:32:23,710 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 17:42:17,943 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-09-18 17:42:17,943 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-18 17:43:02,052 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:44:14,432 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:54:55,594 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:56:35,303 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:57:24,805 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 17:58:19,351 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-18 18:00:50,728 - waitress - INFO - Serving on http://0.0.0.0:8080

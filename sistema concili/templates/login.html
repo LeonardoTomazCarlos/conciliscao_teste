@@ -533,15 +533,6 @@
                     <span class="divider-line"></span>
                 </div>
                 
-                <div class="row g-2 mb-3">
-                    <div class="col-12">
-                        <button type="button" onclick="mostrarCredenciais()" class="btn btn-outline-info w-100">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Ver Credenciais de Teste
-                        </button>
-                    </div>
-                </div>
-                
                 <div class="help-links">
                     <a href="#" onclick="esqueceuSenha()" class="help-link">
                         <i class="fas fa-key me-1"></i>
@@ -607,30 +598,7 @@
                     color: var(--light-text);
                     font-weight: 300;
                 }
-                
-                .btn-outline-info {
-                    border: 2px solid #06b6d4;
-                    color: #06b6d4;
-                    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
-                    font-weight: 600;
-                    transition: all 0.3s ease;
-                    padding: 12px 24px;
-                    border-radius: 12px;
-                    backdrop-filter: blur(10px);
-                    box-shadow: 0 2px 10px rgba(6, 182, 212, 0.1);
-                }
-                
-                .btn-outline-info:hover {
-                    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-                    border-color: #06b6d4;
-                    color: white;
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.25);
-                }
-                
-                .text-primary {
-                    color: var(--primary-color) !important;
-                }
+            
             </style>
 
         </div>
@@ -704,121 +672,6 @@
             });
         }
 
-        function mostrarCredenciais() {
-            const modal = `
-                <div class="modal fade" id="credentialsModal" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info text-white">
-                                <h5 class="modal-title">
-                                    <i class="fas fa-info-circle me-2"></i>Credenciais de Teste
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="text-center mb-4">
-                                    <i class="fas fa-user-cog fa-3x text-info mb-3"></i>
-                                    <h6>Use estas credenciais para testar o sistema:</h6>
-                                </div>
-                                <div class="credentials-box">
-                                    <div class="credential-item">
-                                        <label>Usuário:</label>
-                                        <div class="credential-value">
-                                            <code>admin</code>
-                                            <button onclick="copiarTexto('admin')" class="btn btn-sm btn-outline-secondary ms-2">
-                                                <i class="fas fa-copy"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="credential-item">
-                                        <label>Senha:</label>
-                                        <div class="credential-value">
-                                            <code>admin123</code>
-                                            <button onclick="copiarTexto('admin123')" class="btn btn-sm btn-outline-secondary ms-2">
-                                                <i class="fas fa-copy"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="alert alert-warning mt-3">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    <small>Estas são credenciais de demonstração. Em produção, use senhas seguras.</small>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" onclick="preencherCredenciais()">
-                                    <i class="fas fa-magic me-2"></i>Preencher Automaticamente
-                                </button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <style>
-                    .credentials-box {
-                        background: #f8f9fa;
-                        padding: 20px;
-                        border-radius: 12px;
-                        border: 1px solid #dee2e6;
-                    }
-                    .credential-item {
-                        display: flex;
-                        align-items: center;
-                        margin-bottom: 15px;
-                        gap: 15px;
-                    }
-                    .credential-item:last-child {
-                        margin-bottom: 0;
-                    }
-                    .credential-item label {
-                        font-weight: 600;
-                        min-width: 70px;
-                        margin-bottom: 0;
-                    }
-                    .credential-value {
-                        display: flex;
-                        align-items: center;
-                        flex: 1;
-                    }
-                    .credential-value code {
-                        background: #e9ecef;
-                        padding: 8px 12px;
-                        border-radius: 6px;
-                        font-size: 1rem;
-                        color: #495057;
-                        flex: 1;
-                    }
-                    .contact-info {
-                        background: #f8f9fa;
-                        padding: 20px;
-                        border-radius: 12px;
-                        border-left: 4px solid #007bff;
-                    }
-                    .contact-item {
-                        display: flex;
-                        align-items: center;
-                        margin-bottom: 10px;
-                        gap: 15px;
-                    }
-                    .contact-item:last-child {
-                        margin-bottom: 0;
-                    }
-                    .contact-item i {
-                        width: 20px;
-                        text-align: center;
-                    }
-                </style>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modal);
-            const modalElement = new bootstrap.Modal(document.getElementById('credentialsModal'));
-            modalElement.show();
-            
-            document.getElementById('credentialsModal').addEventListener('hidden.bs.modal', function () {
-                this.remove();
-            });
-        }
-
         function suporte() {
             alert('💬 SUPORTE TÉCNICO\n\n' +
                   'Precisa de ajuda? Entre em contato:\n\n' +
@@ -842,55 +695,6 @@
             });
         }
 
-        function preencherCredenciais() {
-            document.getElementById('username').value = 'admin';
-            document.getElementById('password').value = 'admin123';
-            
-            // Fechar modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('credentialsModal'));
-            modal.hide();
-            
-            // Focar no botão de login
-            document.querySelector('.btn-login').focus();
-        }
-
-        // Animação de entrada do formulário
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.login-container');
-            setTimeout(() => {
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0) scale(1)';
-            }, 100);
-        });
-
-        // Efeito de foco nos campos
-        const inputs = document.querySelectorAll('.form-control');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'translateY(-2px)';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'translateY(0)';
-            });
-        });
-
-        // Validação em tempo real
-        document.getElementById('username').addEventListener('input', function() {
-            if (this.value.length < 3) {
-                this.style.borderColor = '#f59e0b';
-            } else {
-                this.style.borderColor = '#10b981';
-            }
-        });
-
-        document.getElementById('password').addEventListener('input', function() {
-            if (this.value.length < 4) {
-                this.style.borderColor = '#f59e0b';
-            } else {
-                this.style.borderColor = '#10b981';
-            }
-        });
     </script>
 </body>
 </html>
