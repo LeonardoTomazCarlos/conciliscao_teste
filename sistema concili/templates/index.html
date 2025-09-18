@@ -2922,6 +2922,12 @@
             console.log('🔍 Carregando divergências da aba nova...');
             
             try {
+                // Mostrar loading
+                const tabelaCorpo = document.getElementById('tabela-divergencias-nova');
+                if (tabelaCorpo) {
+                    tabelaCorpo.innerHTML = '<tr><td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Carregando...</td></tr>';
+                }
+                
                 // Buscar dados da API de divergências
                 const resp = await fetch('/api/divergencias');
                 let divergencias = [];
@@ -2930,27 +2936,46 @@
                     const dados = await resp.json();
                     console.log('📊 Dados de divergências recebidos:', dados);
                     
-                    // Processar divergências da API
+                    // Processar divergências da API com tratamento de erro mais robusto
                     if (Array.isArray(dados) && dados.length > 0) {
-                        divergencias = dados.map(div => ({
-                            id: div.id,
-                            tipo: div.tipo,
-                            descricao: div.descricao,
-                            valor_extrato: div.extrato ? parseFloat(div.extrato.valor || 0) : 0,
-                            valor_lancamento: div.lancamento ? parseFloat(div.lancamento.valor || 0) : 0,
-                            diferenca: div.extrato && div.lancamento ? 
-                                Math.abs(parseFloat(div.extrato.valor || 0) - parseFloat(div.lancamento.valor || 0)) :
-                                (div.extrato ? parseFloat(div.extrato.valor || 0) : -parseFloat(div.lancamento.valor || 0)),
-                            data: div.created_at ? div.created_at.split(' ')[0] : new Date().toISOString().split('T')[0],
-                            status: div.status,
-                            extrato: div.extrato,
-                            lancamento: div.lancamento
-                        }));
+                        divergencias = dados.map(div => {
+                            try {
+                                // Verificar se é uma divergência formal ou gerada automaticamente
+                                const extrato = div.extrato_bancario || div.extrato || null;
+                                const lancamento = div.lancamento_contabil || div.lancamento || null;
+                                
+                                // Extrair valores com segurança
+                                const valorExtrato = extrato && extrato.valor !== undefined && extrato.valor !== null ? 
+                                    parseFloat(extrato.valor) : 0;
+                                const valorLancamento = lancamento && lancamento.valor !== undefined && lancamento.valor !== null ? 
+                                    parseFloat(lancamento.valor) : 0;
+                                
+                                return {
+                                    id: div.id || 'sem_id',
+                                    tipo: div.tipo || 'indefinido',
+                                    descricao: div.descricao || 'Sem descrição',
+                                    valor_extrato: isNaN(valorExtrato) ? 0 : valorExtrato,
+                                    valor_lancamento: isNaN(valorLancamento) ? 0 : valorLancamento,
+                                    diferenca: extrato && lancamento ? 
+                                        Math.abs(valorExtrato - valorLancamento) :
+                                        (extrato ? valorExtrato : -valorLancamento),
+                                    data: div.created_at ? div.created_at.split(' ')[0] : new Date().toISOString().split('T')[0],
+                                    status: div.status || 'pendente',
+                                    extrato: extrato,
+                                    lancamento: lancamento
+                                };
+                            } catch (err) {
+                                console.error('❌ Erro ao processar divergência individual:', err, div);
+                                return null;
+                            }
+                        }).filter(d => d !== null); // Remove itens com erro
                     }
                     
                     console.log(`✅ Processadas ${divergencias.length} divergências`);
                 } else {
                     console.warn('⚠️ Erro na API de divergências:', resp.status);
+                    const errorText = await resp.text();
+                    console.warn('⚠️ Resposta do servidor:', errorText);
                     divergencias = [];
                 }
                 
@@ -2962,7 +2987,7 @@
                 
             } catch (err) {
                 console.error('❌ Erro ao carregar divergências:', err);
-                mostrarErroDivergencias(err.message);
+                mostrarErroDivergencias(err.message || 'Erro desconhecido ao carregar divergências');
             }
         }
 
@@ -3074,20 +3099,24 @@
 
         function mostrarErroDivergencias(mensagem) {
             const tbody = document.getElementById('tabela-divergencias-nova');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="text-center py-5">
-                        <div class="text-danger">
-                            <i class="fas fa-exclamation-triangle fa-3x mb-3 d-block"></i>
-                            <h5>Erro ao carregar divergências</h5>
-                            <p class="text-muted">${mensagem}</p>
-                            <button class="btn btn-outline-primary btn-sm" onclick="carregarDivergencias()">
-                                <i class="fas fa-redo me-1"></i>Tentar Novamente
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <div class="text-danger">
+                                <i class="fas fa-exclamation-triangle fa-3x mb-3 d-block"></i>
+                                <h5>Erro ao carregar divergências</h5>
+                                <p class="text-muted">${mensagem}</p>
+                                <button class="btn btn-outline-primary btn-sm" onclick="carregarDivergencias()">
+                                    <i class="fas fa-redo me-1"></i>Tentar Novamente
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                console.error('❌ Elemento da tabela de divergências não encontrado');
+            }
         }
         
         // Função removida para evitar erros de sintaxe - carregarDivergencias simplificada
