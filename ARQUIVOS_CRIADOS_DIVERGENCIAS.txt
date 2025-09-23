@@ -1,0 +1,70 @@
+📁 ARQUIVOS DE TESTE DE DIVERGÊNCIAS - VERSÃO LIMPA
+===================================================
+
+🧹 LIMPEZA REALIZADA: 43 arquivos antigos removidos
+🎯 Localização: c:\Users\samue\OneDrive\Documentos\GitHub\conciliscao_teste\sistema concili\
+
+📋 ARQUIVOS MANTIDOS (4 total):
+--------------------------------
+✅ extrato_bancario_teste_divergencias.csv (1.189 bytes)
+   • 20 registros bancários
+   • 2 órfãos (sem correspondência contábil)
+   • 2 duplicatas  
+   • 1 divergência de valor
+
+✅ lancamentos_contabeis_teste_divergencias.csv (1.900 bytes)
+   • 20 registros contábeis
+   • 3 órfãos (sem correspondência no extrato)
+   • 1 divergência de valor
+   • 1 divergência de data
+
+✅ extrato_bancario_divergencias_complexas.csv (426 bytes)
+   • 7 registros com casos especiais
+   • Valores aproximados
+   • Datas divergentes
+   • Estornos parciais
+   • Taxas não previstas
+
+✅ lancamentos_contabeis_divergencias_complexas.csv (632 bytes)
+   • 6 registros correspondentes
+   • Casos de teste avançados
+
+� ARQUIVOS REMOVIDOS (43 total):
+---------------------------------
+🗑️ Todos os arquivos de teste antigos foram removidos, incluindo:
+   • extrato_bancario_divergencias.csv
+   • filtro_*.csv (12 arquivos)
+   • teste_*.csv (10 arquivos)
+   • *exemplo.csv
+   • *dezembro.csv
+   • *duplicatas.csv
+   • *orfaos.csv
+   • E outros arquivos de teste obsoletos
+
+🔍 ANÁLISE DOS ARQUIVOS MANTIDOS:
+---------------------------------
+🎯 TOTAL DE DIVERGÊNCIAS DETECTADAS: 8
+
+📊 Distribuição:
+   • Órfãos no extrato: 2
+   • Órfãos nos lançamentos: 3
+   • Divergências de valor: 1
+   • Duplicatas: 2
+
+🚀 COMO USAR OS ARQUIVOS LIMPOS:
+-------------------------------
+1. Acesse http://localhost:5000
+2. Vá para a aba "Upload de Dados"
+3. Faça upload dos arquivos principais:
+   • extrato_bancario_teste_divergencias.csv
+   • lancamentos_contabeis_teste_divergencias.csv
+4. Execute a conciliação
+5. Verifique as 8 divergências detectadas na aba "Divergências"
+
+📋 DOCUMENTAÇÃO ADICIONAL:
+-------------------------
+✅ GUIA_TESTE_DIVERGENCIAS.md - Instruções completas
+✅ processar_divergencias_teste.py - Script de análise
+✅ limpar_arquivos_teste.py - Script de limpeza usado
+
+✅ SISTEMA LIMPO E PRONTO PARA TESTE DE DIVERGÊNCIAS!

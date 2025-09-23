@@ -1,0 +1,41 @@
+Data,Descrição,Valor,Tipo
+2025-09-20,Transferência PIX - Cliente ABC Ltda,2500.00,credito
+2025-09-20,Pagamento fornecedor XYZ,1200.50,debito
+2025-09-20,Compra cartão débito - Supermercado,156.75,debito
+2025-09-21,Venda produto A - Cliente João,850.00,credito
+2025-09-21,Pagamento energia elétrica,345.80,debito
+2025-09-21,Transferência TED - Cliente Maria,670.25,credito
+2025-09-22,Depósito em dinheiro,4500.00,credito
+2025-09-22,Saque ATM,300.00,debito
+2025-09-22,Pagamento telefone,125.90,debito
+2025-09-22,Venda produto B - Cliente Pedro,980.50,credito
+2025-09-23,ÓRFÃO EXTRATO - Transferência não registrada,777.88,credito
+2025-09-23,Pagamento combustível,189.75,debito
+2025-09-23,VALOR DIVERGENTE - Venda com desconto aplicado,1200.00,credito
+2025-09-23,Taxa de manutenção conta,15.00,debito
+2025-09-24,Transferência PIX - Cliente Carlos,550.80,credito
+2025-09-24,DUPLICATA - Pagamento processado duas vezes,450.00,debito
+2025-09-24,DUPLICATA - Pagamento processado duas vezes,450.00,debito
+2025-09-24,Compra cartão crédito - Loja ABC,234.60,debito
+2025-09-25,Venda produto C - Cliente Ana,1100.75,credito
+2025-09-25,Pagamento internet,89.90,debito
+2025-09-25,DATA DIVERGENTE - Transferência data incorreta,825.40,credito
+2025-09-25,ÓRFÃO EXTRATO - Estorno não contabilizado,150.00,credito
+2025-09-26,Transferência PIX - Cliente Diana,750.00,credito
+2025-09-26,Pagamento aluguel,2800.00,debito
+2025-09-26,VALOR DIVERGENTE - Compra com valor errado,99.99,debito
+2025-09-26,Juros sobre aplicação,45.75,credito
+2025-09-27,Venda produto D - Cliente Eduardo,1350.25,credito
+2025-09-27,DUPLICATA PARCIAL - Mesmo valor cliente diferente,678.90,credito
+2025-09-27,DUPLICATA PARCIAL - Mesmo valor cliente diferente,678.90,credito
+2025-09-27,Pagamento cartão crédito,1567.80,debito
+2025-09-28,Transferência internacional,3200.00,debito
+2025-09-28,ÓRFÃO EXTRATO - Recebimento sem origem,333.33,credito
+2025-09-28,Taxa DOC,12.50,debito
+2025-09-28,Venda produto E - Cliente Fernanda,892.40,credito
+2025-09-29,Depósito cheque,1800.00,credito
+2025-09-29,VALOR DIVERGENTE - Pagamento parcial registrado total,500.00,debito
+2025-09-29,Transferência PIX - Cliente Gabriel,425.60,credito
+2025-09-29,ÓRFÃO EXTRATO - Transferência automática,200.00,debito
+2025-09-30,Venda produto F - Cliente Helena,1675.85,credito
+2025-09-30,Pagamento seguro,456.70,debito

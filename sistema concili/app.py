@@ -1136,83 +1136,150 @@ def verificar_divergencias():
 
             if duplicatas:
                 logging.info(f"Duplicata encontrada: {extrato.descricao} - {extrato.valor}")
-                for duplicata in duplicatas:
-                    # Verificar se já existe esta divergência
+                # Verificar se já existe esta divergência
+                divergencia_existente = Divergencia.query.filter_by(
+                    tipo="duplicata", extrato_id=extrato.id
+                ).first()
+
+                if not divergencia_existente:
+                    divergencia = Divergencia(
+                        tipo="duplicata",
+                        extrato_id=extrato.id,
+                        descricao=f"Transação duplicada detectada: {extrato.descricao} - R$ {extrato.valor}",
+                    )
+                    db.session.add(divergencia)
+                    divergencias_criadas += 1
+                    logging.info(f"Divergência de duplicata criada para extrato ID {extrato.id}")
+
+        # 2. Verificar órfãos no extrato (sem correspondência nos lançamentos)
+        logging.info("Verificando órfãos no extrato...")
+        extratos_nao_conciliados = ExtratoBancario.query.filter_by(conciliado=False).all()
+        for extrato in extratos_nao_conciliados:
+            # Verificar se tem descrição de órfão
+            if "ÓRFÃO EXTRATO" in extrato.descricao.upper():
+                divergencia_existente = Divergencia.query.filter_by(
+                    tipo="orfao_extrato", extrato_id=extrato.id
+                ).first()
+
+                if not divergencia_existente:
+                    divergencia = Divergencia(
+                        tipo="orfao_extrato",
+                        extrato_id=extrato.id,
+                        descricao=f"Órfão no extrato: {extrato.descricao} - R$ {extrato.valor}",
+                    )
+                    db.session.add(divergencia)
+                    divergencias_criadas += 1
+                    logging.info(f"Divergência de órfão no extrato criada para ID {extrato.id}")
+            else:
+                # Verificar se não tem correspondência por valor, data e tipo
+                correspondencia = LancamentoContabil.query.filter(
+                    LancamentoContabil.valor == extrato.valor,
+                    LancamentoContabil.data == extrato.data,
+                    LancamentoContabil.tipo == extrato.tipo,
+                    LancamentoContabil.conciliado == False
+                ).first()
+                
+                if not correspondencia:
                     divergencia_existente = Divergencia.query.filter_by(
-                        tipo="duplicata", extrato_id=extrato.id
+                        tipo="sem_correspondencia", extrato_id=extrato.id
                     ).first()
 
                     if not divergencia_existente:
                         divergencia = Divergencia(
-                            tipo="duplicata",
+                            tipo="sem_correspondencia",
                             extrato_id=extrato.id,
-                            descricao=f"Transação duplicada detectada: {extrato.descricao} - R$ {extrato.valor}",
+                            descricao=f"Extrato sem lançamento correspondente: {extrato.descricao} - R$ {extrato.valor}",
                         )
                         db.session.add(divergencia)
                         divergencias_criadas += 1
-                        logging.info(f"Divergência de duplicata criada para extrato ID {extrato.id}")
+                        logging.info(f"Divergência de correspondência criada para extrato ID {extrato.id}")
 
-        # 2. Verificar valores diferentes entre extratos e lançamentos com mesmo documento
-        logging.info("Verificando valores diferentes...")
-        extratos = ExtratoBancario.query.all()
+        # 3. Verificar órfãos nos lançamentos (sem correspondência no extrato)
+        logging.info("Verificando órfãos nos lançamentos...")
+        lancamentos_nao_conciliados = LancamentoContabil.query.filter_by(conciliado=False).all()
+        for lancamento in lancamentos_nao_conciliados:
+            # Verificar se tem descrição de órfão
+            if "ÓRFÃO CONTÁBIL" in lancamento.descricao.upper():
+                divergencia_existente = Divergencia.query.filter_by(
+                    tipo="orfao_lancamento", lancamento_id=lancamento.id
+                ).first()
+
+                if not divergencia_existente:
+                    divergencia = Divergencia(
+                        tipo="orfao_lancamento",
+                        lancamento_id=lancamento.id,
+                        descricao=f"Órfão contábil: {lancamento.descricao} - R$ {lancamento.valor}",
+                    )
+                    db.session.add(divergencia)
+                    divergencias_criadas += 1
+                    logging.info(f"Divergência de órfão contábil criada para ID {lancamento.id}")
+
+        # 4. Verificar divergências de valor (mesmo item, valores diferentes)
+        logging.info("Verificando divergências de valor...")
+        extratos = ExtratoBancario.query.filter_by(conciliado=False).all()
         for extrato in extratos:
-            if extrato.numero_documento:
-                lancamentos = LancamentoContabil.query.filter_by(
-                    numero_documento=extrato.numero_documento
+            if "VALOR DIVERGENTE" in extrato.descricao.upper() or "VALOR DIFERENTE" in extrato.descricao.upper():
+                # Procurar lançamento com descrição similar na mesma data
+                lancamentos_mesma_data = LancamentoContabil.query.filter(
+                    LancamentoContabil.data == extrato.data,
+                    LancamentoContabil.conciliado == False
                 ).all()
                 
-                for lancamento in lancamentos:
-                    # Converter valores para comparação (extrato pode ter sinal negativo)
-                    valor_extrato = abs(float(extrato.valor))
-                    valor_lancamento = abs(float(lancamento.valor))
-                    diferenca = abs(valor_extrato - valor_lancamento)
-                    
-                    # Se a diferença for maior que R$ 0.01
-                    if diferenca > 0.01:
-                        # Verificar se já existe esta divergência
+                for lancamento in lancamentos_mesma_data:
+                    if "VALOR DIFERENTE" in lancamento.descricao.upper():
+                        # Verificar se valores são diferentes
+                        valor_extrato = abs(float(extrato.valor))
+                        valor_lancamento = abs(float(lancamento.valor))
+                        diferenca = abs(valor_extrato - valor_lancamento)
+                        
+                        if diferenca > 0.01:
+                            divergencia_existente = Divergencia.query.filter_by(
+                                tipo="valor_incorreto",
+                                extrato_id=extrato.id,
+                                lancamento_id=lancamento.id,
+                            ).first()
+
+                            if not divergencia_existente:
+                                divergencia = Divergencia(
+                                    tipo="valor_incorreto",
+                                    extrato_id=extrato.id,
+                                    lancamento_id=lancamento.id,
+                                    descricao=f"Diferença de valor: Extrato R$ {extrato.valor} vs Lançamento R$ {lancamento.valor} (Diff: R$ {diferenca:.2f})",
+                                )
+                                db.session.add(divergencia)
+                                divergencias_criadas += 1
+                                logging.info(f"Divergência de valor criada: Extrato {extrato.id} vs Lançamento {lancamento.id}")
+
+        # 5. Verificar divergências de data (mesmo valor, datas diferentes)
+        logging.info("Verificando divergências de data...")
+        extratos = ExtratoBancario.query.filter_by(conciliado=False).all()
+        for extrato in extratos:
+            if "DATA DIVERGENTE" in extrato.descricao.upper():
+                # Procurar lançamento com mesmo valor mas data diferente
+                lancamentos_mesmo_valor = LancamentoContabil.query.filter(
+                    LancamentoContabil.valor == extrato.valor,
+                    LancamentoContabil.data != extrato.data,
+                    LancamentoContabil.conciliado == False
+                ).all()
+                
+                for lancamento in lancamentos_mesmo_valor:
+                    if "DATA DIFERENTE" in lancamento.descricao.upper():
                         divergencia_existente = Divergencia.query.filter_by(
-                            tipo="valor_incorreto",
+                            tipo="data_incorreta",
                             extrato_id=extrato.id,
                             lancamento_id=lancamento.id,
                         ).first()
 
                         if not divergencia_existente:
                             divergencia = Divergencia(
-                                tipo="valor_incorreto",
+                                tipo="data_incorreta",
                                 extrato_id=extrato.id,
                                 lancamento_id=lancamento.id,
-                                descricao=f"Diferença de valor detectada: Extrato R$ {extrato.valor} vs Lançamento R$ {lancamento.valor} (Diferença: R$ {diferenca:.2f})",
+                                descricao=f"Diferença de data: Extrato {extrato.data} vs Lançamento {lancamento.data} (Valor: R$ {extrato.valor})",
                             )
                             db.session.add(divergencia)
                             divergencias_criadas += 1
-                            logging.info(f"Divergência de valor criada: Extrato {extrato.id} vs Lançamento {lancamento.id}")
-
-        # 3. Verificar extratos sem lançamentos correspondentes
-        logging.info("Verificando extratos sem lançamentos...")
-        extratos_sem_lancamento = ExtratoBancario.query.filter(
-            ~ExtratoBancario.numero_documento.in_(
-                db.session.query(LancamentoContabil.numero_documento).filter(
-                    LancamentoContabil.numero_documento.isnot(None)
-                )
-            )
-        ).all()
-        
-        for extrato in extratos_sem_lancamento:
-            if extrato.numero_documento:  # Só criar divergência se tiver número de documento
-                divergencia_existente = Divergencia.query.filter_by(
-                    tipo="sem_correspondencia",
-                    extrato_id=extrato.id
-                ).first()
-
-                if not divergencia_existente:
-                    divergencia = Divergencia(
-                        tipo="sem_correspondencia",
-                        extrato_id=extrato.id,
-                        descricao=f"Extrato sem lançamento correspondente: {extrato.descricao} - Doc: {extrato.numero_documento}",
-                    )
-                    db.session.add(divergencia)
-                    divergencias_criadas += 1
-                    logging.info(f"Divergência de correspondência criada para extrato ID {extrato.id}")
+                            logging.info(f"Divergência de data criada: Extrato {extrato.id} vs Lançamento {lancamento.id}")
 
         db.session.commit()
         logging.info(f"Verificação de divergências concluída. {divergencias_criadas} novas divergências criadas.")

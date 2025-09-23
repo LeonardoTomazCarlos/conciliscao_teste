@@ -1,0 +1,18 @@
+Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
+2025-09-15,Recebimento PIX sem centavos,1000.00,credito,Receitas,Cliente PIX,Vendas
+2025-09-15,Pagamento com valor exato,850.00,debito,Fornecedores,Fornecedor A,Operacional
+2025-09-16,Venda sem desconto aplicado,1500.00,credito,Receitas,Cliente Premium,Vendas
+2025-09-16,Estorno completo de compra,100.00,credito,Estornos,Cliente Estorno,Vendas
+2025-09-17,Multa atraso pagamento,35.80,debito,Multas,Fornecedor Multa,Operacional
+2025-09-18,Pagamento sem IOF,2000.00,debito,Fornecedores,Fornecedor Internacional,Operacional
+2025-09-18,Recebimento em reais,1900.00,credito,Receitas,Cliente Exportação,Vendas
+2025-09-19,Pagamento à vista com desconto,450.00,debito,Fornecedores,Fornecedor Desconto,Operacional
+2025-09-19,Programa fidelidade crédito,50.00,credito,Receitas,Programa Fidelidade,Marketing
+2025-09-20,Aplicação financeira,1500.00,debito,Investimentos,Banco Aplicação,Financeiro
+2025-09-21,Compra sem tarifa,320.90,debito,Material,Fornecedor Material,Operacional
+2025-09-22,Pagamento normal,1000.00,debito,Fornecedores,Fornecedor Normal,Operacional
+2025-09-22,Rendimento aplicação,125.30,credito,Receitas Financeiras,Banco CDB,Financeiro
+2025-09-23,Saque normal,200.00,debito,Caixa,Banco,Administrativo
+2025-09-24,Recebimento programado,750.25,credito,Receitas,Cliente Programado,Vendas
+2025-09-25,Lançamento adicional não previsto,555.55,credito,Receitas,Cliente Surpresa,Vendas
+2025-09-25,Despesa extra não prevista,333.33,debito,Diversos,Fornecedor Extra,Operacional

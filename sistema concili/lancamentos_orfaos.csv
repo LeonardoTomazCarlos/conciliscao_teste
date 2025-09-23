@@ -1,9 +1,0 @@
-Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
-2025-01-20,Lançamento Órfão 1,987.65,credito,Receitas,Cliente Órfão 1,Vendas
-2025-01-20,Lançamento Órfão 2,432.10,debito,Despesas,Fornecedor Órfão 1,Operacional
-2025-01-21,Lançamento Órfão 3,765.43,credito,Receitas,Cliente Órfão 2,Vendas
-2025-01-21,Lançamento Órfão 4,210.98,debito,Material,Fornecedor Órfão 2,Administrativo
-2025-01-22,Lançamento Órfão 5,543.21,credito,Receitas,Cliente Órfão 3,Vendas
-2025-01-22,Lançamento Órfão 6,98.76,debito,Taxas,Fornecedor Órfão 3,Administrativo
-2025-01-23,Lançamento Órfão 7,321.09,credito,Receitas,Cliente Órfão 4,Vendas
-2025-01-23,Lançamento Órfão 8,876.54,debito,Equipamentos,Fornecedor Órfão 4,Operacional

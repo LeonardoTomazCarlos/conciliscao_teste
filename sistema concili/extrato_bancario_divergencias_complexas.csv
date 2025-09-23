@@ -1,0 +1,8 @@
+Data,Descrição,Valor,Tipo
+2025-09-27,Transferência PIX - Valor aproximado,1000.01,credito
+2025-09-27,Pagamento fornecedor - Data incorreta,500.00,debito
+2025-09-28,Venda com desconto aplicado,950.00,credito
+2025-09-28,Estorno parcial de compra,75.50,credito
+2025-09-29,Taxa bancária não prevista,15.00,debito
+2025-09-29,Juros sobre aplicação,25.75,credito
+2025-09-30,Transferência internacional,2500.00,debito

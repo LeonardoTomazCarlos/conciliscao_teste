@@ -1,6 +1,0 @@
-Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
-2025-01-27,Venda Data Divergente Lanc,500.00,credito,Receitas,Cliente Data,Vendas
-2025-01-28,Compra Data Divergente,150.75,debito,Compras,Fornecedor Data,Administrativo
-2025-01-29,Recebimento PIX Data,300.50,credito,Receitas,Cliente PIX Data,Vendas
-2025-01-30,Saque Data Divergente,200.00,debito,Caixa,Banco Data,Operacional
-2025-01-31,Depósito Data Divergente,750.25,credito,Receitas,Cliente Depósito,Vendas

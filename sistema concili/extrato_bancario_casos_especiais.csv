@@ -1,0 +1,21 @@
+Data,Descrição,Valor,Tipo
+2025-09-15,Transferência PIX com arredondamento,1000.01,credito
+2025-09-15,Pagamento com centavos diferentes,850.47,debito
+2025-09-16,Venda com desconto não aplicado,1250.00,credito
+2025-09-16,Estorno parcial de compra,75.50,credito
+2025-09-17,Taxa bancária não prevista,25.00,debito
+2025-09-17,Juros mora pagamento atrasado,35.80,debito
+2025-09-18,Transferência com IOF,2000.50,debito
+2025-09-18,Recebimento moeda estrangeira,1850.75,credito
+2025-09-19,Pagamento parcelado primeira parcela,500.00,debito
+2025-09-19,Cashback cartão crédito,45.20,credito
+2025-09-20,Transferência entre contas próprias,1500.00,debito
+2025-09-20,Transferência entre contas próprias,1500.00,credito
+2025-09-21,Compra com tarifa adicional,320.90,debito
+2025-09-21,Estorno total transação,320.90,credito
+2025-09-22,Pagamento antecipado com desconto,950.00,debito
+2025-09-22,Rendimento CDB automático,125.30,credito
+2025-09-23,Saque emergência final de semana,200.00,debito
+2025-09-23,Taxa saque emergencial,8.50,debito
+2025-09-24,Transferência programada,750.25,credito
+2025-09-24,Reversão de lançamento,750.25,debito

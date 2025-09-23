@@ -1974,3 +1974,340 @@
 2025-09-22 20:46:24,210 - werkzeug - INFO -  * Debugger PIN: 682-994-724
 2025-09-22 20:56:06,155 - waitress - INFO - Serving on http://0.0.0.0:8080
 2025-09-22 21:19:39,066 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-22 21:22:25,806 - root - INFO - Procedimento finalizado: PROC-20250916134509-BEF82B5D - 0 conciliações
+2025-09-22 21:22:25,817 - root - INFO - Sessão PROC-20250916134509-BEF82B5D finalizada por timeout
+2025-09-22 21:22:25,827 - root - INFO - Procedimento finalizado: efc910d4-86a2-46f0-94e0-bc1908c096dc - 0 conciliações
+2025-09-22 21:22:25,835 - root - INFO - Sessão efc910d4-86a2-46f0-94e0-bc1908c096dc finalizada por timeout
+2025-09-22 21:22:25,835 - root - INFO - 2 sessões antigas finalizadas automaticamente
+2025-09-22 21:22:25,845 - root - INFO - Procedimento criado: PROC-20250922212225-2EE05200 - sessao_conciliacao por usuário admin
+2025-09-22 21:22:33,037 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:22:34,357 - root - INFO - Procedimento criado: PROC-20250922212234-FD7814AC - conciliacao por usuário admin
+2025-09-22 21:22:34,398 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:22:34,398 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:22:34,430 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:22:34,431 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:22:34,433 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-22 21:22:34,443 - root - INFO - Procedimento finalizado: PROC-20250922212234-FD7814AC - 0 conciliações
+2025-09-22 21:22:38,225 - root - INFO - Procedimento criado: PROC-20250922212238-D69D1217 - conciliacao por usuário admin
+2025-09-22 21:22:38,267 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:22:38,267 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:22:38,297 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:22:38,298 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:22:38,299 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-22 21:22:38,309 - root - INFO - Procedimento finalizado: PROC-20250922212238-D69D1217 - 0 conciliações
+2025-09-22 21:22:44,979 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:22:58,004 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:22:58,426 - root - INFO - Procedimento criado: PROC-20250922212258-588AC711 - conciliacao por usuário admin
+2025-09-22 21:22:58,477 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:22:58,477 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:22:58,519 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:22:58,520 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:22:58,521 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-22 21:22:58,532 - root - INFO - Procedimento finalizado: PROC-20250922212258-588AC711 - 0 conciliações
+2025-09-22 21:28:53,953 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-22 21:32:49,306 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:32:53,570 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:32:54,496 - root - INFO - Procedimento criado: PROC-20250922213254-B668CCED - conciliacao por usuário admin
+2025-09-22 21:32:54,565 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:32:54,565 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:32:54,617 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:32:54,619 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:32:54,621 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-22 21:32:54,632 - root - INFO - Procedimento finalizado: PROC-20250922213254-B668CCED - 0 conciliações
+2025-09-22 21:36:02,576 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:36:06,914 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:36:07,580 - root - INFO - Procedimento criado: PROC-20250922213607-485F99FB - conciliacao por usuário admin
+2025-09-22 21:36:07,652 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:36:07,652 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:36:07,712 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:36:07,713 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:36:07,714 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-22 21:36:07,724 - root - INFO - Procedimento finalizado: PROC-20250922213607-485F99FB - 0 conciliações
+2025-09-22 21:36:21,804 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:36:22,276 - root - INFO - Procedimento criado: PROC-20250922213622-BE47C2B4 - conciliacao por usuário admin
+2025-09-22 21:36:22,397 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:36:22,397 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:36:22,458 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:36:22,460 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:36:22,462 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-22 21:36:22,472 - root - INFO - Procedimento finalizado: PROC-20250922213622-BE47C2B4 - 2 conciliações
+2025-09-22 21:44:17,017 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:44:21,281 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:44:22,095 - root - INFO - Procedimento criado: PROC-20250922214422-6D826AB0 - conciliacao por usuário admin
+2025-09-22 21:44:23,043 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:44:23,043 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:44:23,111 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:44:23,112 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:44:23,114 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-22 21:44:23,123 - root - INFO - Procedimento finalizado: PROC-20250922214422-6D826AB0 - 29 conciliações
+2025-09-22 21:48:50,050 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.33:5000
+2025-09-22 21:48:50,050 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-22 21:48:50,051 - werkzeug - INFO -  * Restarting with stat
+2025-09-22 21:48:50,969 - werkzeug - WARNING -  * Debugger is active!
+2025-09-22 21:48:50,973 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-22 21:49:07,573 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.33:5000
+2025-09-22 21:49:07,573 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-22 21:49:07,574 - werkzeug - INFO -  * Restarting with stat
+2025-09-22 21:49:08,470 - werkzeug - WARNING -  * Debugger is active!
+2025-09-22 21:49:08,474 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-22 21:49:50,142 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.33:5000
+2025-09-22 21:49:50,142 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-22 21:49:50,143 - werkzeug - INFO -  * Restarting with stat
+2025-09-22 21:49:51,101 - werkzeug - WARNING -  * Debugger is active!
+2025-09-22 21:49:51,104 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-22 21:52:46,834 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-22 21:53:03,714 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:53:08,068 - root - INFO - Usando sessão existente: PROC-20250922212225-2EE05200
+2025-09-22 21:53:09,006 - root - INFO - Procedimento criado: PROC-20250922215308-E05F46EA - conciliacao por usuário admin
+2025-09-22 21:53:10,609 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:53:10,609 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:53:10,611 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente ABC Ltda - 2500.0
+2025-09-22 21:53:10,612 - root - INFO - Divergência de duplicata criada para extrato ID 1
+2025-09-22 21:53:10,615 - root - INFO - Duplicata encontrada: Pagamento fornecedor XYZ - 1200.5
+2025-09-22 21:53:10,615 - root - INFO - Divergência de duplicata criada para extrato ID 2
+2025-09-22 21:53:10,616 - root - INFO - Duplicata encontrada: Compra cartão débito - Supermercado - 156.75
+2025-09-22 21:53:10,617 - root - INFO - Divergência de duplicata criada para extrato ID 3
+2025-09-22 21:53:10,617 - root - INFO - Duplicata encontrada: Venda produto A - Cliente João - 850.0
+2025-09-22 21:53:10,618 - root - INFO - Divergência de duplicata criada para extrato ID 4
+2025-09-22 21:53:10,618 - root - INFO - Duplicata encontrada: Pagamento energia elétrica - 345.8
+2025-09-22 21:53:10,619 - root - INFO - Divergência de duplicata criada para extrato ID 5
+2025-09-22 21:53:10,620 - root - INFO - Duplicata encontrada: Transferência TED - Cliente Maria - 670.25
+2025-09-22 21:53:10,620 - root - INFO - Divergência de duplicata criada para extrato ID 6
+2025-09-22 21:53:10,621 - root - INFO - Duplicata encontrada: Depósito em dinheiro - 4500.0
+2025-09-22 21:53:10,621 - root - INFO - Divergência de duplicata criada para extrato ID 7
+2025-09-22 21:53:10,622 - root - INFO - Duplicata encontrada: Saque ATM - 300.0
+2025-09-22 21:53:10,622 - root - INFO - Divergência de duplicata criada para extrato ID 8
+2025-09-22 21:53:10,623 - root - INFO - Duplicata encontrada: Pagamento telefone - 125.9
+2025-09-22 21:53:10,624 - root - INFO - Divergência de duplicata criada para extrato ID 9
+2025-09-22 21:53:10,624 - root - INFO - Duplicata encontrada: Venda produto B - Cliente Pedro - 980.5
+2025-09-22 21:53:10,625 - root - INFO - Divergência de duplicata criada para extrato ID 10
+2025-09-22 21:53:10,625 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Transferência não registrada - 777.88
+2025-09-22 21:53:10,626 - root - INFO - Divergência de duplicata criada para extrato ID 11
+2025-09-22 21:53:10,627 - root - INFO - Duplicata encontrada: Pagamento combustível - 189.75
+2025-09-22 21:53:10,627 - root - INFO - Divergência de duplicata criada para extrato ID 12
+2025-09-22 21:53:10,628 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Venda com desconto aplicado - 1200.0
+2025-09-22 21:53:10,628 - root - INFO - Divergência de duplicata criada para extrato ID 13
+2025-09-22 21:53:10,629 - root - INFO - Duplicata encontrada: Taxa de manutenção conta - 15.0
+2025-09-22 21:53:10,629 - root - INFO - Divergência de duplicata criada para extrato ID 14
+2025-09-22 21:53:10,630 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Carlos - 550.8
+2025-09-22 21:53:10,630 - root - INFO - Divergência de duplicata criada para extrato ID 15
+2025-09-22 21:53:10,631 - root - INFO - Duplicata encontrada: DUPLICATA - Pagamento processado duas vezes - 450.0
+2025-09-22 21:53:10,632 - root - INFO - Duplicata encontrada: DUPLICATA - Pagamento processado duas vezes - 450.0
+2025-09-22 21:53:10,633 - root - INFO - Duplicata encontrada: Compra cartão crédito - Loja ABC - 234.6
+2025-09-22 21:53:10,633 - root - INFO - Divergência de duplicata criada para extrato ID 18
+2025-09-22 21:53:10,634 - root - INFO - Duplicata encontrada: Venda produto C - Cliente Ana - 1100.75
+2025-09-22 21:53:10,635 - root - INFO - Divergência de duplicata criada para extrato ID 19
+2025-09-22 21:53:10,635 - root - INFO - Duplicata encontrada: Pagamento internet - 89.9
+2025-09-22 21:53:10,636 - root - INFO - Divergência de duplicata criada para extrato ID 20
+2025-09-22 21:53:10,636 - root - INFO - Duplicata encontrada: DATA DIVERGENTE - Transferência data incorreta - 825.4
+2025-09-22 21:53:10,637 - root - INFO - Divergência de duplicata criada para extrato ID 21
+2025-09-22 21:53:10,639 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Estorno não contabilizado - 150.0
+2025-09-22 21:53:10,640 - root - INFO - Divergência de duplicata criada para extrato ID 22
+2025-09-22 21:53:10,641 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Diana - 750.0
+2025-09-22 21:53:10,642 - root - INFO - Divergência de duplicata criada para extrato ID 23
+2025-09-22 21:53:10,643 - root - INFO - Duplicata encontrada: Pagamento aluguel - 2800.0
+2025-09-22 21:53:10,643 - root - INFO - Divergência de duplicata criada para extrato ID 24
+2025-09-22 21:53:10,644 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Compra com valor errado - 99.99
+2025-09-22 21:53:10,644 - root - INFO - Divergência de duplicata criada para extrato ID 25
+2025-09-22 21:53:10,645 - root - INFO - Duplicata encontrada: Juros sobre aplicação - 45.75
+2025-09-22 21:53:10,646 - root - INFO - Divergência de duplicata criada para extrato ID 26
+2025-09-22 21:53:10,646 - root - INFO - Duplicata encontrada: Venda produto D - Cliente Eduardo - 1350.25
+2025-09-22 21:53:10,647 - root - INFO - Divergência de duplicata criada para extrato ID 27
+2025-09-22 21:53:10,648 - root - INFO - Duplicata encontrada: DUPLICATA PARCIAL - Mesmo valor cliente diferente - 678.9
+2025-09-22 21:53:10,649 - root - INFO - Duplicata encontrada: DUPLICATA PARCIAL - Mesmo valor cliente diferente - 678.9
+2025-09-22 21:53:10,650 - root - INFO - Duplicata encontrada: Pagamento cartão crédito - 1567.8
+2025-09-22 21:53:10,650 - root - INFO - Divergência de duplicata criada para extrato ID 30
+2025-09-22 21:53:10,651 - root - INFO - Duplicata encontrada: Transferência internacional - 3200.0
+2025-09-22 21:53:10,651 - root - INFO - Divergência de duplicata criada para extrato ID 31
+2025-09-22 21:53:10,652 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Recebimento sem origem - 333.33
+2025-09-22 21:53:10,652 - root - INFO - Divergência de duplicata criada para extrato ID 32
+2025-09-22 21:53:10,653 - root - INFO - Duplicata encontrada: Taxa DOC - 12.5
+2025-09-22 21:53:10,654 - root - INFO - Divergência de duplicata criada para extrato ID 33
+2025-09-22 21:53:10,654 - root - INFO - Duplicata encontrada: Venda produto E - Cliente Fernanda - 892.4
+2025-09-22 21:53:10,655 - root - INFO - Divergência de duplicata criada para extrato ID 34
+2025-09-22 21:53:10,655 - root - INFO - Duplicata encontrada: Depósito cheque - 1800.0
+2025-09-22 21:53:10,656 - root - INFO - Divergência de duplicata criada para extrato ID 35
+2025-09-22 21:53:10,656 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Pagamento parcial registrado total - 500.0
+2025-09-22 21:53:10,657 - root - INFO - Divergência de duplicata criada para extrato ID 36
+2025-09-22 21:53:10,658 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Gabriel - 425.6
+2025-09-22 21:53:10,658 - root - INFO - Divergência de duplicata criada para extrato ID 37
+2025-09-22 21:53:10,659 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Transferência automática - 200.0
+2025-09-22 21:53:10,659 - root - INFO - Divergência de duplicata criada para extrato ID 38
+2025-09-22 21:53:10,660 - root - INFO - Duplicata encontrada: Venda produto F - Cliente Helena - 1675.85
+2025-09-22 21:53:10,661 - root - INFO - Divergência de duplicata criada para extrato ID 39
+2025-09-22 21:53:10,661 - root - INFO - Duplicata encontrada: Pagamento seguro - 456.7
+2025-09-22 21:53:10,662 - root - INFO - Divergência de duplicata criada para extrato ID 40
+2025-09-22 21:53:10,662 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente ABC Ltda - 2500.0
+2025-09-22 21:53:10,663 - root - INFO - Divergência de duplicata criada para extrato ID 41
+2025-09-22 21:53:10,663 - root - INFO - Duplicata encontrada: Pagamento fornecedor XYZ - 1200.5
+2025-09-22 21:53:10,664 - root - INFO - Divergência de duplicata criada para extrato ID 42
+2025-09-22 21:53:10,665 - root - INFO - Duplicata encontrada: Compra cartão débito - Supermercado - 156.75
+2025-09-22 21:53:10,665 - root - INFO - Divergência de duplicata criada para extrato ID 43
+2025-09-22 21:53:10,666 - root - INFO - Duplicata encontrada: Venda produto A - Cliente João - 850.0
+2025-09-22 21:53:10,666 - root - INFO - Divergência de duplicata criada para extrato ID 44
+2025-09-22 21:53:10,667 - root - INFO - Duplicata encontrada: Pagamento energia elétrica - 345.8
+2025-09-22 21:53:10,667 - root - INFO - Divergência de duplicata criada para extrato ID 45
+2025-09-22 21:53:10,668 - root - INFO - Duplicata encontrada: Transferência TED - Cliente Maria - 670.25
+2025-09-22 21:53:10,668 - root - INFO - Divergência de duplicata criada para extrato ID 46
+2025-09-22 21:53:10,669 - root - INFO - Duplicata encontrada: Depósito em dinheiro - 4500.0
+2025-09-22 21:53:10,669 - root - INFO - Divergência de duplicata criada para extrato ID 47
+2025-09-22 21:53:10,670 - root - INFO - Duplicata encontrada: Saque ATM - 300.0
+2025-09-22 21:53:10,670 - root - INFO - Divergência de duplicata criada para extrato ID 48
+2025-09-22 21:53:10,671 - root - INFO - Duplicata encontrada: Pagamento telefone - 125.9
+2025-09-22 21:53:10,672 - root - INFO - Divergência de duplicata criada para extrato ID 49
+2025-09-22 21:53:10,672 - root - INFO - Duplicata encontrada: Venda produto B - Cliente Pedro - 980.5
+2025-09-22 21:53:10,673 - root - INFO - Divergência de duplicata criada para extrato ID 50
+2025-09-22 21:53:10,673 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Transferência não registrada - 777.88
+2025-09-22 21:53:10,674 - root - INFO - Divergência de duplicata criada para extrato ID 51
+2025-09-22 21:53:10,674 - root - INFO - Duplicata encontrada: Pagamento combustível - 189.75
+2025-09-22 21:53:10,675 - root - INFO - Divergência de duplicata criada para extrato ID 52
+2025-09-22 21:53:10,676 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Venda com desconto aplicado - 1200.0
+2025-09-22 21:53:10,676 - root - INFO - Divergência de duplicata criada para extrato ID 53
+2025-09-22 21:53:10,677 - root - INFO - Duplicata encontrada: Taxa de manutenção conta - 15.0
+2025-09-22 21:53:10,677 - root - INFO - Divergência de duplicata criada para extrato ID 54
+2025-09-22 21:53:10,678 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Carlos - 550.8
+2025-09-22 21:53:10,678 - root - INFO - Divergência de duplicata criada para extrato ID 55
+2025-09-22 21:53:10,679 - root - INFO - Duplicata encontrada: DUPLICATA - Pagamento processado duas vezes - 450.0
+2025-09-22 21:53:10,679 - root - INFO - Divergência de duplicata criada para extrato ID 56
+2025-09-22 21:53:10,680 - root - INFO - Duplicata encontrada: Compra cartão crédito - Loja ABC - 234.6
+2025-09-22 21:53:10,681 - root - INFO - Divergência de duplicata criada para extrato ID 57
+2025-09-22 21:53:10,681 - root - INFO - Duplicata encontrada: Venda produto C - Cliente Ana - 1100.75
+2025-09-22 21:53:10,682 - root - INFO - Divergência de duplicata criada para extrato ID 58
+2025-09-22 21:53:10,682 - root - INFO - Duplicata encontrada: Pagamento internet - 89.9
+2025-09-22 21:53:10,683 - root - INFO - Divergência de duplicata criada para extrato ID 59
+2025-09-22 21:53:10,684 - root - INFO - Duplicata encontrada: DATA DIVERGENTE - Transferência data incorreta - 825.4
+2025-09-22 21:53:10,684 - root - INFO - Divergência de duplicata criada para extrato ID 60
+2025-09-22 21:53:10,685 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Estorno não contabilizado - 150.0
+2025-09-22 21:53:10,685 - root - INFO - Divergência de duplicata criada para extrato ID 61
+2025-09-22 21:53:10,686 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Diana - 750.0
+2025-09-22 21:53:10,686 - root - INFO - Divergência de duplicata criada para extrato ID 62
+2025-09-22 21:53:10,687 - root - INFO - Duplicata encontrada: Pagamento aluguel - 2800.0
+2025-09-22 21:53:10,687 - root - INFO - Divergência de duplicata criada para extrato ID 63
+2025-09-22 21:53:10,688 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Compra com valor errado - 99.99
+2025-09-22 21:53:10,688 - root - INFO - Divergência de duplicata criada para extrato ID 64
+2025-09-22 21:53:10,689 - root - INFO - Duplicata encontrada: Juros sobre aplicação - 45.75
+2025-09-22 21:53:10,690 - root - INFO - Divergência de duplicata criada para extrato ID 65
+2025-09-22 21:53:10,690 - root - INFO - Duplicata encontrada: Venda produto D - Cliente Eduardo - 1350.25
+2025-09-22 21:53:10,691 - root - INFO - Divergência de duplicata criada para extrato ID 66
+2025-09-22 21:53:10,691 - root - INFO - Duplicata encontrada: DUPLICATA PARCIAL - Mesmo valor cliente diferente - 678.9
+2025-09-22 21:53:10,692 - root - INFO - Divergência de duplicata criada para extrato ID 67
+2025-09-22 21:53:10,693 - root - INFO - Duplicata encontrada: Pagamento cartão crédito - 1567.8
+2025-09-22 21:53:10,693 - root - INFO - Divergência de duplicata criada para extrato ID 68
+2025-09-22 21:53:10,694 - root - INFO - Duplicata encontrada: Transferência internacional - 3200.0
+2025-09-22 21:53:10,694 - root - INFO - Divergência de duplicata criada para extrato ID 69
+2025-09-22 21:53:10,695 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Recebimento sem origem - 333.33
+2025-09-22 21:53:10,695 - root - INFO - Divergência de duplicata criada para extrato ID 70
+2025-09-22 21:53:10,696 - root - INFO - Duplicata encontrada: Taxa DOC - 12.5
+2025-09-22 21:53:10,696 - root - INFO - Divergência de duplicata criada para extrato ID 71
+2025-09-22 21:53:10,697 - root - INFO - Duplicata encontrada: Venda produto E - Cliente Fernanda - 892.4
+2025-09-22 21:53:10,698 - root - INFO - Divergência de duplicata criada para extrato ID 72
+2025-09-22 21:53:10,698 - root - INFO - Duplicata encontrada: Depósito cheque - 1800.0
+2025-09-22 21:53:10,699 - root - INFO - Divergência de duplicata criada para extrato ID 73
+2025-09-22 21:53:10,699 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Pagamento parcial registrado total - 500.0
+2025-09-22 21:53:10,700 - root - INFO - Divergência de duplicata criada para extrato ID 74
+2025-09-22 21:53:10,700 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Gabriel - 425.6
+2025-09-22 21:53:10,701 - root - INFO - Divergência de duplicata criada para extrato ID 75
+2025-09-22 21:53:10,702 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Transferência automática - 200.0
+2025-09-22 21:53:10,702 - root - INFO - Divergência de duplicata criada para extrato ID 76
+2025-09-22 21:53:10,703 - root - INFO - Duplicata encontrada: Venda produto F - Cliente Helena - 1675.85
+2025-09-22 21:53:10,703 - root - INFO - Divergência de duplicata criada para extrato ID 77
+2025-09-22 21:53:10,704 - root - INFO - Duplicata encontrada: Pagamento seguro - 456.7
+2025-09-22 21:53:10,704 - root - INFO - Divergência de duplicata criada para extrato ID 78
+2025-09-22 21:53:10,704 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:53:10,705 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:53:10,712 - root - INFO - Verificação de divergências concluída. 74 novas divergências criadas.
+2025-09-22 21:53:10,722 - root - INFO - Procedimento finalizado: PROC-20250922215308-E05F46EA - 58 conciliações
+2025-09-22 21:53:10,760 - root - INFO - Procedimento criado: PROC-20250922215310-5FA04B71 - conciliacao por usuário admin
+2025-09-22 21:53:10,803 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:53:10,803 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:53:10,805 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente ABC Ltda - 2500.0
+2025-09-22 21:53:10,806 - root - INFO - Duplicata encontrada: Pagamento fornecedor XYZ - 1200.5
+2025-09-22 21:53:10,807 - root - INFO - Duplicata encontrada: Compra cartão débito - Supermercado - 156.75
+2025-09-22 21:53:10,808 - root - INFO - Duplicata encontrada: Venda produto A - Cliente João - 850.0
+2025-09-22 21:53:10,809 - root - INFO - Duplicata encontrada: Pagamento energia elétrica - 345.8
+2025-09-22 21:53:10,810 - root - INFO - Duplicata encontrada: Transferência TED - Cliente Maria - 670.25
+2025-09-22 21:53:10,811 - root - INFO - Duplicata encontrada: Depósito em dinheiro - 4500.0
+2025-09-22 21:53:10,812 - root - INFO - Duplicata encontrada: Saque ATM - 300.0
+2025-09-22 21:53:10,813 - root - INFO - Duplicata encontrada: Pagamento telefone - 125.9
+2025-09-22 21:53:10,814 - root - INFO - Duplicata encontrada: Venda produto B - Cliente Pedro - 980.5
+2025-09-22 21:53:10,815 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Transferência não registrada - 777.88
+2025-09-22 21:53:10,816 - root - INFO - Duplicata encontrada: Pagamento combustível - 189.75
+2025-09-22 21:53:10,817 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Venda com desconto aplicado - 1200.0
+2025-09-22 21:53:10,818 - root - INFO - Duplicata encontrada: Taxa de manutenção conta - 15.0
+2025-09-22 21:53:10,819 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Carlos - 550.8
+2025-09-22 21:53:10,820 - root - INFO - Duplicata encontrada: DUPLICATA - Pagamento processado duas vezes - 450.0
+2025-09-22 21:53:10,821 - root - INFO - Duplicata encontrada: DUPLICATA - Pagamento processado duas vezes - 450.0
+2025-09-22 21:53:10,822 - root - INFO - Duplicata encontrada: Compra cartão crédito - Loja ABC - 234.6
+2025-09-22 21:53:10,823 - root - INFO - Duplicata encontrada: Venda produto C - Cliente Ana - 1100.75
+2025-09-22 21:53:10,824 - root - INFO - Duplicata encontrada: Pagamento internet - 89.9
+2025-09-22 21:53:10,825 - root - INFO - Duplicata encontrada: DATA DIVERGENTE - Transferência data incorreta - 825.4
+2025-09-22 21:53:10,826 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Estorno não contabilizado - 150.0
+2025-09-22 21:53:10,827 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Diana - 750.0
+2025-09-22 21:53:10,828 - root - INFO - Duplicata encontrada: Pagamento aluguel - 2800.0
+2025-09-22 21:53:10,829 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Compra com valor errado - 99.99
+2025-09-22 21:53:10,830 - root - INFO - Duplicata encontrada: Juros sobre aplicação - 45.75
+2025-09-22 21:53:10,831 - root - INFO - Duplicata encontrada: Venda produto D - Cliente Eduardo - 1350.25
+2025-09-22 21:53:10,831 - root - INFO - Duplicata encontrada: DUPLICATA PARCIAL - Mesmo valor cliente diferente - 678.9
+2025-09-22 21:53:10,833 - root - INFO - Duplicata encontrada: DUPLICATA PARCIAL - Mesmo valor cliente diferente - 678.9
+2025-09-22 21:53:10,834 - root - INFO - Duplicata encontrada: Pagamento cartão crédito - 1567.8
+2025-09-22 21:53:10,835 - root - INFO - Duplicata encontrada: Transferência internacional - 3200.0
+2025-09-22 21:53:10,836 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Recebimento sem origem - 333.33
+2025-09-22 21:53:10,837 - root - INFO - Duplicata encontrada: Taxa DOC - 12.5
+2025-09-22 21:53:10,838 - root - INFO - Duplicata encontrada: Venda produto E - Cliente Fernanda - 892.4
+2025-09-22 21:53:10,839 - root - INFO - Duplicata encontrada: Depósito cheque - 1800.0
+2025-09-22 21:53:10,840 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Pagamento parcial registrado total - 500.0
+2025-09-22 21:53:10,841 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Gabriel - 425.6
+2025-09-22 21:53:10,842 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Transferência automática - 200.0
+2025-09-22 21:53:10,842 - root - INFO - Duplicata encontrada: Venda produto F - Cliente Helena - 1675.85
+2025-09-22 21:53:10,843 - root - INFO - Duplicata encontrada: Pagamento seguro - 456.7
+2025-09-22 21:53:10,844 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente ABC Ltda - 2500.0
+2025-09-22 21:53:10,845 - root - INFO - Duplicata encontrada: Pagamento fornecedor XYZ - 1200.5
+2025-09-22 21:53:10,846 - root - INFO - Duplicata encontrada: Compra cartão débito - Supermercado - 156.75
+2025-09-22 21:53:10,847 - root - INFO - Duplicata encontrada: Venda produto A - Cliente João - 850.0
+2025-09-22 21:53:10,848 - root - INFO - Duplicata encontrada: Pagamento energia elétrica - 345.8
+2025-09-22 21:53:10,849 - root - INFO - Duplicata encontrada: Transferência TED - Cliente Maria - 670.25
+2025-09-22 21:53:10,850 - root - INFO - Duplicata encontrada: Depósito em dinheiro - 4500.0
+2025-09-22 21:53:10,851 - root - INFO - Duplicata encontrada: Saque ATM - 300.0
+2025-09-22 21:53:10,852 - root - INFO - Duplicata encontrada: Pagamento telefone - 125.9
+2025-09-22 21:53:10,853 - root - INFO - Duplicata encontrada: Venda produto B - Cliente Pedro - 980.5
+2025-09-22 21:53:10,853 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Transferência não registrada - 777.88
+2025-09-22 21:53:10,854 - root - INFO - Duplicata encontrada: Pagamento combustível - 189.75
+2025-09-22 21:53:10,855 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Venda com desconto aplicado - 1200.0
+2025-09-22 21:53:10,856 - root - INFO - Duplicata encontrada: Taxa de manutenção conta - 15.0
+2025-09-22 21:53:10,857 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Carlos - 550.8
+2025-09-22 21:53:10,858 - root - INFO - Duplicata encontrada: DUPLICATA - Pagamento processado duas vezes - 450.0
+2025-09-22 21:53:10,860 - root - INFO - Duplicata encontrada: Compra cartão crédito - Loja ABC - 234.6
+2025-09-22 21:53:10,861 - root - INFO - Duplicata encontrada: Venda produto C - Cliente Ana - 1100.75
+2025-09-22 21:53:10,862 - root - INFO - Duplicata encontrada: Pagamento internet - 89.9
+2025-09-22 21:53:10,863 - root - INFO - Duplicata encontrada: DATA DIVERGENTE - Transferência data incorreta - 825.4
+2025-09-22 21:53:10,864 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Estorno não contabilizado - 150.0
+2025-09-22 21:53:10,865 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Diana - 750.0
+2025-09-22 21:53:10,866 - root - INFO - Duplicata encontrada: Pagamento aluguel - 2800.0
+2025-09-22 21:53:10,867 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Compra com valor errado - 99.99
+2025-09-22 21:53:10,868 - root - INFO - Duplicata encontrada: Juros sobre aplicação - 45.75
+2025-09-22 21:53:10,869 - root - INFO - Duplicata encontrada: Venda produto D - Cliente Eduardo - 1350.25
+2025-09-22 21:53:10,870 - root - INFO - Duplicata encontrada: DUPLICATA PARCIAL - Mesmo valor cliente diferente - 678.9
+2025-09-22 21:53:10,871 - root - INFO - Duplicata encontrada: Pagamento cartão crédito - 1567.8
+2025-09-22 21:53:10,872 - root - INFO - Duplicata encontrada: Transferência internacional - 3200.0
+2025-09-22 21:53:10,873 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Recebimento sem origem - 333.33
+2025-09-22 21:53:10,874 - root - INFO - Duplicata encontrada: Taxa DOC - 12.5
+2025-09-22 21:53:10,875 - root - INFO - Duplicata encontrada: Venda produto E - Cliente Fernanda - 892.4
+2025-09-22 21:53:10,876 - root - INFO - Duplicata encontrada: Depósito cheque - 1800.0
+2025-09-22 21:53:10,877 - root - INFO - Duplicata encontrada: VALOR DIVERGENTE - Pagamento parcial registrado total - 500.0
+2025-09-22 21:53:10,878 - root - INFO - Duplicata encontrada: Transferência PIX - Cliente Gabriel - 425.6
+2025-09-22 21:53:10,879 - root - INFO - Duplicata encontrada: ÓRFÃO EXTRATO - Transferência automática - 200.0
+2025-09-22 21:53:10,879 - root - INFO - Duplicata encontrada: Venda produto F - Cliente Helena - 1675.85
+2025-09-22 21:53:10,880 - root - INFO - Duplicata encontrada: Pagamento seguro - 456.7
+2025-09-22 21:53:10,881 - root - INFO - Verificando valores diferentes...
+2025-09-22 21:53:10,882 - root - INFO - Verificando extratos sem lançamentos...
+2025-09-22 21:53:10,883 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
+2025-09-22 21:53:10,892 - root - INFO - Procedimento finalizado: PROC-20250922215310-5FA04B71 - 0 conciliações

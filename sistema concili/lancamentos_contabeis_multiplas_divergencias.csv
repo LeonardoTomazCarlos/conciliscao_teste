@@ -1,0 +1,36 @@
+Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
+2025-09-20,Recebimento PIX - Cliente ABC Ltda,2500.00,credito,Receitas,ABC Ltda,Vendas
+2025-09-20,Pagamento fornecedor XYZ,1200.50,debito,Fornecedores,XYZ Ltda,Operacional
+2025-09-20,Compra supermercado,156.75,debito,Alimentação,Supermercado Central,Administrativo
+2025-09-21,Venda produto A - Cliente João,850.00,credito,Receitas,João Silva,Vendas
+2025-09-21,Conta energia elétrica,345.80,debito,Utilidades,Companhia Elétrica,Operacional
+2025-09-21,Recebimento TED - Cliente Maria,670.25,credito,Receitas,Maria Santos,Vendas
+2025-09-22,Depósito vendas em dinheiro,4500.00,credito,Receitas,Caixa,Vendas
+2025-09-22,Saque para operações,300.00,debito,Caixa,Banco,Administrativo
+2025-09-22,Conta telefone,125.90,debito,Utilidades,Operadora,Administrativo
+2025-09-22,Venda produto B - Cliente Pedro,980.50,credito,Receitas,Pedro Costa,Vendas
+2025-09-23,Combustível veículos empresa,189.75,debito,Transporte,Posto Gasolina,Operacional
+2025-09-23,VALOR DIFERENTE - Venda sem desconto,1500.00,credito,Receitas,Cliente Premium,Vendas
+2025-09-23,Taxa manutenção bancária,15.00,debito,Bancos,Banco Principal,Financeiro
+2025-09-24,Recebimento PIX - Cliente Carlos,550.80,credito,Receitas,Carlos Oliveira,Vendas
+2025-09-24,Pagamento único consultoria,450.00,debito,Serviços,Consultor Especialista,Administrativo
+2025-09-24,Compra loja ABC,234.60,debito,Material,Loja ABC,Operacional
+2025-09-25,Venda produto C - Cliente Ana,1100.75,credito,Receitas,Ana Lima,Vendas
+2025-09-25,Internet empresa,89.90,debito,Utilidades,Provedor Internet,Administrativo
+2025-09-24,DATA DIFERENTE - Transferência registrada dia anterior,825.40,credito,Receitas,Cliente Temporal,Vendas
+2025-09-26,Recebimento PIX - Cliente Diana,750.00,credito,Receitas,Diana Ferreira,Vendas
+2025-09-26,Aluguel escritório,2800.00,debito,Aluguel,Imobiliária,Administrativo
+2025-09-26,VALOR DIFERENTE - Compra com valor correto,150.00,debito,Material,Fornecedor ABC,Operacional
+2025-09-26,Rendimento aplicação financeira,45.75,credito,Receitas Financeiras,Banco Investimento,Financeiro
+2025-09-27,Venda produto D - Cliente Eduardo,1350.25,credito,Receitas,Eduardo Pinto,Vendas
+2025-09-27,Pagamento cartão empresarial,1567.80,debito,Cartão,Banco Cartão,Financeiro
+2025-09-28,Pagamento fornecedor internacional,3200.00,debito,Fornecedores,International Supplier,Operacional
+2025-09-28,Taxa DOC bancária,12.50,debito,Bancos,Banco Principal,Financeiro
+2025-09-28,Venda produto E - Cliente Fernanda,892.40,credito,Receitas,Fernanda Alves,Vendas
+2025-09-29,Depósito cheque cliente,1800.00,credito,Receitas,Cliente Cheque,Vendas
+2025-09-29,VALOR DIFERENTE - Pagamento total registrado,1000.00,debito,Fornecedores,Fornecedor Total,Operacional
+2025-09-29,Recebimento PIX - Cliente Gabriel,425.60,credito,Receitas,Gabriel Santos,Vendas
+2025-09-30,Venda produto F - Cliente Helena,1675.85,credito,Receitas,Helena Costa,Vendas
+2025-09-30,Seguro empresarial,456.70,debito,Seguros,Seguradora ABC,Administrativo
+2025-09-30,ÓRFÃO CONTÁBIL - Lançamento sem extrato,999.99,credito,Receitas,Cliente Fantasma,Vendas
+2025-09-30,ÓRFÃO CONTÁBIL - Despesa sem extrato,150.50,debito,Diversos,Fornecedor Invisível,Operacional

@@ -1,0 +1,7 @@
+Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
+2025-09-27,Recebimento PIX - Valor arredondado,1000.00,credito,Receitas,Cliente PIX,Vendas
+2025-09-26,Pagamento fornecedor - Data correta,500.00,debito,Fornecedores,Fornecedor ABC,Operacional
+2025-09-28,Venda sem desconto,1000.00,credito,Receitas,Cliente Desconto,Vendas
+2025-09-28,Estorno total de compra,100.00,credito,Estornos,Cliente Estorno,Vendas
+2025-09-29,Aplicação financeira,25.75,credito,Receitas Financeiras,Banco Investimento,Financeiro
+2025-09-30,Pagamento internacional,2400.00,debito,Fornecedores,Fornecedor Internacional,Operacional

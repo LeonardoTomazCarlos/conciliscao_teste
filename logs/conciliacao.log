@@ -548,3 +548,42 @@ WHERE extrato_bancario.data >= ? AND extrato_bancario.data <= ?) AS anon_1]
 2025-09-16 13:29:05,051 - werkzeug - INFO -  * Restarting with stat
 2025-09-16 13:29:05,884 - werkzeug - WARNING -  * Debugger is active!
 2025-09-16 13:29:05,887 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-22 21:50:24,293 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.33:5000
+2025-09-22 21:50:24,294 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-22 21:50:24,295 - werkzeug - INFO -  * Restarting with stat
+2025-09-22 21:50:25,218 - werkzeug - WARNING -  * Debugger is active!
+2025-09-22 21:50:25,221 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-22 21:51:35,385 - root - INFO - Iniciando verificação de divergências...
+2025-09-22 21:51:35,385 - root - INFO - Verificando duplicatas nos extratos...
+2025-09-22 21:51:35,395 - root - INFO - Duplicata encontrada: DUPLICATA - Pagamento processado duas vezes - 450.0
+2025-09-22 21:51:35,396 - root - INFO - Divergência de duplicata criada para extrato ID 16
+2025-09-22 21:51:35,398 - root - INFO - Duplicata encontrada: DUPLICATA - Pagamento processado duas vezes - 450.0
+2025-09-22 21:51:35,399 - root - INFO - Divergência de duplicata criada para extrato ID 17
+2025-09-22 21:51:35,403 - root - INFO - Duplicata encontrada: DUPLICATA PARCIAL - Mesmo valor cliente diferente - 678.9
+2025-09-22 21:51:35,403 - root - INFO - Divergência de duplicata criada para extrato ID 28
+2025-09-22 21:51:35,404 - root - INFO - Duplicata encontrada: DUPLICATA PARCIAL - Mesmo valor cliente diferente - 678.9
+2025-09-22 21:51:35,405 - root - INFO - Divergência de duplicata criada para extrato ID 29
+2025-09-22 21:51:35,409 - root - INFO - Verificando órfãos no extrato...
+2025-09-22 21:51:35,415 - root - INFO - Divergência de órfão no extrato criada para ID 11
+2025-09-22 21:51:35,416 - root - INFO - Divergência de correspondência criada para extrato ID 13
+2025-09-22 21:51:35,420 - root - INFO - Divergência de correspondência criada para extrato ID 21
+2025-09-22 21:51:35,421 - root - INFO - Divergência de órfão no extrato criada para ID 22
+2025-09-22 21:51:35,423 - root - INFO - Divergência de correspondência criada para extrato ID 25
+2025-09-22 21:51:35,425 - root - INFO - Divergência de correspondência criada para extrato ID 28
+2025-09-22 21:51:35,426 - root - INFO - Divergência de correspondência criada para extrato ID 29
+2025-09-22 21:51:35,427 - root - INFO - Divergência de órfão no extrato criada para ID 32
+2025-09-22 21:51:35,429 - root - INFO - Divergência de correspondência criada para extrato ID 36
+2025-09-22 21:51:35,430 - root - INFO - Divergência de órfão no extrato criada para ID 38
+2025-09-22 21:51:35,431 - root - INFO - Verificando órfãos nos lançamentos...
+2025-09-22 21:51:35,433 - root - INFO - Divergência de órfão contábil criada para ID 34
+2025-09-22 21:51:35,434 - root - INFO - Divergência de órfão contábil criada para ID 35
+2025-09-22 21:51:35,434 - root - INFO - Verificando divergências de valor...
+2025-09-22 21:51:35,437 - root - INFO - Divergência de valor criada: Extrato 13 vs Lançamento 12
+2025-09-22 21:51:35,438 - root - INFO - Divergência de valor criada: Extrato 25 vs Lançamento 22
+2025-09-22 21:51:35,439 - root - INFO - Divergência de valor criada: Extrato 36 vs Lançamento 30
+2025-09-22 21:51:35,439 - root - INFO - Verificando divergências de data...
+2025-09-22 21:51:35,442 - root - INFO - Divergência de data criada: Extrato 21 vs Lançamento 19
+2025-09-22 21:51:35,450 - root - INFO - Verificação de divergências concluída. 20 novas divergências criadas.

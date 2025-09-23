@@ -1,0 +1,21 @@
+Data,Descrição,Valor,Tipo,Categoria,Fornecedor/Cliente,Centro de Custo
+2025-09-20,Pagamento fornecedor ABC Ltda,2500.00,debito,Fornecedores,ABC Ltda,Operacional
+2025-09-20,Recebimento PIX - Cliente João,1200.00,credito,Receitas,João Silva,Vendas
+2025-09-20,Material de escritório,150.75,debito,Administrativo,Papelaria Central,Administrativo
+2025-09-21,Venda produto X - Cliente Maria,800.00,credito,Receitas,Maria Santos,Vendas
+2025-09-21,Conta de energia elétrica,320.50,debito,Utilidades,Companhia Elétrica,Operacional
+2025-09-21,Recebimento TED - Cliente Pedro,450.00,credito,Receitas,Pedro Costa,Vendas
+2025-09-22,Saque para caixa,200.00,debito,Caixa,Banco,Administrativo
+2025-09-22,Depósito vendas em dinheiro,3000.00,credito,Receitas,Caixa,Vendas
+2025-09-22,Conta de internet,89.90,debito,Utilidades,Provedor Internet,Administrativo
+2025-09-22,Venda produto Y - Cliente Ana,675.25,credito,Receitas,Ana Lima,Vendas
+2025-09-23,VALOR DIFERENTE - Transferência registrada errado,1500.00,credito,Receitas,Cliente Especial,Vendas
+2025-09-23,Combustível veículos,180.00,debito,Transporte,Posto Shell,Operacional
+2025-09-23,Venda produto Z - Cliente Carlos,1100.00,credito,Receitas,Carlos Oliveira,Vendas
+2025-09-24,Recebimento PIX - Cliente Diana,550.00,credito,Receitas,Diana Ferreira,Vendas
+2025-09-24,Conta de telefone,95.80,debito,Utilidades,Operadora Tel,Administrativo
+2025-09-25,Venda produto W - Cliente Eduardo,420.50,credito,Receitas,Eduardo Pinto,Vendas
+2025-09-25,Pagamento consultoria única,250.00,debito,Serviços,Consultor Especialista,Administrativo
+2025-09-25,Recebimento PIX - Cliente Fernanda,890.75,credito,Receitas,Fernanda Alves,Vendas
+2025-09-26,ÓRFÃO CONTÁBIL - Lançamento sem extrato,333.33,debito,Diversos,Fornecedor Fantasma,Operacional
+2025-09-26,DATA DIVERGENTE - Lançamento data errada,600.00,credito,Receitas,Cliente Temporal,Vendas
