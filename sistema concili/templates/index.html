@@ -1232,6 +1232,7 @@
                                             <option value="lancamento_orfao">Lançamento Órfão</option>
                                             <option value="diferenca_valor">Diferença de Valor</option>
                                             <option value="data_divergente">Data Divergente</option>
+                                            <option value="duplicata">Duplicata</option>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
@@ -3180,8 +3181,33 @@
             console.log('🔍 Carregando divergências da aba nova...');
             
             try {
+                // Construir URL com parâmetros de filtro
+                const params = new URLSearchParams();
+                
+                // Obter valores dos filtros
+                const tipoFiltro = document.getElementById('filtro-tipo-divergencia')?.value?.trim();
+                const statusFiltro = document.getElementById('filtro-status-divergencia')?.value?.trim();
+                const dataInicial = document.getElementById('filtro-data-inicial-div')?.value?.trim();
+                const dataFinal = document.getElementById('filtro-data-final-div')?.value?.trim();
+                
+                // Adicionar parâmetros não vazios
+                if (tipoFiltro) params.append('tipo', tipoFiltro);
+                if (statusFiltro) params.append('status', statusFiltro);
+                if (dataInicial) params.append('data_inicial', dataInicial);
+                if (dataFinal) params.append('data_final', dataFinal);
+                
+                const url = `/api/divergencias${params.toString() ? '?' + params.toString() : ''}`;
+                
+                console.log('🔗 URL de busca:', url);
+                console.log('📋 Filtros aplicados:', {
+                    tipo: tipoFiltro,
+                    status: statusFiltro,
+                    dataInicial: dataInicial,
+                    dataFinal: dataFinal
+                });
+                
                 // Buscar dados da API de divergências
-                const resp = await fetch('/api/divergencias');
+                const resp = await fetch(url);
                 let divergencias = [];
                 
                 if (resp.ok) {
@@ -3209,6 +3235,8 @@
                     console.log(`✅ Processadas ${divergencias.length} divergências`);
                 } else {
                     console.warn('⚠️ Erro na API de divergências:', resp.status);
+                    const errorText = await resp.text();
+                    console.error('❌ Detalhes do erro:', errorText);
                     divergencias = [];
                 }
                 
@@ -3312,6 +3340,12 @@
         // Funções auxiliares
         function obterInfoTipo(tipo) {
             const tipos = {
+                'orfao_extrato': { nome: 'Extrato Órfão', classe: 'bg-danger' },
+                'orfao_lancamento': { nome: 'Lançamento Órfão', classe: 'bg-warning text-dark' },
+                'sem_correspondencia': { nome: 'Sem Correspondência', classe: 'bg-danger' },
+                'valor_incorreto': { nome: 'Diferença Valor', classe: 'bg-info' },
+                'data_incorreta': { nome: 'Data Divergente', classe: 'bg-secondary' },
+                'duplicata': { nome: 'Duplicata', classe: 'bg-warning text-dark' },
                 'extrato_orfao': { nome: 'Extrato Órfão', classe: 'bg-danger' },
                 'lancamento_orfao': { nome: 'Lançamento Órfão', classe: 'bg-warning text-dark' },
                 'diferenca_valor': { nome: 'Diferença Valor', classe: 'bg-info' },
@@ -4497,13 +4531,78 @@ Os arquivos de teste já estão na pasta 'exemplos'.
 
         // Aplicar filtros nas divergências
         function aplicarFiltrosDivergencias() {
-            console.log('Aplicando filtros nas divergências');
+            console.log('🔍 Aplicando filtros nas divergências');
+            
+            // Obter valores dos filtros
+            const tipoFiltro = document.getElementById('filtro-tipo-divergencia')?.value?.trim();
+            const statusFiltro = document.getElementById('filtro-status-divergencia')?.value?.trim();
+            const dataInicial = document.getElementById('filtro-data-inicial-div')?.value?.trim();
+            const dataFinal = document.getElementById('filtro-data-final-div')?.value?.trim();
+            
+            // Log dos filtros aplicados
+            console.log('📋 Filtros aplicados:', {
+                tipo: tipoFiltro || 'Todos',
+                status: statusFiltro || 'Todos',
+                dataInicial: dataInicial || 'Não definida',
+                dataFinal: dataFinal || 'Não definida'
+            });
+            
+            // Validar datas
+            if (dataInicial && dataFinal && dataInicial > dataFinal) {
+                alert('⚠️ A data inicial não pode ser maior que a data final!');
+                return;
+            }
+            
+            // Mostrar indicador de carregamento
+            const tbody = document.getElementById('tabela-divergencias-nova');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="text-center py-5">
+                        <div class="text-primary">
+                            <i class="fas fa-spinner fa-spin fa-3x mb-3 d-block"></i>
+                            <h5>Aplicando filtros...</h5>
+                            <p class="text-muted">Buscando divergências com os critérios selecionados.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Carregar divergências com filtros
             carregarDivergencias();
         }
 
         // Limpar filtros das divergências
         function limparFiltrosDivergencias() {
-            console.log('Limpando filtros das divergências');
+            console.log('🧹 Limpando filtros das divergências');
+            
+            // Limpar todos os campos de filtro
+            const filtroTipo = document.getElementById('filtro-tipo-divergencia');
+            const filtroStatus = document.getElementById('filtro-status-divergencia');
+            const filtroDataInicial = document.getElementById('filtro-data-inicial-div');
+            const filtroDataFinal = document.getElementById('filtro-data-final-div');
+            
+            if (filtroTipo) filtroTipo.value = '';
+            if (filtroStatus) filtroStatus.value = '';
+            if (filtroDataInicial) filtroDataInicial.value = '';
+            if (filtroDataFinal) filtroDataFinal.value = '';
+            
+            console.log('✅ Filtros limpos - carregando todas as divergências');
+            
+            // Mostrar indicador de carregamento
+            const tbody = document.getElementById('tabela-divergencias-nova');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="text-center py-5">
+                        <div class="text-info">
+                            <i class="fas fa-broom fa-3x mb-3 d-block"></i>
+                            <h5>Limpando filtros...</h5>
+                            <p class="text-muted">Recarregando todas as divergências.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Carregar todas as divergências
             carregarDivergencias();
         }
 

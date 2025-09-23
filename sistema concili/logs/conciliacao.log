@@ -2311,3 +2311,12 @@
 2025-09-22 21:53:10,882 - root - INFO - Verificando extratos sem lançamentos...
 2025-09-22 21:53:10,883 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
 2025-09-22 21:53:10,892 - root - INFO - Procedimento finalizado: PROC-20250922215310-5FA04B71 - 0 conciliações
+2025-09-22 22:05:58,306 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-22 22:06:34,465 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-22 22:07:38,310 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-22 22:07:41,926 - root - INFO - Filtros aplicados - Tipo: , Status: , Data inicial: , Data final: 
+2025-09-22 22:07:41,926 - root - INFO - Total de divergências encontradas: 94
+2025-09-22 22:07:58,701 - root - INFO - Filtros aplicados - Tipo: data_divergente, Status: , Data inicial: , Data final: 
+2025-09-22 22:07:58,701 - root - INFO - Total de divergências encontradas: 1
+2025-09-22 22:08:02,439 - root - INFO - Filtros aplicados - Tipo: extrato_orfao, Status: , Data inicial: , Data final: 
+2025-09-22 22:08:02,439 - root - INFO - Total de divergências encontradas: 10

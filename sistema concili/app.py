@@ -2019,63 +2019,115 @@ def get_estatisticas_conciliacoes():
 @api_login_required
 @requires_permission("read")
 def get_divergencias():
-    # Controle de acesso: usuários comuns só veem suas próprias divergências
-    divergencias_query = Divergencia.query.filter_by(status="pendente")
+    try:
+        # Obter parâmetros de filtro
+        tipo_filtro = request.args.get('tipo', '').strip()
+        status_filtro = request.args.get('status', '').strip()
+        data_inicial = request.args.get('data_inicial', '').strip()
+        data_final = request.args.get('data_final', '').strip()
+        
+        # Inicializar query base
+        divergencias_query = Divergencia.query
+        
+        # Aplicar filtro de status (padrão: pendente se não especificado)
+        if status_filtro:
+            divergencias_query = divergencias_query.filter(Divergencia.status == status_filtro)
+        else:
+            divergencias_query = divergencias_query.filter(Divergencia.status == "pendente")
 
-    if current_user.perfil == "usuario":
-        # Filtrar divergências relacionadas aos registros do usuário
-        divergencias_query = (
-            divergencias_query.join(
-                ExtratoBancario,
-                Divergencia.extrato_id == ExtratoBancario.id,
-                isouter=True,
-            )
-            .join(
-                LancamentoContabil,
-                Divergencia.lancamento_id == LancamentoContabil.id,
-                isouter=True,
-            )
-            .filter(
-                db.or_(
-                    ExtratoBancario.usuario_id == current_user.id,
-                    LancamentoContabil.usuario_id == current_user.id,
+        # Controle de acesso: usuários comuns só veem suas próprias divergências
+        if current_user.perfil == "usuario":
+            # Filtrar divergências relacionadas aos registros do usuário
+            divergencias_query = (
+                divergencias_query.join(
+                    ExtratoBancario,
+                    Divergencia.extrato_id == ExtratoBancario.id,
+                    isouter=True,
+                )
+                .join(
+                    LancamentoContabil,
+                    Divergencia.lancamento_id == LancamentoContabil.id,
+                    isouter=True,
+                )
+                .filter(
+                    db.or_(
+                        ExtratoBancario.usuario_id == current_user.id,
+                        LancamentoContabil.usuario_id == current_user.id,
+                    )
                 )
             )
-        )
 
-    divergencias = divergencias_query.order_by(Divergencia.created_at.desc()).all()
-    return jsonify(
-        [
-            {
-                "id": d.id,
-                "tipo": d.tipo,
-                "descricao": d.descricao,
-                "status": d.status,
-                "created_at": d.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-                "extrato": (
-                    {
-                        "id": d.extrato.id,
-                        "descricao": d.extrato.descricao,
-                        "valor": d.extrato.valor,
-                        "data": d.extrato.data.strftime("%Y-%m-%d"),
-                    }
-                    if d.extrato
-                    else None
-                ),
-                "lancamento": (
-                    {
-                        "id": d.lancamento.id,
-                        "descricao": d.lancamento.descricao,
-                        "valor": d.lancamento.valor,
-                        "data": d.lancamento.data.strftime("%Y-%m-%d"),
-                    }
-                    if d.lancamento
-                    else None
-                ),
+        # Aplicar filtros se fornecidos
+        if tipo_filtro:
+            # Mapear tipos de filtro para os tipos no banco
+            tipo_map = {
+                'extrato_orfao': ['orfao_extrato', 'sem_correspondencia'],
+                'lancamento_orfao': ['orfao_lancamento'],
+                'diferenca_valor': ['valor_incorreto'],
+                'data_divergente': ['data_incorreta'],
+                'duplicata': ['duplicata']
             }
-            for d in divergencias
-        ]
-    )
+            
+            tipos_db = tipo_map.get(tipo_filtro, [tipo_filtro])
+            divergencias_query = divergencias_query.filter(Divergencia.tipo.in_(tipos_db))
+        
+        # Filtros de data (baseados na data de criação da divergência)
+        if data_inicial:
+            try:
+                data_inicial_obj = datetime.strptime(data_inicial, '%Y-%m-%d')
+                divergencias_query = divergencias_query.filter(Divergencia.created_at >= data_inicial_obj)
+            except ValueError:
+                pass
+        
+        if data_final:
+            try:
+                data_final_obj = datetime.strptime(data_final, '%Y-%m-%d')
+                # Adicionar 1 dia para incluir todo o dia final
+                data_final_obj = data_final_obj.replace(hour=23, minute=59, second=59)
+                divergencias_query = divergencias_query.filter(Divergencia.created_at <= data_final_obj)
+            except ValueError:
+                pass
+
+        divergencias = divergencias_query.order_by(Divergencia.created_at.desc()).all()
+        
+        logging.info(f"Filtros aplicados - Tipo: {tipo_filtro}, Status: {status_filtro}, Data inicial: {data_inicial}, Data final: {data_final}")
+        logging.info(f"Total de divergências encontradas: {len(divergencias)}")
+        
+        return jsonify(
+            [
+                {
+                    "id": d.id,
+                    "tipo": d.tipo,
+                    "descricao": d.descricao,
+                    "status": d.status,
+                    "created_at": d.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                    "extrato": (
+                        {
+                            "id": d.extrato.id,
+                            "descricao": d.extrato.descricao,
+                            "valor": d.extrato.valor,
+                            "data": d.extrato.data.strftime("%Y-%m-%d"),
+                        }
+                        if d.extrato
+                        else None
+                    ),
+                    "lancamento": (
+                        {
+                            "id": d.lancamento.id,
+                            "descricao": d.lancamento.descricao,
+                            "valor": d.lancamento.valor,
+                            "data": d.lancamento.data.strftime("%Y-%m-%d"),
+                        }
+                        if d.lancamento
+                        else None
+                    ),
+                }
+                for d in divergencias
+            ]
+        )
+    except Exception as e:
+        logging.error(f"Erro ao buscar divergências: {e}")
+        return jsonify({"error": "Erro interno do servidor"}), 500
 
 
 @app.route("/api/divergencias/<int:divergencia_id>/resolver", methods=["POST"])
