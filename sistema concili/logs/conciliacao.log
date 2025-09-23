@@ -1963,3 +1963,14 @@
 2025-09-16 13:56:13,117 - root - INFO - Verificando extratos sem lançamentos...
 2025-09-16 13:56:13,118 - root - INFO - Verificação de divergências concluída. 0 novas divergências criadas.
 2025-09-16 13:56:13,128 - root - INFO - Procedimento finalizado: PROC-20250916135612-ECCB49B2 - 25 conciliações
+2025-09-22 20:44:01,633 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-22 20:46:23,386 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.33:5000
+2025-09-22 20:46:23,386 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-22 20:46:23,388 - werkzeug - INFO -  * Restarting with stat
+2025-09-22 20:46:24,207 - werkzeug - WARNING -  * Debugger is active!
+2025-09-22 20:46:24,210 - werkzeug - INFO -  * Debugger PIN: 682-994-724
+2025-09-22 20:56:06,155 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-22 21:19:39,066 - waitress - INFO - Serving on http://0.0.0.0:8080
