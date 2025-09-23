@@ -136,6 +136,7 @@
             border-radius: 12px;
             padding: 1rem 1.25rem;
             font-size: 1rem;
+            height: 58px; /* Altura fixa para todos os campos */
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
             backdrop-filter: blur(10px);
@@ -155,6 +156,9 @@
 
         .input-group {
             margin-bottom: 1.5rem;
+            height: 58px; /* Altura fixa para todos os grupos */
+            display: flex;
+            align-items: stretch;
         }
 
         .input-group-text {
@@ -164,11 +168,24 @@
             border-radius: 12px 0 0 12px;
             color: var(--light-text);
             backdrop-filter: blur(10px);
+            height: 58px; /* Mesma altura dos campos */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 58px;
         }
 
         .input-group .form-control {
             border-left: none;
             border-radius: 0 12px 12px 0;
+            height: 58px; /* Assegurar altura consistente */
+        }
+
+        .input-group .form-floating {
+            flex: 1;
+            height: 58px; /* Mesma altura para o container floating */
+            display: flex;
+            align-items: stretch;
         }
 
         .btn-login {
@@ -275,6 +292,9 @@
             cursor: pointer;
             z-index: 10;
             transition: all 0.2s;
+            height: auto;
+            padding: 0;
+            margin: 0;
         }
 
         .show-password:hover {
@@ -284,6 +304,15 @@
 
         .password-field {
             position: relative;
+            height: 58px; /* Mesma altura dos outros campos */
+        }
+
+        .password-field .form-floating {
+            height: 100%;
+        }
+
+        .password-field .form-control {
+            padding-right: 3rem; /* Espaço para o botão de mostrar senha */
         }
 
         .floating-elements {

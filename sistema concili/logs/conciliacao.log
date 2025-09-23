@@ -2320,3 +2320,15 @@
 2025-09-22 22:07:58,701 - root - INFO - Total de divergências encontradas: 1
 2025-09-22 22:08:02,439 - root - INFO - Filtros aplicados - Tipo: extrato_orfao, Status: , Data inicial: , Data final: 
 2025-09-22 22:08:02,439 - root - INFO - Total de divergências encontradas: 10
+2025-09-23 14:11:24,857 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-23 14:11:40,744 - root - INFO - Filtros aplicados - Tipo: , Status: , Data inicial: , Data final: 
+2025-09-23 14:11:40,745 - root - INFO - Total de divergências encontradas: 94
+2025-09-23 14:11:54,551 - root - INFO - Filtros aplicados - Tipo: data_divergente, Status: , Data inicial: , Data final: 
+2025-09-23 14:11:54,551 - root - INFO - Total de divergências encontradas: 1
+2025-09-23 14:11:56,686 - root - INFO - Filtros aplicados - Tipo: data_divergente, Status: , Data inicial: , Data final: 
+2025-09-23 14:11:56,686 - root - INFO - Total de divergências encontradas: 1
+2025-09-23 14:11:59,585 - root - INFO - Filtros aplicados - Tipo: extrato_orfao, Status: , Data inicial: , Data final: 
+2025-09-23 14:11:59,585 - root - INFO - Total de divergências encontradas: 10
+2025-09-23 14:14:49,176 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-23 14:14:56,128 - root - INFO - Filtros aplicados - Tipo: , Status: , Data inicial: , Data final: 
+2025-09-23 14:14:56,128 - root - INFO - Total de divergências encontradas: 94
