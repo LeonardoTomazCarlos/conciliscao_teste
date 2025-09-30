@@ -587,3 +587,24 @@ WHERE extrato_bancario.data >= ? AND extrato_bancario.data <= ?) AS anon_1]
 2025-09-22 21:51:35,439 - root - INFO - Verificando divergências de data...
 2025-09-22 21:51:35,442 - root - INFO - Divergência de data criada: Extrato 21 vs Lançamento 19
 2025-09-22 21:51:35,450 - root - INFO - Verificação de divergências concluída. 20 novas divergências criadas.
+2025-09-30 16:16:18,928 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.59:5000
+2025-09-30 16:16:18,929 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-30 16:16:18,929 - werkzeug - INFO -  * Restarting with stat
+2025-09-30 16:16:19,815 - werkzeug - WARNING -  * Debugger is active!
+2025-09-30 16:16:19,819 - werkzeug - INFO -  * Debugger PIN: 153-432-512
+2025-09-30 16:16:37,476 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.59:5000
+2025-09-30 16:16:37,477 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-30 16:16:37,477 - werkzeug - INFO -  * Restarting with stat
+2025-09-30 16:16:38,394 - werkzeug - WARNING -  * Debugger is active!
+2025-09-30 16:16:38,397 - werkzeug - INFO -  * Debugger PIN: 153-432-512
+2025-09-30 16:18:05,179 - waitress - INFO - Serving on http://0.0.0.0:8080
+2025-09-30 16:19:03,745 - root - ERROR - Erro ao obter dados do relatório: 'ExtratoBancario' object has no attribute 'banco'
+2025-09-30 16:19:09,462 - root - ERROR - Erro ao obter dados do relatório: 'ExtratoBancario' object has no attribute 'banco'
+2025-09-30 16:19:14,343 - root - ERROR - Erro ao obter dados do relatório: 'ExtratoBancario' object has no attribute 'banco'
+2025-09-30 16:19:25,330 - root - ERROR - Erro ao obter dados do relatório: 'Divergencia' object has no attribute 'valor_diferenca'

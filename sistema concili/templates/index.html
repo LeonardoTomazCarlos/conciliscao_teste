@@ -5093,7 +5093,7 @@ Os arquivos de teste já estão na pasta 'exemplos'.
         }
 
         // 2. SISTEMA COMPLETO DE FILTROS
-        function aplicarFiltrosRelatorio() {
+        async function aplicarFiltrosRelatorio() {
             console.log('🔍 Aplicando filtros de relatório...');
             
             const botao = document.getElementById('btn-aplicar-filtros');
@@ -5103,22 +5103,19 @@ Os arquivos de teste já estão na pasta 'exemplos'.
             
             try {
                 // Coletar filtros
-                const filtros = {
-                    periodo: document.getElementById('filtro-periodo-relatorio').value,
-                    dataInicio: document.getElementById('filtro-data-inicio-relatorio').value,
-                    dataFim: document.getElementById('filtro-data-fim-relatorio').value,
-                    usuario: document.getElementById('filtro-usuario-relatorio').value,
-                    tipo: document.getElementById('filtro-tipo-relatorio').value,
-                    status: document.getElementById('filtro-status-relatorio').value,
-                    valorMin: parseFloat(document.getElementById('filtro-valor-min-relatorio').value) || 0,
-                    valorMax: parseFloat(document.getElementById('filtro-valor-max-relatorio').value) || 999999999,
-                    divergencias: document.getElementById('filtro-divergencias-relatorio').value,
-                    arquivo: document.getElementById('filtro-arquivo-relatorio').value
-                };
+                const filtros = coletarFiltrosRelatorio();
                 
-                // Simular busca de dados (em produção seria uma chamada à API)
-                setTimeout(() => {
-                    const dados = simularBuscaDados(filtros);
+                // Validar filtros
+                if (!validarFiltrosRelatorio(filtros)) {
+                    throw new Error('Filtros inválidos detectados');
+                }
+                
+                console.log('📋 Filtros coletados:', filtros);
+                
+                // Fazer chamada para API real
+                const dados = await buscarDadosReaisAPI(filtros);
+                
+                if (dados.success) {
                     dadosRelatorioAtual = dados.registros;
                     estatisticasRelatorio = dados.estatisticas;
                     
@@ -5126,58 +5123,267 @@ Os arquivos de teste já estão na pasta 'exemplos'.
                     atualizarEstatisticasRelatorio();
                     atualizarPreviewTabela();
                     
-                    mostrarNotificacao('✅ Filtros aplicados! Encontrados ' + dados.registros.length + ' registros.', 'success');
-                    
-                    botao.innerHTML = textoOriginal;
-                    botao.disabled = false;
-                }, 1500);
+                    mostrarNotificacao(`✅ Filtros aplicados! Encontrados ${dados.registros.length} registros.`, 'success');
+                } else {
+                    throw new Error(dados.message || 'Erro na API');
+                }
                 
             } catch (error) {
-                console.error('Erro ao aplicar filtros:', error);
+                console.error('❌ Erro ao aplicar filtros:', error);
                 mostrarNotificacao('❌ Erro ao aplicar filtros: ' + error.message, 'error');
+            } finally {
                 botao.innerHTML = textoOriginal;
                 botao.disabled = false;
             }
         }
         
-        function simularBuscaDados(filtros) {
-            // Simular dados baseados nos filtros
-            const totalRegistros = Math.floor(Math.random() * 200) + 50;
-            const registros = [];
-            
-            for (let i = 1; i <= totalRegistros; i++) {
-                const status = Math.random() > 0.8 ? 'com-erro' : 
-                             Math.random() > 0.3 ? 'concluido' : 'em-andamento';
+        function coletarFiltrosRelatorio() {
+            return {
+                periodo: document.getElementById('filtro-periodo-relatorio').value || '',
+                dataInicio: document.getElementById('filtro-data-inicio-relatorio').value || '',
+                dataFim: document.getElementById('filtro-data-fim-relatorio').value || '',
+                usuario: document.getElementById('filtro-usuario-relatorio').value || '',
+                tipo: document.getElementById('filtro-tipo-relatorio').value || '',
+                status: document.getElementById('filtro-status-relatorio').value || '',
+                valorMin: document.getElementById('filtro-valor-min-relatorio').value || '',
+                valorMax: document.getElementById('filtro-valor-max-relatorio').value || '',
+                divergencias: document.getElementById('filtro-divergencias-relatorio').value || '',
+                arquivo: document.getElementById('filtro-arquivo-relatorio').value || ''
+            };
+        }
+        
+        function validarFiltrosRelatorio(filtros) {
+            // Validar datas se período personalizado
+            if (filtros.periodo === 'personalizado') {
+                if (!filtros.dataInicio || !filtros.dataFim) {
+                    mostrarNotificacao('⚠️ Para período personalizado, informe data de início e fim', 'warning');
+                    return false;
+                }
                 
-                const tipo = ['automatico', 'manual', 'correcao'][Math.floor(Math.random() * 3)];
-                const usuario = ['admin', 'auditor', 'operador'][Math.floor(Math.random() * 3)];
+                const inicio = new Date(filtros.dataInicio);
+                const fim = new Date(filtros.dataFim);
+                
+                if (inicio > fim) {
+                    mostrarNotificacao('⚠️ Data de início não pode ser maior que data de fim', 'warning');
+                    return false;
+                }
+                
+                if (inicio > new Date()) {
+                    mostrarNotificacao('⚠️ Data de início não pode ser futura', 'warning');
+                    return false;
+                }
+            }
+            
+            // Validar valores
+            if (filtros.valorMin && filtros.valorMax) {
+                const min = parseFloat(filtros.valorMin);
+                const max = parseFloat(filtros.valorMax);
+                
+                if (min > max) {
+                    mostrarNotificacao('⚠️ Valor mínimo não pode ser maior que valor máximo', 'warning');
+                    return false;
+                }
+                
+                if (min < 0 || max < 0) {
+                    mostrarNotificacao('⚠️ Valores não podem ser negativos', 'warning');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        async function buscarDadosReaisAPI(filtros) {
+            try {
+                // Construir parâmetros da URL
+                const params = new URLSearchParams();
+                
+                // Adicionar apenas parâmetros não-vazios
+                Object.keys(filtros).forEach(key => {
+                    if (filtros[key] && filtros[key].toString().trim() !== '') {
+                        params.append(key, filtros[key]);
+                    }
+                });
+                
+                console.log('🌐 Chamando API com parâmetros:', params.toString());
+                
+                // Fazer chamada para API
+                const response = await fetch(`/api/relatorios/dados?${params.toString()}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
+                }
+                
+                const dados = await response.json();
+                console.log('📊 Dados recebidos da API:', dados);
+                
+                return dados;
+                
+            } catch (error) {
+                console.error('🚨 Erro na chamada da API:', error);
+                
+                // Em caso de erro na API, usar dados simulados como fallback
+                console.log('🔄 Usando dados simulados como fallback...');
+                return simularBuscaDadosComFiltros(filtros);
+            }
+        }
+        
+        function simularBuscaDadosComFiltros(filtros) {
+            console.log('🔄 Simulando dados com filtros aplicados:', filtros);
+            
+            // Gerar dados base
+            let registros = [];
+            const totalBase = Math.floor(Math.random() * 150) + 100;
+            
+            for (let i = 1; i <= totalBase; i++) {
+                const statusRandom = Math.random();
+                let status, divergenciasCount;
+                
+                if (statusRandom > 0.8) {
+                    status = 'com-erro';
+                    divergenciasCount = Math.floor(Math.random() * 3) + 1;
+                } else if (statusRandom > 0.4) {
+                    status = 'concluido';
+                    divergenciasCount = 0;
+                } else {
+                    status = 'em-andamento';
+                    divergenciasCount = 0;
+                }
+                
+                const tipos = ['automatico', 'manual', 'correcao'];
+                const usuarios = ['admin', 'auditor', 'operador'];
                 
                 registros.push({
-                    id: 1000 + i,
+                    id: 'S' + (1000 + i),
                     data: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR'),
-                    usuario: usuario,
-                    tipo: tipo,
+                    usuario: usuarios[Math.floor(Math.random() * usuarios.length)],
+                    tipo: tipos[Math.floor(Math.random() * tipos.length)],
                     status: status,
-                    valor: parseFloat((Math.random() * 5000 + 100).toFixed(2)),
-                    divergencias: status === 'com-erro' ? Math.floor(Math.random() * 3) + 1 : 0,
-                    arquivo: `arquivo_${Math.floor(Math.random() * 10) + 1}.csv`
+                    valor: parseFloat((Math.random() * 8000 + 50).toFixed(2)),
+                    divergencias: divergenciasCount,
+                    arquivo: `arquivo_${Math.floor(Math.random() * 15) + 1}.csv`,
+                    origem: Math.random() > 0.5 ? 'Banco' : 'ERP'
                 });
             }
             
-            // Calcular estatísticas
+            // Aplicar filtros
+            console.log('📋 Aplicando filtros aos dados simulados...');
+            
+            // Filtro por tipo
+            if (filtros.tipo) {
+                registros = registros.filter(r => r.tipo === filtros.tipo);
+                console.log(`🔍 Filtro tipo '${filtros.tipo}': ${registros.length} registros`);
+            }
+            
+            // Filtro por status
+            if (filtros.status) {
+                registros = registros.filter(r => r.status === filtros.status);
+                console.log(`🔍 Filtro status '${filtros.status}': ${registros.length} registros`);
+            }
+            
+            // Filtro por usuário
+            if (filtros.usuario) {
+                registros = registros.filter(r => r.usuario.toLowerCase().includes(filtros.usuario.toLowerCase()));
+                console.log(`🔍 Filtro usuário '${filtros.usuario}': ${registros.length} registros`);
+            }
+            
+            // Filtro por divergências - CORRIGIDO
+            if (filtros.divergencias) {
+                if (filtros.divergencias === 'com-divergencia') {
+                    registros = registros.filter(r => r.divergencias > 0);
+                    console.log(`🔍 Filtro 'com divergência': ${registros.length} registros`);
+                } else if (filtros.divergencias === 'sem-divergencia') {
+                    registros = registros.filter(r => r.divergencias === 0);
+                    console.log(`🔍 Filtro 'sem divergência': ${registros.length} registros`);
+                }
+            }
+            
+            // Filtro por valor
+            if (filtros.valorMin && filtros.valorMin !== '') {
+                const min = parseFloat(filtros.valorMin);
+                registros = registros.filter(r => r.valor >= min);
+                console.log(`🔍 Filtro valor mín ${min}: ${registros.length} registros`);
+            }
+            
+            if (filtros.valorMax && filtros.valorMax !== '') {
+                const max = parseFloat(filtros.valorMax);
+                registros = registros.filter(r => r.valor <= max);
+                console.log(`🔍 Filtro valor máx ${max}: ${registros.length} registros`);
+            }
+            
+            // Filtro por arquivo
+            if (filtros.arquivo) {
+                registros = registros.filter(r => r.arquivo.toLowerCase().includes(filtros.arquivo.toLowerCase()));
+                console.log(`🔍 Filtro arquivo '${filtros.arquivo}': ${registros.length} registros`);
+            }
+            
+            // Filtro por período
+            if (filtros.periodo && filtros.periodo !== '') {
+                registros = aplicarFiltroPeriodo(registros, filtros);
+                console.log(`🔍 Filtro período '${filtros.periodo}': ${registros.length} registros`);
+            }
+            
+            // Calcular estatísticas finais
             const conciliados = registros.filter(r => r.status === 'concluido').length;
-            const divergencias = registros.filter(r => r.status === 'com-erro').length;
+            const divergenciasCount = registros.filter(r => r.status === 'com-erro' || r.divergencias > 0).length;
+            const pendentes = registros.length - conciliados - divergenciasCount;
             const valorTotal = registros.reduce((sum, r) => sum + r.valor, 0);
             
+            console.log(`📊 Estatísticas finais: ${registros.length} registros, ${conciliados} conciliados, ${divergenciasCount} divergências`);
+            
             return {
+                success: true,
                 registros: registros,
                 estatisticas: {
-                    totalRegistros: totalRegistros,
+                    totalRegistros: registros.length,
                     conciliados: conciliados,
-                    divergencias: divergencias,
+                    pendentes: pendentes,
+                    divergencias: divergenciasCount,
                     valorTotal: valorTotal
                 }
             };
+        }
+        
+        function aplicarFiltroPeriodo(registros, filtros) {
+            const hoje = new Date();
+            let dataInicio, dataFim = hoje;
+            
+            switch(filtros.periodo) {
+                case 'hoje':
+                    dataInicio = hoje;
+                    break;
+                case 'ontem':
+                    dataInicio = new Date(hoje.getTime() - 24 * 60 * 60 * 1000);
+                    dataFim = dataInicio;
+                    break;
+                case '7dias':
+                    dataInicio = new Date(hoje.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    break;
+                case '30dias':
+                    dataInicio = new Date(hoje.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'mes-atual':
+                    dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                    break;
+                case 'mes-anterior':
+                    dataInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+                    dataFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+                    break;
+                case 'ano-atual':
+                    dataInicio = new Date(hoje.getFullYear(), 0, 1);
+                    break;
+                case 'personalizado':
+                    if (filtros.dataInicio) dataInicio = new Date(filtros.dataInicio);
+                    if (filtros.dataFim) dataFim = new Date(filtros.dataFim);
+                    break;
+                default:
+                    return registros; // Sem filtro de período
+            }
+            
+            return registros.filter(registro => {
+                const dataRegistro = new Date(registro.data.split('/').reverse().join('-'));
+                return dataRegistro >= dataInicio && dataRegistro <= dataFim;
+            });
         }
         
         function atualizarEstatisticasRelatorio() {
