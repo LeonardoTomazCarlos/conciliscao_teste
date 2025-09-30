@@ -3753,6 +3753,433 @@ def limpar_todos_dados():
         return jsonify({"error": str(e)}), 500
 
 
+# ====== NOVAS APIS PARA SISTEMA DE RELATÓRIOS COMPLETO ======
+
+@app.route("/api/relatorios/dados", methods=["GET"])
+@api_login_required
+def obter_dados_relatorio_completo():
+    """API principal para buscar dados filtrados para relatórios"""
+    try:
+        # Obter parâmetros de filtro
+        periodo = request.args.get('periodo', '')
+        data_inicio = request.args.get('dataInicio', '')
+        data_fim = request.args.get('dataFim', '')
+        usuario_filtro = request.args.get('usuario', '')
+        tipo = request.args.get('tipo', '')
+        status = request.args.get('status', '')
+        valor_min = request.args.get('valorMin', type=float)
+        valor_max = request.args.get('valorMax', type=float)
+        divergencias_filtro = request.args.get('divergencias', '')
+        arquivo = request.args.get('arquivo', '')
+        
+        # Construir queries base
+        query_extratos = ExtratoBancario.query
+        query_lancamentos = LancamentoContabil.query
+        query_divergencias = Divergencia.query
+        
+        # Aplicar filtros de data baseados no período
+        if periodo and periodo != 'personalizado':
+            data_inicio_calc, data_fim_calc = calcular_datas_periodo(periodo)
+            if data_inicio_calc:
+                query_extratos = query_extratos.filter(ExtratoBancario.data >= data_inicio_calc)
+                query_lancamentos = query_lancamentos.filter(LancamentoContabil.data >= data_inicio_calc)
+                query_divergencias = query_divergencias.filter(Divergencia.created_at >= data_inicio_calc)
+            if data_fim_calc:
+                query_extratos = query_extratos.filter(ExtratoBancario.data <= data_fim_calc)
+                query_lancamentos = query_lancamentos.filter(LancamentoContabil.data <= data_fim_calc)
+                query_divergencias = query_divergencias.filter(Divergencia.created_at <= data_fim_calc)
+        elif data_inicio or data_fim:
+            if data_inicio:
+                data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+                query_extratos = query_extratos.filter(ExtratoBancario.data >= data_inicio_dt)
+                query_lancamentos = query_lancamentos.filter(LancamentoContabil.data >= data_inicio_dt)
+                query_divergencias = query_divergencias.filter(Divergencia.created_at >= data_inicio_dt)
+            if data_fim:
+                data_fim_dt = datetime.strptime(data_fim, '%Y-%m-%d').date()
+                query_extratos = query_extratos.filter(ExtratoBancario.data <= data_fim_dt)
+                query_lancamentos = query_lancamentos.filter(LancamentoContabil.data <= data_fim_dt)
+                query_divergencias = query_divergencias.filter(Divergencia.created_at <= data_fim_dt)
+        
+        # Aplicar filtros de status
+        if status:
+            if status == 'concluido':
+                query_extratos = query_extratos.filter(ExtratoBancario.conciliado == True)
+                query_lancamentos = query_lancamentos.filter(LancamentoContabil.conciliado == True)
+            elif status == 'em-andamento':
+                query_extratos = query_extratos.filter(ExtratoBancario.conciliado == False)
+                query_lancamentos = query_lancamentos.filter(LancamentoContabil.conciliado == False)
+            elif status == 'com-erro':
+                query_divergencias = query_divergencias.filter(Divergencia.status == 'ativo')
+        
+        # Aplicar filtros de valor
+        if valor_min is not None:
+            query_extratos = query_extratos.filter(ExtratoBancario.valor >= valor_min)
+            query_lancamentos = query_lancamentos.filter(LancamentoContabil.valor >= valor_min)
+            
+        if valor_max is not None:
+            query_extratos = query_extratos.filter(ExtratoBancario.valor <= valor_max)
+            query_lancamentos = query_lancamentos.filter(LancamentoContabil.valor <= valor_max)
+        
+        # Aplicar filtro de arquivo
+        if arquivo:
+            query_extratos = query_extratos.filter(ExtratoBancario.arquivo_origem.ilike(f'%{arquivo}%'))
+            query_lancamentos = query_lancamentos.filter(LancamentoContabil.arquivo_origem.ilike(f'%{arquivo}%'))
+        
+        # Aplicar filtro de usuário
+        if usuario_filtro:
+            user_obj = Usuario.query.filter(Usuario.username.ilike(f'%{usuario_filtro}%')).first()
+            if user_obj:
+                query_extratos = query_extratos.filter(ExtratoBancario.usuario_id == user_obj.id)
+                query_lancamentos = query_lancamentos.filter(LancamentoContabil.usuario_id == user_obj.id)
+        
+        # Buscar dados
+        extratos = query_extratos.all()
+        lancamentos = query_lancamentos.all()
+        divergencias = query_divergencias.all()
+        
+        # Processar registros combinados
+        registros = []
+        
+        # Adicionar extratos
+        for extrato in extratos:
+            status_final = 'concluido' if extrato.conciliado else 'em-andamento'
+            tipo_final = tipo if tipo in ['automatico', 'manual', 'correcao'] else 'automatico'
+            
+            registros.append({
+                'id': f'E{extrato.id}',
+                'data': extrato.data.strftime('%d/%m/%Y'),
+                'usuario': extrato.usuario.username if extrato.usuario else 'Sistema',
+                'tipo': tipo_final,
+                'status': status_final,
+                'valor': float(extrato.valor),
+                'divergencias': 0,
+                'arquivo': extrato.arquivo_origem or 'Importação direta',
+                'origem': extrato.banco or 'Banco',
+                'descricao': extrato.historico or extrato.descricao or 'Transação bancária'
+            })
+        
+        # Adicionar lançamentos
+        for lancamento in lancamentos:
+            status_final = 'concluido' if lancamento.conciliado else 'em-andamento'
+            tipo_final = tipo if tipo in ['automatico', 'manual', 'correcao'] else 'manual'
+            
+            registros.append({
+                'id': f'L{lancamento.id}',
+                'data': lancamento.data.strftime('%d/%m/%Y'),
+                'usuario': lancamento.usuario.username if lancamento.usuario else 'Sistema',
+                'tipo': tipo_final,
+                'status': status_final,
+                'valor': float(lancamento.valor),
+                'divergencias': 0,
+                'arquivo': lancamento.arquivo_origem or 'Importação direta',
+                'origem': 'ERP/Contabilidade',
+                'descricao': lancamento.historico or lancamento.descricao or 'Lançamento contábil'
+            })
+        
+        # Adicionar divergências
+        for div in divergencias:
+            registros.append({
+                'id': f'D{div.id}',
+                'data': div.created_at.strftime('%d/%m/%Y'),
+                'usuario': div.usuario.username if div.usuario else 'Sistema',
+                'tipo': 'automatico',
+                'status': 'com-erro',
+                'valor': float(div.valor_diferenca) if div.valor_diferenca else 0,
+                'divergencias': 1,
+                'arquivo': 'Detectada automaticamente',
+                'origem': div.tipo or 'Sistema',
+                'descricao': div.descricao or f'Divergência do tipo {div.tipo}'
+            })
+        
+        # Aplicar filtros finais nos registros processados
+        if tipo:
+            registros = [r for r in registros if r['tipo'] == tipo]
+        
+        if status:
+            registros = [r for r in registros if r['status'] == status]
+            
+        if divergencias_filtro:
+            if divergencias_filtro == 'com-divergencia':
+                registros = [r for r in registros if r['divergencias'] > 0]
+            elif divergencias_filtro == 'sem-divergencia':
+                registros = [r for r in registros if r['divergencias'] == 0]
+        
+        # Ordenar por data (mais recente primeiro)
+        registros.sort(key=lambda x: datetime.strptime(x['data'], '%d/%m/%Y'), reverse=True)
+        
+        # Calcular estatísticas
+        total_registros = len(registros)
+        conciliados = len([r for r in registros if r['status'] == 'concluido'])
+        divergencias_count = len([r for r in registros if r['status'] == 'com-erro'])
+        pendentes = total_registros - conciliados - divergencias_count
+        valor_total = sum([r['valor'] for r in registros])
+        
+        estatisticas = {
+            'totalRegistros': total_registros,
+            'conciliados': conciliados,
+            'pendentes': pendentes,
+            'divergencias': divergencias_count,
+            'valorTotal': valor_total,
+            'percentualConciliacao': round((conciliados / total_registros * 100) if total_registros > 0 else 0, 1)
+        }
+        
+        return jsonify({
+            'success': True,
+            'registros': registros,
+            'estatisticas': estatisticas,
+            'filtros_aplicados': {
+                'periodo': periodo,
+                'data_inicio': data_inicio,
+                'data_fim': data_fim,
+                'status': status,
+                'tipo': tipo,
+                'usuario': usuario_filtro,
+                'total_encontrado': total_registros
+            },
+            'metadados': {
+                'data_geracao': datetime.now().isoformat(),
+                'usuario_solicitante': current_user.username,
+                'versao_api': '2.0'
+            }
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao obter dados do relatório: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Erro interno do servidor ao processar relatório'
+        }), 500
+
+
+@app.route("/api/relatorios/estatisticas", methods=["GET"])
+@api_login_required
+def obter_estatisticas_relatorio():
+    """API para obter estatísticas resumidas para dashboard"""
+    try:
+        # Estatísticas básicas
+        total_extratos = ExtratoBancario.query.count()
+        total_lancamentos = LancamentoContabil.query.count()
+        total_divergencias = Divergencia.query.filter_by(status='ativo').count()
+        
+        extratos_conciliados = ExtratoBancario.query.filter_by(conciliado=True).count()
+        lancamentos_conciliados = LancamentoContabil.query.filter_by(conciliado=True).count()
+        
+        # Valores totais
+        valor_total_extratos = db.session.query(db.func.sum(ExtratoBancario.valor)).scalar() or 0
+        valor_total_lancamentos = db.session.query(db.func.sum(LancamentoContabil.valor)).scalar() or 0
+        
+        # Estatísticas por período (últimos 30 dias)
+        data_corte = datetime.now().date() - timedelta(days=30)
+        
+        extratos_periodo = ExtratoBancario.query.filter(ExtratoBancario.data >= data_corte).count()
+        lancamentos_periodo = LancamentoContabil.query.filter(LancamentoContabil.data >= data_corte).count()
+        divergencias_periodo = Divergencia.query.filter(Divergencia.created_at >= data_corte).count()
+        
+        return jsonify({
+            'success': True,
+            'estatisticas_gerais': {
+                'total_registros': total_extratos + total_lancamentos,
+                'total_extratos': total_extratos,
+                'total_lancamentos': total_lancamentos,
+                'total_divergencias': total_divergencias,
+                'extratos_conciliados': extratos_conciliados,
+                'lancamentos_conciliados': lancamentos_conciliados,
+                'percentual_conciliacao_extratos': round((extratos_conciliados / total_extratos * 100) if total_extratos > 0 else 0, 1),
+                'percentual_conciliacao_lancamentos': round((lancamentos_conciliados / total_lancamentos * 100) if total_lancamentos > 0 else 0, 1)
+            },
+            'valores_totais': {
+                'valor_total_extratos': float(valor_total_extratos),
+                'valor_total_lancamentos': float(valor_total_lancamentos),
+                'valor_total_geral': float(valor_total_extratos) + float(valor_total_lancamentos)
+            },
+            'periodo_30_dias': {
+                'extratos': extratos_periodo,
+                'lancamentos': lancamentos_periodo,
+                'divergencias': divergencias_periodo,
+                'total': extratos_periodo + lancamentos_periodo
+            },
+            'metadados': {
+                'data_calculo': datetime.now().isoformat(),
+                'usuario': current_user.username
+            }
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao calcular estatísticas: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route("/api/relatorios/exportar", methods=["POST"])
+@api_login_required
+def exportar_relatorio_personalizado():
+    """API para exportar dados de relatório em diferentes formatos"""
+    try:
+        dados = request.get_json()
+        
+        if not dados:
+            return jsonify({'error': 'Dados não fornecidos'}), 400
+            
+        formato = dados.get('formato', 'csv').lower()
+        registros = dados.get('registros', [])
+        estatisticas = dados.get('estatisticas', {})
+        
+        if not registros:
+            return jsonify({'error': 'Nenhum registro para exportar'}), 400
+        
+        if formato == 'csv':
+            return gerar_csv_relatorio(registros, estatisticas)
+        elif formato == 'json':
+            return gerar_json_relatorio(registros, estatisticas)
+        elif formato == 'excel':
+            return jsonify({
+                'error': 'Exportação Excel em desenvolvimento',
+                'alternativa': 'Use CSV como alternativa'
+            }), 501
+        elif formato == 'pdf':
+            return jsonify({
+                'error': 'Exportação PDF em desenvolvimento',
+                'alternativa': 'Use o relatório HTML como alternativa'
+            }), 501
+        else:
+            return jsonify({'error': f'Formato {formato} não suportado'}), 400
+            
+    except Exception as e:
+        logging.error(f"Erro ao exportar relatório: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+def calcular_datas_periodo(periodo):
+    """Calcula datas de início e fim baseado no período selecionado"""
+    hoje = datetime.now().date()
+    data_inicio = None
+    data_fim = hoje
+    
+    if periodo == 'hoje':
+        data_inicio = hoje
+    elif periodo == 'ontem':
+        data_inicio = hoje - timedelta(days=1)
+        data_fim = data_inicio
+    elif periodo == '7dias':
+        data_inicio = hoje - timedelta(days=7)
+    elif periodo == '30dias':
+        data_inicio = hoje - timedelta(days=30)
+    elif periodo == 'mes-atual':
+        data_inicio = hoje.replace(day=1)
+    elif periodo == 'mes-anterior':
+        primeiro_dia_mes_atual = hoje.replace(day=1)
+        data_fim = primeiro_dia_mes_atual - timedelta(days=1)
+        data_inicio = data_fim.replace(day=1)
+    elif periodo == 'ano-atual':
+        data_inicio = hoje.replace(month=1, day=1)
+    
+    return data_inicio, data_fim
+
+
+def gerar_csv_relatorio(registros, estatisticas):
+    """Gera arquivo CSV com os dados do relatório"""
+    try:
+        # Criar conteúdo CSV
+        output = StringIO()
+        
+        # Cabeçalho com informações do relatório
+        output.write(f"# RELATÓRIO DE CONCILIAÇÃO BANCÁRIA\n")
+        output.write(f"# Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
+        output.write(f"# Usuário: {current_user.username}\n")
+        output.write(f"# Total de registros: {len(registros)}\n")
+        output.write(f"#\n")
+        
+        # Estatísticas
+        output.write(f"# ESTATÍSTICAS\n")
+        output.write(f"# Total de Registros: {estatisticas.get('totalRegistros', 0)}\n")
+        output.write(f"# Conciliados: {estatisticas.get('conciliados', 0)}\n")
+        output.write(f"# Divergências: {estatisticas.get('divergencias', 0)}\n")
+        output.write(f"# Valor Total: R$ {estatisticas.get('valorTotal', 0):,.2f}\n")
+        output.write(f"#\n")
+        
+        # Cabeçalho das colunas
+        output.write("ID,Data,Usuario,Tipo,Status,Valor,Divergencias,Arquivo,Origem,Descricao\n")
+        
+        # Dados
+        for registro in registros:
+            linha = [
+                str(registro.get('id', '')),
+                str(registro.get('data', '')),
+                str(registro.get('usuario', '')),
+                str(registro.get('tipo', '')),
+                str(registro.get('status', '')),
+                str(registro.get('valor', 0)),
+                str(registro.get('divergencias', 0)),
+                f'"{registro.get("arquivo", "")}"',
+                f'"{registro.get("origem", "")}"',
+                f'"{registro.get("descricao", "")}"'
+            ]
+            output.write(','.join(linha) + '\n')
+        
+        # Criar resposta
+        csv_content = output.getvalue()
+        output.close()
+        
+        response = app.response_class(
+            csv_content,
+            mimetype='text/csv',
+            headers={
+                'Content-Disposition': f'attachment; filename=relatorio_conciliacao_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+            }
+        )
+        
+        return response
+        
+    except Exception as e:
+        logging.error(f"Erro ao gerar CSV: {e}")
+        return jsonify({'error': f'Erro ao gerar CSV: {str(e)}'}), 500
+
+
+def gerar_json_relatorio(registros, estatisticas):
+    """Gera arquivo JSON com os dados do relatório"""
+    try:
+        dados_json = {
+            'metadata': {
+                'titulo': 'Relatório de Conciliação Bancária',
+                'data_geracao': datetime.now().isoformat(),
+                'usuario': current_user.username,
+                'versao': '2.0',
+                'total_registros': len(registros)
+            },
+            'estatisticas': estatisticas,
+            'registros': registros,
+            'resumo': {
+                'periodo_analisado': f"Dados processados até {datetime.now().strftime('%d/%m/%Y %H:%M')}",
+                'observacoes': [
+                    'Este relatório contém dados de conciliação bancária',
+                    'Os valores estão em formato brasileiro (R$)',
+                    'Datas no formato DD/MM/AAAA'
+                ]
+            }
+        }
+        
+        json_content = json.dumps(dados_json, ensure_ascii=False, indent=2)
+        
+        response = app.response_class(
+            json_content,
+            mimetype='application/json',
+            headers={
+                'Content-Disposition': f'attachment; filename=relatorio_conciliacao_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+            }
+        )
+        
+        return response
+        
+    except Exception as e:
+        logging.error(f"Erro ao gerar JSON: {e}")
+        return jsonify({'error': f'Erro ao gerar JSON: {str(e)}'}), 500
+
+
+# ====== FIM NOVAS APIS DE RELATÓRIOS ======
+
 # === ROTAS DE ADMINISTRAÇÃO ===
 
 
