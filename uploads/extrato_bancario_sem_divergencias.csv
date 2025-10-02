@@ -1,0 +1,11 @@
+Data,Descricao,Valor,Tipo,Numero_Documento
+2025-10-01,Deposito PIX Cliente João Silva,1500.00,Credito,PIX001
+2025-10-01,TED Recebida Empresa ABC,2800.00,Credito,TED002
+2025-10-01,Pagamento Fornecedor XYZ,-850.00,Debito,PAG003
+2025-10-02,Deposito PIX Cliente Maria Santos,950.00,Credito,PIX004
+2025-10-02,Transferencia DOC Recebida,1200.00,Credito,DOC005
+2025-10-02,Pagamento Boleto Energia,-320.00,Debito,BOL006
+2025-10-02,Pagamento Salarios,-4500.00,Debito,SAL007
+2025-10-03,PIX Recebido Vendas Loja,780.00,Credito,PIX008
+2025-10-03,Tarifa Bancaria,-15.00,Debito,TAR009
+2025-10-03,Deposito Cliente Pedro Lima,2100.00,Credito,DEP010

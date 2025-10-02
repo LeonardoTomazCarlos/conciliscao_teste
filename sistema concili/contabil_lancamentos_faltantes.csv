@@ -1,0 +1,9 @@
+data,descricao,valor,tipo
+2025-10-01,Consultoria contabil,800.00,credito
+2025-10-01,Pagamento contador,600.00,debito
+2025-10-02,Venda consultoria,1300.00,credito
+2025-10-02,Compra software,450.00,debito
+2025-10-03,Prestacao servico B,900.00,credito
+2025-10-03,Pagamento licenca,275.00,debito
+2025-10-04,Recebimento extra,550.00,credito
+2025-10-04,Taxa manutencao,80.00,debito

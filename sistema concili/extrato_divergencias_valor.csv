@@ -1,0 +1,9 @@
+data,descricao,valor,tipo
+2025-10-01,Pagamento fornecedor A,1500.00,debito
+2025-10-01,Recebimento cliente B,2300.00,credito
+2025-10-02,Taxa bancaria,50.00,debito
+2025-10-02,Transferencia recebida,800.00,credito
+2025-10-03,Pagamento salarios,4500.00,debito
+2025-10-03,Venda produto X,1200.00,credito
+2025-10-04,Aluguel escritorio,1800.00,debito
+2025-10-04,Recebimento servicos,950.00,credito

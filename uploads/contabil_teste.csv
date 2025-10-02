@@ -1,0 +1,7 @@
+Data,Descricao,Valor,Tipo,Numero_Documento
+2025-10-02,Recebimento PIX Cliente A,500.00,Receita,PIX001
+2025-10-02,Entrada Dinheiro,1000.00,Receita,DEP002
+2025-10-02,Pagamento Fornecedor B,300.00,Despesa,PAG003
+2025-10-02,Recebimento TED Empresa C,750.00,Receita,TED004
+2025-10-02,Taxa Bancaria,25.00,Despesa,TAR005
+2025-10-02,Venda Produto X,200.00,Receita,VEN006

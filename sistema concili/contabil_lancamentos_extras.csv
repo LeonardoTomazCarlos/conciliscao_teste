@@ -1,0 +1,7 @@
+data,descricao,valor,tipo
+2025-10-01,Venda produto Y,650.00,credito
+2025-10-01,Compra insumos,320.00,debito
+2025-10-02,Recebimento duplicata,1100.00,credito
+2025-10-02,Pagamento fornecedor B,850.00,debito
+2025-10-03,Venda mercadoria Z,470.00,credito
+2025-10-04,Deposito cheque,390.00,credito

@@ -1,0 +1,6 @@
+Data,Descricao,Valor,Tipo,Numero_Documento
+2025-10-02,PIX Recebido Cliente A,500.00,Credito,PIX001
+2025-10-02,Deposito Dinheiro,1000.00,Credito,DEP002
+2025-10-02,Pagamento Fornecedor B,-300.00,Debito,PAG003
+2025-10-02,TED Recebida Empresa C,800.00,Credito,TED004
+2025-10-02,Tarifa Mensal,-25.00,Debito,TAR005

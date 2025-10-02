@@ -1,0 +1,13 @@
+Data,Descricao,Valor,Tipo,Numero_Documento
+2025-10-01,Recebimento PIX Cliente João Silva,1500.00,Receita,PIX001
+2025-10-01,Recebimento TED Empresa ABC,2800.00,Receita,TED002
+2025-10-01,Pagamento a Fornecedor XYZ,850.00,Despesa,PAG003
+2025-10-02,Recebimento PIX Cliente Maria Santos,950.00,Receita,PIX004
+2025-10-02,Recebimento DOC,1200.00,Receita,DOC005
+2025-10-02,Pagamento Conta de Energia,320.00,Despesa,BOL006
+2025-10-02,Folha de Pagamento Outubro,4500.00,Despesa,SAL007
+2025-10-03,Venda PIX Loja Virtual,780.00,Receita,PIX008
+2025-10-03,Taxa de Manutencao Conta,15.00,Despesa,TAR009
+2025-10-03,Deposito Cliente Pedro Lima,2100.00,Receita,DEP010
+2025-10-04,Recebimento Cliente Carlos,800.00,Receita,PIX011
+2025-10-05,Pagamento Fornecedor ABC,900.00,Despesa,PAG014

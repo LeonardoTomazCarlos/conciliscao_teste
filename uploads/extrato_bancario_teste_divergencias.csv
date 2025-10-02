@@ -1,0 +1,21 @@
+Data,Descrição,Valor,Tipo
+2025-09-20,Pagamento fornecedor ABC Ltda,2500.00,debito
+2025-09-20,Transferência PIX recebida - Cliente João,1200.00,credito
+2025-09-20,Compra material escritório,150.75,debito
+2025-09-21,Venda produto X - Cliente Maria,800.00,credito
+2025-09-21,Pagamento energia elétrica,320.50,debito
+2025-09-21,Transferência TED - Cliente Pedro,450.00,credito
+2025-09-22,Saque ATM,200.00,debito
+2025-09-22,Depósito em dinheiro,3000.00,credito
+2025-09-22,Pagamento internet,89.90,debito
+2025-09-22,Venda produto Y - Cliente Ana,675.25,credito
+2025-09-23,DIVERGÊNCIA VALOR - Transferência errada,999.99,credito
+2025-09-23,Pagamento combustível,180.00,debito
+2025-09-23,Venda produto Z - Cliente Carlos,1100.00,credito
+2025-09-24,ÓRFÃO EXTRATO - Sem correspondência contábil,777.77,debito
+2025-09-24,Transferência PIX - Cliente Diana,550.00,credito
+2025-09-24,Pagamento telefone,95.80,debito
+2025-09-25,Venda produto W - Cliente Eduardo,420.50,credito
+2025-09-25,DUPLICATA - Mesmo pagamento duas vezes,250.00,debito
+2025-09-25,DUPLICATA - Mesmo pagamento duas vezes,250.00,debito
+2025-09-25,Transferência PIX - Cliente Fernanda,890.75,credito
