@@ -644,7 +644,7 @@
                     
                     <ul class="nav flex-column px-2">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#dashboard" onclick="ativarAba('dashboard'); return false;">
+                            <a class="nav-link" href="#dashboard" onclick="ativarAba('dashboard'); return false;">
                                 <i class="fas fa-tachometer-alt me-3"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -659,14 +659,12 @@
                             <a class="nav-link" href="#conciliacao" onclick="ativarAba('conciliacao'); return false;">
                                 <i class="fas fa-link me-3"></i>
                                 <span>Conciliação</span>
-                                <span id="badge-conciliacao" class="badge bg-warning ms-2" style="display: none;">0</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#divergencias" onclick="ativarAba('divergencias'); return false;">
                                 <i class="fas fa-exclamation-triangle me-3"></i>
                                 <span>Divergências</span>
-                                <span id="badge-divergencias" class="badge bg-warning ms-2" style="display: none;">0</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -684,7 +682,7 @@
                 <div class="main-content">
                     <div class="tab-content">
                         <!-- Dashboard -->
-                        <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                        <div class="tab-pane fade" id="dashboard" role="tabpanel">
                             <div class="page-header">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
@@ -2233,8 +2231,8 @@
                     // Atualizar título do período se aplicável
                     atualizarTituloPeriodo(data.periodo, data.data_inicio, data.data_fim);
                     
-                    // Atualizar badges de navegação com o total de divergências
-                    atualizarBadgesNavegacao(data.divergencias_pendentes || 0);
+                    // Badges removidos do projeto
+                    // atualizarBadgesNavegacao(data.divergencias_pendentes || 0);
                 })
                 .catch(error => {
                     console.error('Erro ao carregar estatísticas:', error);
@@ -3463,38 +3461,14 @@
             document.getElementById('valor-divergencias').textContent = formatarMoeda(valorTotal);
             document.getElementById('percentual-divergencias').textContent = `${percentual}%`;
             
-            // Atualizar badges de navegação
-            atualizarBadgesNavegacao(total);
+            // Badges removidos do projeto
+            // atualizarBadgesNavegacao(total);
         }
 
-        // Atualizar badges de navegação
+        // Função desabilitada - badges removidos do projeto
         function atualizarBadgesNavegacao(totalDivergencias) {
-            const badgeConciliacao = document.getElementById('badge-conciliacao');
-            const badgeDivergencias = document.getElementById('badge-divergencias');
-            
-            if (totalDivergencias > 0) {
-                // Mostrar badge na aba Conciliação
-                if (badgeConciliacao) {
-                    badgeConciliacao.textContent = totalDivergencias;
-                    badgeConciliacao.style.display = 'inline-block';
-                    badgeConciliacao.className = 'badge bg-warning ms-2';
-                }
-                
-                // Mostrar badge na aba Divergências
-                if (badgeDivergencias) {
-                    badgeDivergencias.textContent = totalDivergencias;
-                    badgeDivergencias.style.display = 'inline-block';
-                    badgeDivergencias.className = 'badge bg-warning ms-2';
-                }
-            } else {
-                // Ocultar badges quando não há divergências
-                if (badgeConciliacao) {
-                    badgeConciliacao.style.display = 'none';
-                }
-                if (badgeDivergencias) {
-                    badgeDivergencias.style.display = 'none';
-                }
-            }
+            // Esta função foi desabilitada pois os badges foram removidos
+            return;
         }
 
         // Renderizar tabela - NOVA
@@ -4366,7 +4340,9 @@ Os arquivos de teste já estão na pasta 'exemplos'.
             window.ativarAbaSemDelay = function(target) {
                 console.log('⚡ Ativação INSTANTÂNEA:', target);
                 
+                // Salvar aba ativa no localStorage para persistência
                 localStorage.setItem('abaSistemaAtiva', target);
+                console.log('💾 Aba salva no localStorage:', target);
                 
                 // ESCONDER TODAS as abas primeiro - FORÇADO
                 document.querySelectorAll('.tab-pane').forEach(t => {
@@ -4413,13 +4389,23 @@ Os arquivos de teste já estão na pasta 'exemplos'.
         function inicializarSistemaImediato() {
             console.log('🚀 Sistema iniciando instantaneamente...');
             // Restaurar aba ativa do localStorage, se existir
-            let abaInicial = localStorage.getItem('abaSistemaAtiva') || 'dashboard';
-            // Se a aba salva não existir no DOM, usar dashboard
+            let abaInicial = localStorage.getItem('abaSistemaAtiva');
+            console.log('🔍 Aba salva no localStorage:', abaInicial);
+            
+            // Se não há aba salva, usar dashboard como padrão APENAS na primeira visita
+            if (!abaInicial) {
+                abaInicial = 'dashboard';
+                console.log('📝 Primeira visita - usando dashboard como padrão');
+            }
+            
+            // Verificar se a aba salva existe no DOM
             if (!document.getElementById(abaInicial)) {
+                console.log('⚠️ Aba salva não encontrada no DOM:', abaInicial);
                 abaInicial = 'dashboard';
                 localStorage.setItem('abaSistemaAtiva', abaInicial);
             }
-            console.log('🏠 Aba inicial:', abaInicial);
+            
+            console.log('🏠 Aba que será ativada:', abaInicial);
             ativarAbaSemDelay(abaInicial);
             // Continuar inicialização normal
             inicializarSistema(abaInicial);
@@ -6236,6 +6222,24 @@ Os arquivos de teste já estão na pasta 'exemplos'.
             </div>
         </div>
     </div>
+
+    <script>
+        // Garantir que a aba atual seja salva antes de recarregar a página
+        window.addEventListener('beforeunload', function() {
+            const abaAtual = document.querySelector('.nav-link.active');
+            if (abaAtual) {
+                const href = abaAtual.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    const abaId = href.substring(1);
+                    localStorage.setItem('abaSistemaAtiva', abaId);
+                    console.log('💾 Salvando aba atual antes de recarregar:', abaId);
+                }
+            }
+        });
+
+        // Debug: Mostrar qual aba está salva
+        console.log('🔍 Aba salva no localStorage na inicialização:', localStorage.getItem('abaSistemaAtiva'));
+    </script>
 
 </body>
 </html>
