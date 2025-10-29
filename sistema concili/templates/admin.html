@@ -1385,9 +1385,9 @@
                 </div>
                 <div class="modal-body">
                     <p>Tem certeza que deseja resetar a senha do usuário <strong id="reset-username"></strong>?</p>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        A nova senha será: <strong>senha123</strong>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Uma nova senha temporária será gerada automaticamente.
                     </div>
                     <input type="hidden" id="reset-usuario-id">
                 </div>
@@ -1945,15 +1945,66 @@
             try {
                 const response = await fetch(`/api/admin/usuarios/${id}/resetar-senha`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nova_senha: 'senha123' })
+                    headers: { 'Content-Type': 'application/json' }
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
                     bootstrap.Modal.getInstance(document.getElementById('modalResetarSenha')).hide();
-                    alert('Senha resetada com sucesso! Nova senha: ' + data.nova_senha);
+                    
+                    // Mostrar a nova senha em um modal mais seguro
+                    const senhaModal = `
+                        <div class="modal fade" id="modalNovaSenha" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-warning">
+                                        <h5 class="modal-title">
+                                            <i class="fas fa-key me-2"></i>Nova Senha Gerada
+                                        </h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <strong>IMPORTANTE:</strong> Anote esta senha e feche esta janela. Ela não será mostrada novamente.
+                                        </div>
+                                        <div class="text-center">
+                                            <p><strong>Nova senha temporária:</strong></p>
+                                            <div class="bg-light p-3 rounded border">
+                                                <code class="fs-4" id="nova-senha-display">${data.nova_senha}</code>
+                                            </div>
+                                            <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copiarSenha()">
+                                                <i class="fas fa-copy me-1"></i>Copiar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">
+                                            Entendi e anotei a senha
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Remover modal anterior se existir
+                    const modalAntigo = document.getElementById('modalNovaSenha');
+                    if (modalAntigo) modalAntigo.remove();
+                    
+                    // Adicionar novo modal
+                    document.body.insertAdjacentHTML('beforeend', senhaModal);
+                    
+                    // Mostrar modal
+                    const novoModal = new bootstrap.Modal(document.getElementById('modalNovaSenha'));
+                    novoModal.show();
+                    
+                    // Remover modal quando fechar
+                    document.getElementById('modalNovaSenha').addEventListener('hidden.bs.modal', function() {
+                        this.remove();
+                        carregarUsuarios(); // Recarregar lista
+                    });
+                    
                 } else {
                     throw new Error(data.error);
                 }
@@ -2070,6 +2121,28 @@
                 console.error('Erro:', error);
                 alert('Erro ao salvar dados: ' + error.message);
             }
+        }
+
+        function copiarSenha() {
+            const senhaElement = document.getElementById('nova-senha-display');
+            const senha = senhaElement.textContent;
+            
+            navigator.clipboard.writeText(senha).then(function() {
+                // Mostrar feedback visual
+                const btn = event.target.closest('button');
+                const iconOriginal = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check me-1"></i>Copiado!';
+                btn.classList.add('btn-success');
+                btn.classList.remove('btn-outline-secondary');
+                
+                setTimeout(() => {
+                    btn.innerHTML = iconOriginal;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-secondary');
+                }, 2000);
+            }).catch(function(err) {
+                alert('Erro ao copiar senha. Por favor, selecione e copie manualmente.');
+            });
         }
 
         function alterarSenha() {

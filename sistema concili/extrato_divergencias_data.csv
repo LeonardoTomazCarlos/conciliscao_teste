@@ -1,8 +1,0 @@
-data,descricao,valor,tipo
-2025-10-01,Pagamento luz,250.00,debito
-2025-10-01,Recebimento cliente C,1800.00,credito
-2025-10-02,Compra material,300.00,debito
-2025-10-03,Venda mercadoria,2200.00,credito
-2025-10-04,Pagamento agua,180.00,debito
-2025-10-05,Recebimento aluguel,1500.00,credito
-2025-10-05,Manutencao equipamento,600.00,debito

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trocar Senha - Sistema de Conciliação</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .password-change-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .logo-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+        
+        .form-floating input {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-floating input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: none;
+        }
+        
+        .requirements {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .requirement-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .requirement-icon {
+            width: 20px;
+            margin-right: 0.5rem;
+            color: #6c757d;
+        }
+        
+        .requirement-icon.valid {
+            color: #28a745;
+        }
+        
+        .progress-container {
+            margin-top: 0.5rem;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+        
+        .strength-weak { background: #dc3545; }
+        .strength-fair { background: #ffc107; }
+        .strength-good { background: #28a745; }
+        .strength-strong { background: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="password-change-container">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fas fa-key"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-1">Trocar Senha</h2>
+            <p class="text-muted mb-0">Sua senha atual é temporária e deve ser alterada</p>
+        </div>
+
+        <!-- Alertas -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Atenção!</strong> Por motivos de segurança, você deve alterar sua senha temporária antes de continuar.
+        </div>
+
+        <form id="trocarSenhaForm" method="POST">
+            <div class="form-floating">
+                <input type="password" class="form-control" id="senha_atual" name="senha_atual" 
+                       placeholder="Senha atual" required>
+                <label for="senha_atual">
+                    <i class="fas fa-lock me-2"></i>Senha Atual (Temporária)
+                </label>
+            </div>
+
+            <div class="form-floating">
+                <input type="password" class="form-control" id="nova_senha" name="nova_senha" 
+                       placeholder="Nova senha" required minlength="8">
+                <label for="nova_senha">
+                    <i class="fas fa-key me-2"></i>Nova Senha
+                </label>
+            </div>
+
+            <!-- Indicador de força da senha -->
+            <div id="strength-container" style="display: none;">
+                <small class="text-muted">Força da senha:</small>
+                <div class="progress-container">
+                    <div id="strength-bar" class="progress-bar"></div>
+                </div>
+                <small id="strength-text" class="text-muted"></small>
+            </div>
+
+            <div class="form-floating">
+                <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" 
+                       placeholder="Confirmar nova senha" required>
+                <label for="confirmar_senha">
+                    <i class="fas fa-check-double me-2"></i>Confirmar Nova Senha
+                </label>
+            </div>
+
+            <!-- Requisitos de senha -->
+            <div class="requirements">
+                <h6 class="mb-2"><i class="fas fa-list-check me-2"></i>Requisitos da senha:</h6>
+                <div class="requirement-item">
+                    <i id="req-length" class="fas fa-circle requirement-icon"></i>
+                    <span>Pelo menos 8 caracteres</span>
+                </div>
+                <div class="requirement-item">
+                    <i id="req-different" class="fas fa-circle requirement-icon"></i>
+                    <span>Diferente da senha atual</span>
+                </div>
+                <div class="requirement-item">
+                    <i id="req-match" class="fas fa-circle requirement-icon"></i>
+                    <span>Confirmação confere</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+                <i class="fas fa-key me-2"></i>
+                <span id="btn-text">Alterar Senha</span>
+                <span id="btn-loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Alterando...
+                </span>
+            </button>
+        </form>
+
+        <div class="text-center">
+            <small class="text-muted">
+                <i class="fas fa-shield-alt me-1"></i>
+                Sistema de Conciliação Bancária
+            </small>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('trocarSenhaForm');
+            const novaSenhaInput = document.getElementById('nova_senha');
+            const confirmarSenhaInput = document.getElementById('confirmar_senha');
+            const senhaAtualInput = document.getElementById('senha_atual');
+            
+            // Elementos dos requisitos
+            const reqLength = document.getElementById('req-length');
+            const reqDifferent = document.getElementById('req-different');
+            const reqMatch = document.getElementById('req-match');
+            
+            // Elementos de força da senha
+            const strengthContainer = document.getElementById('strength-container');
+            const strengthBar = document.getElementById('strength-bar');
+            const strengthText = document.getElementById('strength-text');
+            
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                let feedback = [];
+                
+                if (password.length >= 8) strength++;
+                if (password.match(/[a-z]/)) strength++;
+                if (password.match(/[A-Z]/)) strength++;
+                if (password.match(/[0-9]/)) strength++;
+                if (password.match(/[^a-zA-Z0-9]/)) strength++;
+                
+                let strengthLevel = '';
+                let strengthClass = '';
+                let width = '0%';
+                
+                if (strength < 2) {
+                    strengthLevel = 'Muito fraca';
+                    strengthClass = 'strength-weak';
+                    width = '25%';
+                } else if (strength < 3) {
+                    strengthLevel = 'Fraca';
+                    strengthClass = 'strength-fair';
+                    width = '50%';
+                } else if (strength < 4) {
+                    strengthLevel = 'Boa';
+                    strengthClass = 'strength-good';
+                    width = '75%';
+                } else {
+                    strengthLevel = 'Forte';
+                    strengthClass = 'strength-strong';
+                    width = '100%';
+                }
+                
+                strengthBar.className = `progress-bar ${strengthClass}`;
+                strengthBar.style.width = width;
+                strengthText.textContent = strengthLevel;
+            }
+            
+            function validateRequirements() {
+                const novaSenha = novaSenhaInput.value;
+                const confirmarSenha = confirmarSenhaInput.value;
+                const senhaAtual = senhaAtualInput.value;
+                
+                // Comprimento mínimo
+                if (novaSenha.length >= 8) {
+                    reqLength.classList.add('valid');
+                    reqLength.classList.remove('fa-circle');
+                    reqLength.classList.add('fa-check-circle');
+                } else {
+                    reqLength.classList.remove('valid');
+                    reqLength.classList.add('fa-circle');
+                    reqLength.classList.remove('fa-check-circle');
+                }
+                
+                // Diferente da atual
+                if (novaSenha && senhaAtual && novaSenha !== senhaAtual) {
+                    reqDifferent.classList.add('valid');
+                    reqDifferent.classList.remove('fa-circle');
+                    reqDifferent.classList.add('fa-check-circle');
+                } else {
+                    reqDifferent.classList.remove('valid');
+                    reqDifferent.classList.add('fa-circle');
+                    reqDifferent.classList.remove('fa-check-circle');
+                }
+                
+                // Confirmação confere
+                if (novaSenha && confirmarSenha && novaSenha === confirmarSenha) {
+                    reqMatch.classList.add('valid');
+                    reqMatch.classList.remove('fa-circle');
+                    reqMatch.classList.add('fa-check-circle');
+                } else {
+                    reqMatch.classList.remove('valid');
+                    reqMatch.classList.add('fa-circle');
+                    reqMatch.classList.remove('fa-check-circle');
+                }
+            }
+            
+            // Event listeners
+            novaSenhaInput.addEventListener('input', function() {
+                const password = this.value;
+                
+                if (password.length > 0) {
+                    strengthContainer.style.display = 'block';
+                    checkPasswordStrength(password);
+                } else {
+                    strengthContainer.style.display = 'none';
+                }
+                
+                validateRequirements();
+            });
+            
+            confirmarSenhaInput.addEventListener('input', validateRequirements);
+            senhaAtualInput.addEventListener('input', validateRequirements);
+            
+            // Submit do formulário
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const btnText = document.getElementById('btn-text');
+                const btnLoading = document.getElementById('btn-loading');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                
+                // Mostrar loading
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline';
+                submitBtn.disabled = true;
+                
+                // Enviar dados
+                const formData = new FormData(form);
+                
+                fetch('/trocar-senha-obrigatoria', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        senha_atual: formData.get('senha_atual'),
+                        nova_senha: formData.get('nova_senha'),
+                        confirmar_senha: formData.get('confirmar_senha')
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar sucesso e redirecionar
+                        const alertHtml = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                        
+                        form.insertAdjacentHTML('beforebegin', alertHtml);
+                        
+                        setTimeout(() => {
+                            window.location.href = data.redirect;
+                        }, 1500);
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .catch(error => {
+                    // Mostrar erro
+                    const alertHtml = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            ${error.message}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    
+                    form.insertAdjacentHTML('beforebegin', alertHtml);
+                })
+                .finally(() => {
+                    // Restaurar botão
+                    btnText.style.display = 'inline';
+                    btnLoading.style.display = 'none';
+                    submitBtn.disabled = false;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

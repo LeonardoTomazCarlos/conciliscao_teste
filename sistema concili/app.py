@@ -20,6 +20,7 @@ from flask_login import (
     current_user,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
+
 import csv
 import os
 import re
@@ -35,6 +36,27 @@ from io import BytesIO, StringIO
 import PyPDF2
 import logging
 from functools import wraps
+import secrets
+import string
+
+
+def gerar_senha_temporaria(comprimento=12):
+    """Gera uma senha temporária segura"""
+    caracteres = string.ascii_letters + string.digits + "!@#$%"
+    # Garantir pelo menos um de cada tipo
+    senha = [
+        secrets.choice(string.ascii_lowercase),
+        secrets.choice(string.ascii_uppercase),
+        secrets.choice(string.digits),
+        secrets.choice("!@#$%")
+    ]
+    # Completar o resto aleatoriamente
+    for _ in range(comprimento - 4):
+        senha.append(secrets.choice(caracteres))
+    
+    # Embaralhar para posição aleatória
+    secrets.SystemRandom().shuffle(senha)
+    return ''.join(senha)
 
 
 # Decorator personalizado para APIs que retorna JSON em caso de erro de autenticação
@@ -48,6 +70,7 @@ def api_login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
 
 
 app = Flask(__name__)
@@ -79,18 +102,46 @@ logging.basicConfig(
 db = SQLAlchemy(app)
 CORS(app)
 
+
+# Função auxiliar para organizar uploads por data
+def obter_caminho_upload_organizado(filename):
+    """
+    Gera o caminho de upload organizado por ano/mês/dia
+    Exemplo: uploads/2025/10/29/arquivo.csv
+    """
+    from datetime import datetime
+    
+    hoje = datetime.now()
+    ano = hoje.strftime("%Y")
+    mes = hoje.strftime("%m")
+    dia = hoje.strftime("%d")
+    
+    # Criar estrutura de pastas: uploads/YYYY/MM/DD/
+    pasta_organizada = os.path.join(
+        app.config["UPLOAD_FOLDER"], 
+        ano, 
+        mes, 
+        dia
+    )
+    
+    # Criar as pastas se não existirem
+    os.makedirs(pasta_organizada, exist_ok=True)
+    
+    # Retornar o caminho completo do arquivo
+    return os.path.join(pasta_organizada, secure_filename(filename))
+
 # Configuração do Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
 
-# Verificação de usuário ativo antes de cada requisição
+# Verificação de usuário ativo e senha temporária antes de cada requisição
 @app.before_request
 def verificar_usuario_ativo():
-    """Verifica se o usuário logado ainda está ativo"""
+    """Verifica se o usuário logado ainda está ativo e se precisa trocar senha temporária"""
     # Excluir rotas que não precisam de verificação
-    rotas_excluidas = ["login", "logout", "static"]
+    rotas_excluidas = ["login", "logout", "static", "trocar_senha_obrigatoria"]
 
     # Verificar se a rota atual está nas excluídas
     if request.endpoint in rotas_excluidas:
@@ -108,6 +159,16 @@ def verificar_usuario_ativo():
                 "error",
             )
             return redirect(url_for("login"))
+        
+        # Verificar se precisa trocar senha temporária
+        if usuario_atual.senha_temporaria:
+            if request.is_json:
+                return jsonify({
+                    "error": "Senha temporária deve ser alterada",
+                    "redirect": url_for("trocar_senha_obrigatoria")
+                }), 403
+            else:
+                return redirect(url_for("trocar_senha_obrigatoria"))
 
 
 # Funções de controle de acesso
@@ -163,6 +224,7 @@ class Usuario(UserMixin, db.Model):
     nome_completo = db.Column(db.String(200), nullable=False)
     perfil = db.Column(db.String(50), default="usuario")  # admin, usuario, auditor
     ativo = db.Column(db.Boolean, default=True)
+    senha_temporaria = db.Column(db.Boolean, default=False)  # Indica se senha precisa ser trocada
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     ultimo_acesso = db.Column(db.DateTime)
 
@@ -1420,6 +1482,17 @@ def login():
 
             log_auditoria("login", "usuario", user.id)
 
+            # Verificar se precisa trocar senha temporária
+            if user.senha_temporaria:
+                if request.is_json:
+                    return jsonify({
+                        "success": True, 
+                        "redirect": url_for("trocar_senha_obrigatoria"),
+                        "senha_temporaria": True
+                    })
+                else:
+                    return redirect(url_for("trocar_senha_obrigatoria"))
+
             if request.is_json:
                 return jsonify({"success": True, "redirect": url_for("index")})
             else:
@@ -1452,6 +1525,96 @@ def logout():
         if request.method == "POST":
             return jsonify({"success": False, "error": str(e)}), 500
         return redirect(url_for("login"))
+
+
+@app.route("/trocar-senha-obrigatoria", methods=["GET", "POST"])
+@login_required
+def trocar_senha_obrigatoria():
+    """Força usuário a trocar senha temporária"""
+    # Verificar se realmente precisa trocar senha
+    if not current_user.senha_temporaria:
+        return redirect(url_for("index"))
+    
+    if request.method == "POST":
+        try:
+            data = request.get_json() if request.is_json else request.form
+            senha_atual = data.get("senha_atual")
+            nova_senha = data.get("nova_senha")
+            confirmar_senha = data.get("confirmar_senha")
+            
+            # Validações
+            if not senha_atual or not nova_senha or not confirmar_senha:
+                error_msg = "Todos os campos são obrigatórios"
+                if request.is_json:
+                    return jsonify({"error": error_msg}), 400
+                flash(error_msg, "error")
+                return render_template("trocar_senha_obrigatoria.html")
+            
+            # Verificar senha atual
+            if not check_password_hash(current_user.password_hash, senha_atual):
+                error_msg = "Senha atual incorreta"
+                if request.is_json:
+                    return jsonify({"error": error_msg}), 400
+                flash(error_msg, "error")
+                return render_template("trocar_senha_obrigatoria.html")
+            
+            # Verificar se nova senha é igual à confirmação
+            if nova_senha != confirmar_senha:
+                error_msg = "A confirmação da senha não confere"
+                if request.is_json:
+                    return jsonify({"error": error_msg}), 400
+                flash(error_msg, "error")
+                return render_template("trocar_senha_obrigatoria.html")
+            
+            # Validar nova senha
+            if len(nova_senha) < 8:
+                error_msg = "A nova senha deve ter pelo menos 8 caracteres"
+                if request.is_json:
+                    return jsonify({"error": error_msg}), 400
+                flash(error_msg, "error")
+                return render_template("trocar_senha_obrigatoria.html")
+            
+            # Verificar se nova senha é diferente da atual
+            if check_password_hash(current_user.password_hash, nova_senha):
+                error_msg = "A nova senha deve ser diferente da senha atual"
+                if request.is_json:
+                    return jsonify({"error": error_msg}), 400
+                flash(error_msg, "error")
+                return render_template("trocar_senha_obrigatoria.html")
+            
+            # Atualizar senha
+            current_user.password_hash = generate_password_hash(nova_senha)
+            current_user.senha_temporaria = False  # Remover flag de senha temporária
+            db.session.commit()
+            
+            # Log da alteração
+            log_auditoria(
+                "trocar_senha_obrigatoria",
+                "usuario",
+                current_user.id,
+                None,
+                {"acao": "senha_alterada_pos_reset"}
+            )
+            
+            success_msg = "Senha alterada com sucesso!"
+            if request.is_json:
+                return jsonify({
+                    "success": True, 
+                    "message": success_msg,
+                    "redirect": url_for("index")
+                })
+            flash(success_msg, "success")
+            return redirect(url_for("index"))
+            
+        except Exception as e:
+            logging.error(f"Erro ao trocar senha obrigatória: {e}")
+            error_msg = "Erro interno do servidor"
+            if request.is_json:
+                return jsonify({"error": error_msg}), 500
+            flash(error_msg, "error")
+            return render_template("trocar_senha_obrigatoria.html")
+    
+    return render_template("trocar_senha_obrigatoria.html")
 
 
 # === ROTAS DE ADMINISTRAÇÃO ===
@@ -2965,9 +3128,12 @@ def upload_extrato():
         if file.filename == "":
             return jsonify({"error": "Nenhum arquivo selecionado"}), 400
 
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        # Usar a nova organização por data
+        filepath = obter_caminho_upload_organizado(file.filename)
         file.save(filepath)
+        
+        # Obter apenas o nome do arquivo para uso posterior
+        filename = secure_filename(file.filename)
 
         # Usar sessão única de conciliação
         procedimento = obter_ou_criar_sessao_conciliacao()
@@ -3094,9 +3260,12 @@ def upload_lancamentos():
         if file.filename == "":
             return jsonify({"error": "Nenhum arquivo selecionado"}), 400
 
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        # Usar a nova organização por data
+        filepath = obter_caminho_upload_organizado(file.filename)
         file.save(filepath)
+        
+        # Obter apenas o nome do arquivo para uso posterior
+        filename = secure_filename(file.filename)
 
         # Usar sessão única de conciliação
         procedimento = obter_ou_criar_sessao_conciliacao()
@@ -4320,23 +4489,24 @@ def alterar_status_usuario(usuario_id):
 def resetar_senha_usuario(usuario_id):
     """Resetar senha de um usuário"""
     try:
-        data = request.get_json()
-        nova_senha = data.get("nova_senha", "senha123")
-
         usuario = Usuario.query.get(usuario_id)
         if not usuario:
             return jsonify({"error": "Usuário não encontrado"}), 404
 
+        # Gerar senha temporária segura
+        nova_senha = gerar_senha_temporaria()
+        
         usuario.password_hash = generate_password_hash(nova_senha)
+        usuario.senha_temporaria = True  # Marcar como senha temporária
         db.session.commit()
 
-        # Log da alteração
+        # Log da alteração (SEM a senha)
         log_auditoria(
             "resetar_senha_usuario",
             "usuario",
             usuario.id,
             None,
-            {"acao": "senha_resetada"},
+            {"acao": "senha_resetada", "admin_id": current_user.id},
         )
 
         return jsonify(
@@ -4471,6 +4641,7 @@ def alterar_senha_usuario():
 
         # Atualizar senha
         usuario.password_hash = generate_password_hash(nova_senha)
+        usuario.senha_temporaria = False  # Remover flag de senha temporária se existir
         db.session.commit()
 
         log_auditoria(
