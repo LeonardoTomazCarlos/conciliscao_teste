@@ -104,10 +104,10 @@ CORS(app)
 
 
 # Função auxiliar para organizar uploads por data
-def obter_caminho_upload_organizado(filename):
+def obter_caminho_upload_organizado(filename, procedimento_id=None):
     """
-    Gera o caminho de upload organizado por ano/mês/dia
-    Exemplo: uploads/2025/10/29/arquivo.csv
+    Gera o caminho de upload organizado por ano/mês/dia com número do procedimento
+    Exemplo: uploads/2025/10/30/extrato_bancario_01.csv
     """
     from datetime import datetime
     
@@ -127,8 +127,21 @@ def obter_caminho_upload_organizado(filename):
     # Criar as pastas se não existirem
     os.makedirs(pasta_organizada, exist_ok=True)
     
+    # Processar nome do arquivo com número do procedimento
+    filename_seguro = secure_filename(filename)
+    
+    if procedimento_id:
+        # Separar nome e extensão
+        nome, extensao = os.path.splitext(filename_seguro)
+        # Formatar número do procedimento com dois dígitos
+        numero_proc = f"{procedimento_id:02d}"
+        # Criar novo nome: nome_original_XX.extensao
+        filename_com_numero = f"{nome}_{numero_proc}{extensao}"
+    else:
+        filename_com_numero = filename_seguro
+    
     # Retornar o caminho completo do arquivo
-    return os.path.join(pasta_organizada, secure_filename(filename))
+    return os.path.join(pasta_organizada, filename_com_numero)
 
 # Configuração do Flask-Login
 login_manager = LoginManager()
@@ -2178,6 +2191,165 @@ def get_estatisticas_conciliacoes():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/divergencias/por-procedimento", methods=["GET"])
+@api_login_required
+@requires_permission("read")
+def get_divergencias_por_procedimento():
+    """Lista divergências agrupadas por procedimento, similar à tela de conciliação"""
+    try:
+        # Query base para buscar procedimentos que têm divergências
+        procedimentos_query = db.session.query(ProcedimentoConciliacao).distinct()
+        
+        # Controle de acesso: usuários comuns só veem seus próprios dados
+        if current_user.perfil == "usuario":
+            procedimentos_query = procedimentos_query.filter(
+                ProcedimentoConciliacao.usuario_id == current_user.id
+            )
+        
+        # Filtrar apenas procedimentos que têm divergências
+        # Fazemos isso através dos arquivos de origem dos extratos/lançamentos
+        procedimentos_com_divergencias = []
+        
+        for proc in procedimentos_query.order_by(ProcedimentoConciliacao.created_at.desc()).all():
+            # Buscar divergências relacionadas aos extratos/lançamentos deste procedimento
+            # através dos nomes dos arquivos que seguem o padrão _XX onde XX é o procedimento.id
+            padrao_arquivo = f"_{proc.id:02d}."
+            
+            divergencias_extrato = db.session.query(Divergencia).join(
+                ExtratoBancario, Divergencia.extrato_id == ExtratoBancario.id
+            ).filter(
+                ExtratoBancario.arquivo_origem.like(f'%{padrao_arquivo}%'),
+                Divergencia.status == "pendente"
+            ).all()
+            
+            divergencias_lancamento = db.session.query(Divergencia).join(
+                LancamentoContabil, Divergencia.lancamento_id == LancamentoContabil.id
+            ).filter(
+                LancamentoContabil.arquivo_origem.like(f'%{padrao_arquivo}%'),
+                Divergencia.status == "pendente"
+            ).all()
+            
+            # Combinar e remover duplicatas
+            todas_divergencias = list(set(divergencias_extrato + divergencias_lancamento))
+            
+            if todas_divergencias:
+                # Contar tipos de divergências
+                tipos_count = {}
+                for div in todas_divergencias:
+                    tipos_count[div.tipo] = tipos_count.get(div.tipo, 0) + 1
+                
+                procedimentos_com_divergencias.append({
+                    "id": proc.id,
+                    "uuid": proc.uuid,
+                    "descricao": proc.uuid,  # Usar UUID como descrição principal
+                    "status": proc.status,
+                    "created_at": proc.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                    "total_divergencias": len(todas_divergencias),
+                    "tipos_divergencias": tipos_count,
+                    "divergencias_resumo": {
+                        "duplicatas": tipos_count.get("duplicata", 0),
+                        "orfaos_extrato": tipos_count.get("orfao_extrato", 0) + tipos_count.get("sem_correspondencia", 0),
+                        "orfaos_lancamento": tipos_count.get("orfao_lancamento", 0),
+                        "valor_incorreto": tipos_count.get("valor_incorreto", 0),
+                        "data_incorreta": tipos_count.get("data_incorreta", 0)
+                    }
+                })
+        
+        return jsonify(procedimentos_com_divergencias)
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar divergências por procedimento: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/divergencias/procedimento/<int:procedimento_id>", methods=["GET"])
+@api_login_required
+@requires_permission("read")
+def get_divergencias_procedimento(procedimento_id):
+    """Lista todas as divergências de um procedimento específico"""
+    try:
+        # Verificar se o procedimento existe e o usuário tem acesso
+        procedimento = ProcedimentoConciliacao.query.get_or_404(procedimento_id)
+        
+        if current_user.perfil == "usuario" and procedimento.usuario_id != current_user.id:
+            return jsonify({"error": "Acesso negado"}), 403
+        
+        # Buscar divergências relacionadas aos arquivos deste procedimento
+        padrao_arquivo = f"_{procedimento_id:02d}."
+        
+        # Divergências do extrato
+        divergencias_extrato = db.session.query(Divergencia).join(
+            ExtratoBancario, Divergencia.extrato_id == ExtratoBancario.id
+        ).filter(
+            ExtratoBancario.arquivo_origem.like(f'%{padrao_arquivo}%')
+        ).all()
+        
+        # Divergências do lançamento
+        divergencias_lancamento = db.session.query(Divergencia).join(
+            LancamentoContabil, Divergencia.lancamento_id == LancamentoContabil.id
+        ).filter(
+            LancamentoContabil.arquivo_origem.like(f'%{padrao_arquivo}%')
+        ).all()
+        
+        # Divergências que só têm extrato ou só lançamento
+        divergencias_apenas_extrato = [d for d in divergencias_extrato if d not in divergencias_lancamento]
+        divergencias_apenas_lancamento = [d for d in divergencias_lancamento if d not in divergencias_extrato]
+        divergencias_ambos = [d for d in divergencias_extrato if d in divergencias_lancamento]
+        
+        todas_divergencias = divergencias_apenas_extrato + divergencias_apenas_lancamento + divergencias_ambos
+        
+        # Filtro opcional por status
+        status_filtro = request.args.get('status', 'pendente')
+        if status_filtro:
+            todas_divergencias = [d for d in todas_divergencias if d.status == status_filtro]
+        
+        return jsonify({
+            "procedimento": {
+                "id": procedimento.id,
+                "uuid": procedimento.uuid,
+                "descricao": procedimento.uuid,  # Usar UUID como descrição principal
+                "status": procedimento.status,
+                "created_at": procedimento.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            },
+            "divergencias": [
+                {
+                    "id": d.id,
+                    "tipo": d.tipo,
+                    "descricao": d.descricao,
+                    "status": d.status,
+                    "created_at": d.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                    "extrato": (
+                        {
+                            "id": d.extrato.id,
+                            "descricao": d.extrato.descricao,
+                            "valor": d.extrato.valor,
+                            "data": d.extrato.data.strftime("%Y-%m-%d"),
+                            "arquivo_origem": d.extrato.arquivo_origem
+                        }
+                        if d.extrato
+                        else None
+                    ),
+                    "lancamento": (
+                        {
+                            "id": d.lancamento.id,
+                            "descricao": d.lancamento.descricao,
+                            "valor": d.lancamento.valor,
+                            "data": d.lancamento.data.strftime("%Y-%m-%d"),
+                            "arquivo_origem": d.lancamento.arquivo_origem
+                        }
+                        if d.lancamento
+                        else None
+                    ),
+                }
+                for d in sorted(todas_divergencias, key=lambda x: x.created_at, reverse=True)
+            ]
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar divergências do procedimento {procedimento_id}: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/divergencias", methods=["GET"])
 @api_login_required
 @requires_permission("read")
@@ -3128,18 +3300,19 @@ def upload_extrato():
         if file.filename == "":
             return jsonify({"error": "Nenhum arquivo selecionado"}), 400
 
-        # Usar a nova organização por data
-        filepath = obter_caminho_upload_organizado(file.filename)
-        file.save(filepath)
-        
-        # Obter apenas o nome do arquivo para uso posterior
-        filename = secure_filename(file.filename)
-
         # Usar sessão única de conciliação
         procedimento = obter_ou_criar_sessao_conciliacao()
 
         if not procedimento:
             return jsonify({"error": "Erro ao criar/obter sessão"}), 500
+
+        # Usar a nova organização por data com número do procedimento
+        filepath = obter_caminho_upload_organizado(file.filename, procedimento.id)
+        file.save(filepath)
+        
+        # Obter o nome do arquivo com número do procedimento para uso posterior
+        nome_original, extensao = os.path.splitext(secure_filename(file.filename))
+        filename = f"{nome_original}_{procedimento.id:02d}{extensao}"
 
         # Atualizar descrição da sessão para incluir o upload do extrato
         if "Upload de extrato" not in (procedimento.descricao or ""):
@@ -3216,6 +3389,14 @@ def upload_extrato():
 
         db.session.commit()
 
+        # Verificar divergências após upload
+        logging.info("Executando verificação de divergências após upload do extrato...")
+        try:
+            divergencias_criadas = verificar_divergencias()
+            logging.info(f"Verificação de divergências concluída: {divergencias_criadas} divergências criadas")
+        except Exception as e:
+            logging.error(f"Erro na verificação de divergências: {e}")
+
         # NÃO finalizar procedimento aqui - deixar para a sessão completa
         # finalizar_procedimento(procedimento.id, "concluido")
 
@@ -3260,18 +3441,19 @@ def upload_lancamentos():
         if file.filename == "":
             return jsonify({"error": "Nenhum arquivo selecionado"}), 400
 
-        # Usar a nova organização por data
-        filepath = obter_caminho_upload_organizado(file.filename)
-        file.save(filepath)
-        
-        # Obter apenas o nome do arquivo para uso posterior
-        filename = secure_filename(file.filename)
-
         # Usar sessão única de conciliação
         procedimento = obter_ou_criar_sessao_conciliacao()
 
         if not procedimento:
             return jsonify({"error": "Erro ao criar/obter sessão"}), 500
+
+        # Usar a nova organização por data com número do procedimento
+        filepath = obter_caminho_upload_organizado(file.filename, procedimento.id)
+        file.save(filepath)
+        
+        # Obter o nome do arquivo com número do procedimento para uso posterior
+        nome_original, extensao = os.path.splitext(secure_filename(file.filename))
+        filename = f"{nome_original}_{procedimento.id:02d}{extensao}"
 
         # Atualizar descrição da sessão para incluir o upload dos lançamentos
         if "Upload de lançamentos" not in (procedimento.descricao or ""):
@@ -3332,6 +3514,14 @@ def upload_lancamentos():
             registros_importados += 1
 
         db.session.commit()
+
+        # Verificar divergências após upload
+        logging.info("Executando verificação de divergências após upload dos lançamentos...")
+        try:
+            divergencias_criadas = verificar_divergencias()
+            logging.info(f"Verificação de divergências concluída: {divergencias_criadas} divergências criadas")
+        except Exception as e:
+            logging.error(f"Erro na verificação de divergências: {e}")
 
         # NÃO finalizar procedimento aqui - deixar para a sessão completa
         # finalizar_procedimento(procedimento.id, "concluido")
@@ -3599,6 +3789,24 @@ def get_estatisticas():
         query_lancamentos = LancamentoContabil.query
         query_conciliacoes = Conciliacao.query
         query_divergencias = Divergencia.query
+
+        # Controle de acesso: usuários comuns só veem seus próprios dados
+        if current_user.perfil == "usuario":
+            query_extratos = query_extratos.filter(ExtratoBancario.usuario_id == current_user.id)
+            query_lancamentos = query_lancamentos.filter(LancamentoContabil.usuario_id == current_user.id)
+            query_conciliacoes = query_conciliacoes.filter(Conciliacao.usuario_id == current_user.id)
+            # Para divergências, filtrar através dos extratos e lançamentos do usuário
+            divergencias_usuario = db.session.query(Divergencia.id).join(
+                ExtratoBancario, Divergencia.extrato_id == ExtratoBancario.id, isouter=True
+            ).join(
+                LancamentoContabil, Divergencia.lancamento_id == LancamentoContabil.id, isouter=True
+            ).filter(
+                db.or_(
+                    ExtratoBancario.usuario_id == current_user.id,
+                    LancamentoContabil.usuario_id == current_user.id
+                )
+            ).subquery()
+            query_divergencias = query_divergencias.filter(Divergencia.id.in_(divergencias_usuario))
 
         # Aplicar filtros de data
         if data_inicio and data_fim:

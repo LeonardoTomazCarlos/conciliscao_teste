@@ -768,6 +768,9 @@
                                     <button class="btn btn-sm btn-outline-warning ms-1" onclick="console.log('Período atual:', periodoAtualDashboard)">
                                         <i class="fas fa-info me-1"></i>Período Atual
                                     </button>
+                                    <button class="btn btn-sm btn-outline-success ms-1" onclick="testarFiltrosDashboard()">
+                                        <i class="fas fa-flask me-1"></i>Teste JS
+                                    </button>
                                 </div>
                             </div>
 
@@ -1300,16 +1303,48 @@
                             </div>
                         </div>
 
-                        <!-- Tabela de Divergências -->
-                        <div class="card card-dashboard">
+                        <!-- Lista de Procedimentos com Divergências -->
+                        <div class="card card-dashboard" id="lista-procedimentos-divergencias">
                             <div class="card-header bg-transparent border-0">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="fw-bold mb-0">
-                                        <i class="fas fa-list text-warning me-2"></i>Lista de Divergências
+                                        <i class="fas fa-folder-open text-warning me-2"></i>Procedimentos com Divergências
                                     </h5>
-                                    <button class="btn btn-outline-primary btn-sm" onclick="atualizarListaDivergencias()">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="carregarProcedimentosDivergencias()">
                                         <i class="fas fa-sync-alt me-1"></i>Atualizar
                                     </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="container-procedimentos-divergencias">
+                                    <div class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-hourglass-half fa-2x mb-3 d-block"></i>
+                                            <span>Carregando procedimentos...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detalhes das Divergências do Procedimento -->
+                        <div class="card card-dashboard mt-4" id="detalhes-divergencias-procedimento" style="display: none;">
+                            <div class="card-header bg-transparent border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="fw-bold mb-0">
+                                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>Divergências do Procedimento
+                                        </h5>
+                                        <small class="text-muted" id="procedimento-titulo"></small>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-outline-secondary btn-sm me-2" onclick="voltarListaProcedimentosDivergencias()">
+                                            <i class="fas fa-arrow-left me-1"></i>Voltar
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="atualizarDivergenciasProcedimento()">
+                                            <i class="fas fa-sync-alt me-1"></i>Atualizar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -1328,7 +1363,7 @@
                                                 <th>Ações</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tabela-divergencias-nova">
+                                        <tbody id="tabela-divergencias-procedimento">
                                             <tr>
                                                 <td colspan="9" class="text-center py-5">
                                                     <div class="text-muted">
@@ -1339,18 +1374,6 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
-
-                                <!-- Paginação -->
-                                <div class="d-flex justify-content-between align-items-center mt-4">
-                                    <div class="text-muted">
-                                        <small>Mostrando <span id="div-inicio">0</span> a <span id="div-fim">0</span> de <span id="div-total">0</span> divergências</small>
-                                    </div>
-                                    <nav>
-                                        <ul class="pagination pagination-sm mb-0" id="paginacao-divergencias">
-                                            <!-- Paginação será inserida via JavaScript -->
-                                        </ul>
-                                    </nav>
                                 </div>
                             </div>
                         </div>
@@ -1988,6 +2011,145 @@
     </script>
     
     <script>
+        // ===== FUNÇÕES AUXILIARES GLOBAIS =====
+        
+        // Função para formatar data no padrão brasileiro
+        function formatarDataBrasileira(dataString) {
+            if (!dataString) return '-';
+            try {
+                const data = new Date(dataString);
+                return data.toLocaleDateString('pt-BR');
+            } catch (e) {
+                return dataString;
+            }
+        }
+
+        // Função para obter informações sobre tipos de divergência
+        function obterInfoTipoDivergencia(tipo) {
+            const tipos = {
+                'duplicata': { nome: 'Duplicata', classe: 'bg-warning' },
+                'orfao_extrato': { nome: 'Órfão Extrato', classe: 'bg-info' },
+                'orfao_lancamento': { nome: 'Órfão Lançamento', classe: 'bg-primary' },
+                'sem_correspondencia': { nome: 'Sem Correspondência', classe: 'bg-info' },
+                'valor_incorreto': { nome: 'Valor Incorreto', classe: 'bg-danger' },
+                'data_incorreta': { nome: 'Data Incorreta', classe: 'bg-secondary' }
+            };
+            
+            return tipos[tipo] || { nome: tipo, classe: 'bg-dark' };
+        }
+
+        // Função para ver detalhes da divergência
+        function verDetalhesDivergencia(id) {
+            alert('Visualizando detalhes da divergência ' + id + '\n\nFuncionalidade em desenvolvimento...');
+        }
+
+        // Função para resolver divergência
+        function resolverDivergencia(id) {
+            if (confirm('Deseja marcar a divergência ' + id + ' como resolvida?')) {
+                // Implementar a lógica de resolução
+                fetch(`/api/divergencias/${id}/resolver`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ justificativa: 'Resolvida manualmente' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Divergência ' + id + ' marcada como resolvida!');
+                        // Recarregar dados
+                        if (window.procedimentoDivergenciaAtivo) {
+                            atualizarDivergenciasProcedimento();
+                        } else {
+                            carregarProcedimentosDivergencias();
+                        }
+                    } else {
+                        alert('Erro ao resolver divergência: ' + (data.error || 'Erro desconhecido'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao resolver divergência');
+                });
+            }
+        }
+
+        // ===== FIM DAS FUNÇÕES AUXILIARES =====
+
+        // Função de teste para verificar se o JavaScript está funcionando
+        function testarFiltrosDashboard() {
+            console.log('🧪 TESTE: Função testarFiltrosDashboard chamada');
+            alert('JavaScript está funcionando! Os filtros devem funcionar agora.');
+            
+            // Testar se os elementos existem
+            const botoes = ['filtro-hoje', 'filtro-semana', 'filtro-mes', 'filtro-ano'];
+            botoes.forEach(id => {
+                const elemento = document.getElementById(id);
+                if (elemento) {
+                    console.log('✅ Elemento encontrado:', id);
+                } else {
+                    console.error('❌ Elemento NÃO encontrado:', id);
+                }
+            });
+            
+            // Testar aplicarFiltroPeriodo
+            try {
+                console.log('🧪 Testando aplicarFiltroPeriodo...');
+                aplicarFiltroPeriodo('semana');
+                console.log('✅ aplicarFiltroPeriodo funcionou');
+            } catch (error) {
+                console.error('❌ Erro em aplicarFiltroPeriodo:', error);
+            }
+        }
+
+        // Tornar a função global para teste
+        window.testarFiltrosDashboard = testarFiltrosDashboard;
+
+        // Função para configurar eventos dos botões de filtro
+        function configurarEventosFiltrosDashboard() {
+            console.log('🎯 Configurando eventos dos filtros do Dashboard...');
+            
+            const botoesFiltro = [
+                { id: 'filtro-hoje', periodo: 'hoje' },
+                { id: 'filtro-semana', periodo: 'semana' },
+                { id: 'filtro-mes', periodo: 'mes' },
+                { id: 'filtro-ano', periodo: 'ano' }
+            ];
+            
+            botoesFiltro.forEach(({ id, periodo }) => {
+                const botao = document.getElementById(id);
+                if (botao) {
+                    console.log('✅ Configurando evento para:', id);
+                    
+                    // Remover evento anterior se existir
+                    botao.removeEventListener('click', botao._filtroHandler);
+                    
+                    // Criar nova handler
+                    const handler = function(e) {
+                        e.preventDefault();
+                        console.log('🖱️ Clique detectado no botão:', id, 'para período:', periodo);
+                        aplicarFiltroPeriodo(periodo);
+                    };
+                    
+                    // Armazenar referência do handler
+                    botao._filtroHandler = handler;
+                    
+                    // Adicionar evento
+                    botao.addEventListener('click', handler);
+                    
+                    console.log('✅ Evento configurado para:', id);
+                } else {
+                    console.error('❌ Botão não encontrado:', id);
+                }
+            });
+            
+            console.log('🎯 Configuração de eventos concluída');
+        }
+
+        // Tornar função global
+        window.configurarEventosFiltrosDashboard = configurarEventosFiltrosDashboard;
+
         // Configurar drag and drop para as áreas de upload
         function setupDragAndDrop() {
             // Verificar se já foi inicializado para evitar eventos duplicados
@@ -2160,22 +2322,25 @@
         }
 
         function carregarEstatisticas(periodo = 'total', dataInicio = null, dataFim = null) {
-            console.log('Carregando estatísticas:', { periodo, dataInicio, dataFim });
+            console.log('🚀 INICIO carregarEstatisticas:', { periodo, dataInicio, dataFim });
             
             // Construir parâmetros da requisição
             const params = new URLSearchParams();
             if (periodo && periodo !== 'total') {
                 params.append('periodo', periodo);
+                console.log('➕ Adicionado parâmetro período:', periodo);
             }
             if (dataInicio) {
                 params.append('data_inicio', dataInicio);
+                console.log('➕ Adicionado data_inicio:', dataInicio);
             }
             if (dataFim) {
                 params.append('data_fim', dataFim);
+                console.log('➕ Adicionado data_fim:', dataFim);
             }
 
             const url = `/api/estatisticas?${params}`;
-            console.log('URL da requisição:', url);
+            console.log('🔗 URL da requisição completa:', url);
 
             // Exibir indicador de carregamento
             const elementos = ['total-extratos', 'total-lancamentos', 'total-conciliados', 'total-divergencias'];
@@ -2184,13 +2349,19 @@
                 if (element) element.textContent = '...';
             });
 
+            console.log('📡 INICIANDO fetch para URL:', url);
+            
             fetch(url)
                 .then(response => {
-                    console.log('Resposta recebida:', response.status);
+                    console.log('📥 Resposta recebida - Status:', response.status, 'OK:', response.ok);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Dados recebidos:', data);
+                    console.log('📊 Dados recebidos:', data);
+                    console.log('📊 Tipo dos dados:', typeof data);
                     
                     // Atualizar elementos básicos
                     const totalExtratosEl = document.getElementById('total-extratos');
@@ -2235,14 +2406,22 @@
                     // atualizarBadgesNavegacao(data.divergencias_pendentes || 0);
                 })
                 .catch(error => {
-                    console.error('Erro ao carregar estatísticas:', error);
+                    console.error('❌ ERRO ao carregar estatísticas:', error);
+                    console.error('❌ Tipo do erro:', typeof error);
+                    console.error('❌ Mensagem do erro:', error.message);
+                    console.error('❌ Stack do erro:', error.stack);
+                    
                     // Restaurar valores em caso de erro
                     elementos.forEach(id => {
                         const element = document.getElementById(id);
-                        if (element) element.textContent = 'Erro';
+                        if (element) {
+                            element.textContent = 'Erro';
+                            console.log('❌ Elemento com erro:', id);
+                        }
                     });
                     
                     // Mostrar alerta para o usuário
+                    console.error('❌ Mostrando alerta para o usuário');
                     alert('Erro ao carregar estatísticas: ' + error.message);
                 });
         }
@@ -2286,31 +2465,42 @@
 
         // Aplicar filtro de período
         function aplicarFiltroPeriodo(periodo) {
-            console.log('Aplicando filtro de período:', periodo);
+            console.log('🎯 INICIO - Aplicando filtro de período:', periodo);
             periodoAtualDashboard = periodo;
             
             // Atualizar estado visual dos botões - usar seletor mais específico
-            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+            const todosOsBotoes = document.querySelectorAll('.btn-group .btn');
+            console.log('📊 Total de botões encontrados:', todosOsBotoes.length);
+            
+            todosOsBotoes.forEach(btn => {
                 btn.classList.remove('active');
+                console.log('❌ Removido active de:', btn.id);
             });
             
             const botaoAtivo = document.getElementById(`filtro-${periodo}`);
             if (botaoAtivo) {
                 botaoAtivo.classList.add('active');
-                console.log('Botão ativado:', botaoAtivo.id);
+                console.log('✅ Botão ativado:', botaoAtivo.id);
             } else {
-                console.error('Botão não encontrado:', `filtro-${periodo}`);
+                console.error('❌ Botão não encontrado:', `filtro-${periodo}`);
             }
             
             // Ocultar filtro personalizado se estiver visível
             const containerPersonalizado = document.getElementById('filtro-personalizado-container');
             if (containerPersonalizado) {
                 containerPersonalizado.style.display = 'none';
+                console.log('🔒 Container personalizado ocultado');
             }
             
             // Carregar estatísticas com o novo período
-            console.log('Carregando estatísticas para período:', periodo);
-            carregarEstatisticas(periodo);
+            console.log('📈 CHAMANDO carregarEstatisticas para período:', periodo);
+            try {
+                carregarEstatisticas(periodo);
+                console.log('✅ Função carregarEstatisticas chamada com sucesso');
+            } catch (error) {
+                console.error('❌ Erro ao chamar carregarEstatisticas:', error);
+            }
+            console.log('🏁 FIM - aplicarFiltroPeriodo concluído');
         }
 
         // Mostrar filtro personalizado
@@ -3372,7 +3562,251 @@
             }).format(Math.abs(valor));
         }
 
+        // Funções auxiliares para divergências movidas para o topo do script
+
         // Carregar divergências - NOVA IMPLEMENTAÇÃO
+        // Variável global para controlar estado das divergências
+        window.procedimentoDivergenciaAtivo = null;
+
+        // Carregar procedimentos com divergências
+        async function carregarProcedimentosDivergencias() {
+            console.log('🔍 Carregando procedimentos com divergências...');
+            
+            try {
+                const resp = await fetch('/api/divergencias/por-procedimento');
+                
+                if (resp.ok) {
+                    const procedimentos = await resp.json();
+                    console.log('📊 Procedimentos com divergências:', procedimentos);
+                    
+                    renderizarProcedimentosDivergencias(procedimentos);
+                    atualizarEstatisticasDivergenciasGerais(procedimentos);
+                } else {
+                    console.error('❌ Erro ao carregar procedimentos:', resp.status);
+                    mostrarErroProcedimentosDivergencias('Erro ao carregar procedimentos');
+                }
+            } catch (err) {
+                console.error('❌ Erro ao carregar procedimentos:', err);
+                mostrarErroProcedimentosDivergencias(err.message);
+            }
+        }
+
+        // Renderizar lista de procedimentos com divergências
+        function renderizarProcedimentosDivergencias(procedimentos) {
+            const container = document.getElementById('container-procedimentos-divergencias');
+            
+            if (procedimentos.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <div class="text-muted">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3 d-block"></i>
+                            <h5>Nenhuma divergência encontrada</h5>
+                            <p>Todos os procedimentos estão conciliados sem divergências.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const html = procedimentos.map(proc => `
+                <div class="card mb-3 procedimento-card" data-procedimento-id="${proc.id}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="fw-bold mb-1">
+                                    <i class="fas fa-folder-open text-warning me-2"></i>
+                                    ${proc.descricao}
+                                </h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    ${formatarDataBrasileira(proc.created_at)}
+                                    <span class="ms-3">
+                                        <i class="fas fa-fingerprint me-1"></i>
+                                        ID: ${proc.id}
+                                    </span>
+                                </small>
+                                <div class="mt-2">
+                                    <span class="badge bg-danger me-2">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        ${proc.total_divergencias} divergência${proc.total_divergencias !== 1 ? 's' : ''}
+                                    </span>
+                                    ${proc.divergencias_resumo.duplicatas > 0 ? `<span class="badge bg-warning me-1">Duplicatas: ${proc.divergencias_resumo.duplicatas}</span>` : ''}
+                                    ${proc.divergencias_resumo.orfaos_extrato > 0 ? `<span class="badge bg-info me-1">Órfãos Extrato: ${proc.divergencias_resumo.orfaos_extrato}</span>` : ''}
+                                    ${proc.divergencias_resumo.orfaos_lancamento > 0 ? `<span class="badge bg-primary me-1">Órfãos Lançamento: ${proc.divergencias_resumo.orfaos_lancamento}</span>` : ''}
+                                    ${proc.divergencias_resumo.valor_incorreto > 0 ? `<span class="badge bg-danger me-1">Valor Incorreto: ${proc.divergencias_resumo.valor_incorreto}</span>` : ''}
+                                    ${proc.divergencias_resumo.data_incorreta > 0 ? `<span class="badge bg-secondary me-1">Data Incorreta: ${proc.divergencias_resumo.data_incorreta}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-outline-warning btn-sm" onclick="verDivergenciasProcedimento(${proc.id})">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Ver Divergências
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        // Ver divergências de um procedimento específico
+        async function verDivergenciasProcedimento(procedimentoId) {
+            console.log('🔍 Carregando divergências do procedimento:', procedimentoId);
+            
+            try {
+                const resp = await fetch(`/api/divergencias/procedimento/${procedimentoId}`);
+                
+                if (resp.ok) {
+                    const dados = await resp.json();
+                    console.log('📊 Divergências do procedimento:', dados);
+                    
+                    window.procedimentoDivergenciaAtivo = procedimentoId;
+                    mostrarDetalhesDivergenciasProcedimento(dados);
+                } else {
+                    console.error('❌ Erro ao carregar divergências do procedimento:', resp.status);
+                    alert('Erro ao carregar divergências do procedimento');
+                }
+            } catch (err) {
+                console.error('❌ Erro ao carregar divergências do procedimento:', err);
+                alert('Erro ao carregar divergências do procedimento');
+            }
+        }
+
+        // Mostrar detalhes das divergências do procedimento
+        function mostrarDetalhesDivergenciasProcedimento(dados) {
+            // Ocultar lista de procedimentos
+            document.getElementById('lista-procedimentos-divergencias').style.display = 'none';
+            
+            // Mostrar detalhes das divergências
+            document.getElementById('detalhes-divergencias-procedimento').style.display = 'block';
+            
+            // Atualizar título
+            document.getElementById('procedimento-titulo').textContent = dados.procedimento.descricao;
+            
+            // Renderizar tabela de divergências
+            renderizarTabelaDivergenciasProcedimento(dados.divergencias);
+        }
+
+        // Renderizar tabela de divergências do procedimento
+        function renderizarTabelaDivergenciasProcedimento(divergencias) {
+            const tbody = document.getElementById('tabela-divergencias-procedimento');
+            
+            if (divergencias.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-check-circle fa-2x text-success mb-3 d-block"></i>
+                                <span>Nenhuma divergência encontrada neste procedimento</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const html = divergencias.map(div => {
+                const tipoInfo = obterInfoTipoDivergencia(div.tipo);
+                const valorExtrato = div.extrato ? parseFloat(div.extrato.valor || 0) : 0;
+                const valorLancamento = div.lancamento ? parseFloat(div.lancamento.valor || 0) : 0;
+                const diferenca = div.extrato && div.lancamento ? 
+                    Math.abs(valorExtrato - valorLancamento) :
+                    (div.extrato ? valorExtrato : -valorLancamento);
+
+                return `
+                    <tr>
+                        <td>${div.id}</td>
+                        <td>
+                            <span class="badge ${tipoInfo.classe}">
+                                ${tipoInfo.nome}
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted d-block">${div.descricao}</small>
+                        </td>
+                        <td>${div.extrato ? formatarMoeda(valorExtrato) : '-'}</td>
+                        <td>${div.lancamento ? formatarMoeda(valorLancamento) : '-'}</td>
+                        <td class="${diferenca > 0 ? 'text-success' : 'text-danger'}">
+                            <i class="fas ${diferenca > 0 ? 'fa-arrow-up' : 'fa-arrow-down'} me-1"></i>
+                            ${formatarMoeda(Math.abs(diferenca))}
+                        </td>
+                        <td>${formatarDataBrasileira(div.created_at)}</td>
+                        <td>
+                            <span class="badge ${div.status === 'pendente' ? 'bg-warning' : 'bg-success'}">
+                                ${div.status === 'pendente' ? 'Pendente' : 'Resolvida'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button class="btn btn-outline-info btn-sm" onclick="verDetalhesDivergencia(${div.id})" title="Ver detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                ${div.status === 'pendente' ? `
+                                    <button class="btn btn-outline-success btn-sm" onclick="resolverDivergencia(${div.id})" title="Resolver">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = html;
+        }
+
+        // Voltar para a lista de procedimentos
+        function voltarListaProcedimentosDivergencias() {
+            document.getElementById('lista-procedimentos-divergencias').style.display = 'block';
+            document.getElementById('detalhes-divergencias-procedimento').style.display = 'none';
+            window.procedimentoDivergenciaAtivo = null;
+        }
+
+        // Atualizar divergências do procedimento atual
+        function atualizarDivergenciasProcedimento() {
+            if (window.procedimentoDivergenciaAtivo) {
+                verDivergenciasProcedimento(window.procedimentoDivergenciaAtivo);
+            }
+        }
+
+        // Atualizar estatísticas gerais das divergências
+        function atualizarEstatisticasDivergenciasGerais(procedimentos) {
+            let totalDivergencias = 0;
+            let totalPendentes = 0;
+            let valorTotal = 0;
+
+            procedimentos.forEach(proc => {
+                totalDivergencias += proc.total_divergencias;
+                totalPendentes += proc.total_divergencias; // Assumindo que são todas pendentes na lista
+            });
+
+            document.getElementById('divergencias-pendentes').textContent = totalPendentes;
+            document.getElementById('divergencias-resolvidas').textContent = '0'; // Será calculado separadamente se necessário
+            document.getElementById('valor-divergencias').textContent = formatarMoeda(valorTotal);
+            
+            const percentual = totalDivergencias > 0 ? 100 : 0; // Percentual simplificado
+            document.getElementById('percentual-divergencias').textContent = `${percentual}%`;
+        }
+
+        // Mostrar erro ao carregar procedimentos
+        function mostrarErroProcedimentosDivergencias(mensagem) {
+            const container = document.getElementById('container-procedimentos-divergencias');
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="text-danger">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
+                        <h5>Erro ao carregar dados</h5>
+                        <p>${mensagem}</p>
+                        <button class="btn btn-outline-primary btn-sm" onclick="carregarProcedimentosDivergencias()">
+                            <i class="fas fa-sync-alt me-1"></i>Tentar novamente
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         async function carregarDivergencias() {
             console.log('🔍 Carregando divergências da aba nova...');
             
@@ -4327,7 +4761,11 @@ Os arquivos de teste já estão na pasta 'exemplos'.
                             console.log('✅ Aba conciliação inicializada com sucesso');
                         }, 200);
                     } else if (target === 'divergencias') {
-                        setTimeout(() => carregarDivergencias(), 100);
+                        setTimeout(() => {
+                            // Garantir que estamos na visualização de procedimentos
+                            voltarListaProcedimentosDivergencias();
+                            carregarProcedimentosDivergencias();
+                        }, 100);
                     } else if (target === 'dashboard') {
                         setTimeout(() => carregarEstatisticas('hoje'), 100);
                     }
@@ -5975,13 +6413,22 @@ Os arquivos de teste já estão na pasta 'exemplos'.
             console.log('📊 Inicializando sistema de relatórios...');
             
             // Configurar eventos
-            document.getElementById('filtro-periodo-relatorio').addEventListener('change', togglePeriodoPersonalizado);
+            const filtroRelatorio = document.getElementById('filtro-periodo-relatorio');
+            if (filtroRelatorio) {
+                filtroRelatorio.addEventListener('change', togglePeriodoPersonalizado);
+            }
             
             // Carregar filtros salvos
             atualizarListaFiltrosSalvos();
             
             // Configurar filtros rápidos se existirem
             configurarFiltrosRapidos();
+            
+            // Configurar eventos dos filtros do Dashboard
+            console.log('🎯 Configurando filtros do Dashboard...');
+            setTimeout(() => {
+                configurarEventosFiltrosDashboard();
+            }, 100);
             
             console.log('✅ Sistema de relatórios iniciado!');
         });
